@@ -1,0 +1,128 @@
+# code for detecting red objects and then identifying what zone they are in
+
+import cv2
+import numpy as np
+
+def detect_red_object(frame, zone_num, min_area=1000):
+    # HSV color space is more suitable for color detection
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    # Very restrictive lower and upper bounds for a specific shade of red
+    lower_red = np.array([0, 200, 150])
+    upper_red = np.array([10, 255, 255])
+
+    mask = cv2.inRange(hsv, lower_red, upper_red)
+
+    # Morphological operations to reduce noise
+    kernel = np.ones((5,5),np.uint8)
+    mask = cv2.erode(mask, kernel, iterations=1)
+    mask = cv2.dilate(mask, kernel, iterations=1)
+
+    # Find contours
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Draw contours and label zones
+    for contour in contours:
+        area = cv2.contourArea(contour)
+
+        # Check if contour meets minimum area threshold
+        if area < min_area:
+            continue
+
+        cv2.drawContours(frame, [contour], 0, (0, 255, 0), 2)
+        x, y, _, _ = cv2.boundingRect(contour)
+        cv2.putText(frame, f"Zone {zone_num}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+
+    # HSV color space is more suitable for color detection
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    # More restrictive lower and upper bounds for red
+    lower_red = np.array([0, 240, 220])
+    upper_red = np.array([10, 255, 255])
+    mask1 = cv2.inRange(hsv, lower_red, upper_red)
+
+    lower_red = np.array([160, 150, 100])
+    upper_red = np.array([180, 255, 255])
+    mask2 = cv2.inRange(hsv, lower_red, upper_red)
+
+    mask = mask1 + mask2
+
+    # Morphological operations to reduce noise
+    kernel = np.ones((5,5),np.uint8)
+    mask = cv2.erode(mask, kernel, iterations = 1)
+    mask = cv2.dilate(mask, kernel, iterations = 1)
+
+    # Find contours
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Draw contours and label zones
+    for contour in contours:
+        area = cv2.contourArea(contour)
+
+        # Check if contour meets minimum area threshold
+        if area < min_area:
+            continue
+
+        # Optional: check for additional features like aspect ratio or solidity here
+
+        cv2.drawContours(frame, [contour], 0, (0, 255, 0), 2)
+        x, y, _, _ = cv2.boundingRect(contour)
+        cv2.putText(frame, f"Zone {zone_num}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+ # Increase min_area to consider larger contours
+    # HSV color space is more suitable for color detection
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    # Define lower and upper bounds for red
+    lower_red = np.array([0, 120, 70])
+    upper_red = np.array([10, 255, 255])
+    mask1 = cv2.inRange(hsv, lower_red, upper_red)
+
+    lower_red = np.array([160, 120, 70])
+    upper_red = np.array([180, 255, 255])
+    mask2 = cv2.inRange(hsv, lower_red, upper_red)
+
+    mask = mask1 + mask2
+
+    # Morphological operations to reduce noise
+    kernel = np.ones((5,5),np.uint8)
+    mask = cv2.erode(mask, kernel, iterations = 1)
+    mask = cv2.dilate(mask, kernel, iterations = 1)
+
+    # Find contours
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Draw contours and label zones
+    for contour in contours:
+        area = cv2.contourArea(contour)
+
+        if area < min_area:
+            continue
+
+        cv2.drawContours(frame, [contour], 0, (0, 255, 0), 2)
+        x, y, _, _ = cv2.boundingRect(contour)
+        cv2.putText(frame, f"Zone {zone_num}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+
+# Initialize camera
+cap = cv2.VideoCapture(0)
+
+while True:
+    # Read frame
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    height, width, _ = frame.shape
+    left_zone = frame[:, :width//3]
+    middle_zone = frame[:, width//3:2*(width//3)]
+    right_zone = frame[:, 2*(width//3):]
+
+    detect_red_object(left_zone, 1)
+    detect_red_object(middle_zone, 2)
+    detect_red_object(right_zone, 3)
+
+    cv2.imshow('Red Object Detection', frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
