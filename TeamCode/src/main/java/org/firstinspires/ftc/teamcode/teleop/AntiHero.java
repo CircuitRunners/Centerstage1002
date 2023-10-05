@@ -12,20 +12,20 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 public class AntiHero extends CommandOpMode {
 
     private double power = -1;
-
-    DcMotorEx leftMotor, rightMotor;
+    private DcMotorEx
+    DcMotorEx leftLiftMotor, rightLiftMotor;
 
     @Override
     public void initialize() {
-        leftMotor = hardwareMap.get(DcMotorEx.class, "leftLift");
-        rightMotor = hardwareMap.get(DcMotorEx.class, "rightLift");
+        leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLift");
+        rightLiftMotor = hardwareMap.get(DcMotorEx.class, "rightLift");
     }
     @Override
     public void run() {
         super.run();
 
-        leftMotor.setPower(power);
-        rightMotor.setPower(-power);
+        leftLiftMotor.setPower(power);
+        rightLiftMotor.setPower(-power);
     }
 
 }
