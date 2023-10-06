@@ -17,7 +17,7 @@ public class MainTeleOp extends CommandOpMode {
     private double backLeftPower;
     private double frontRightPower;
     private double backRightPower;
-    private double airplanePosition = 0.5;
+    private double airplanePosition = 0.0;
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     DcMotorEx leftLiftMotor, rightLiftMotor;
     DcMotorEx intakeMotor;
@@ -66,6 +66,10 @@ public class MainTeleOp extends CommandOpMode {
         }
         else{
             intakePower = 0;
+        }
+
+        if(airPlaneLaunch){
+            airplanePosition = 0.5;
         }
         frontLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         backLeftPower = Range.clip(-(y-x), -1.0, 1.0);
