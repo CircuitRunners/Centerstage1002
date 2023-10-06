@@ -38,6 +38,7 @@ public class MainTeleOp extends CommandOpMode {
         private double liftUp = gamepad2.left_trigger;
         private double liftDown = gamepad2.right_trigger;
         private double rx = gamepad1.right_stick;
+        private double x2 = gamepad2.left_stick_x;
         if (liftUp != 0) {
             liftPower = liftUp;
         }
