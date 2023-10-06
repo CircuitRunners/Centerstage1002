@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class MainTeleOp extends CommandOpMode {
@@ -16,9 +17,11 @@ public class MainTeleOp extends CommandOpMode {
     private double backLeftPower;
     private double frontRightPower;
     private double backRightPower;
+    private double airplanePosition = 0.5;
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     DcMotorEx leftLiftMotor, rightLiftMotor;
     DcMotorEx intakeMotor;
+    Servo airplaneServo;
 
 
     @Override
@@ -30,12 +33,12 @@ public class MainTeleOp extends CommandOpMode {
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRightWheel");
         backRight = hardwareMap.get(DcMotorEx.class, "backRightWheel");
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
+        airplaneServo = harwareMap.get(Servo.class, "Airplane");
 
     }
     @Override
     public void run() {
         super.run;
-        HEAD
         double y = gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
         double liftUp = gamepad2.left_trigger;
@@ -45,8 +48,9 @@ public class MainTeleOp extends CommandOpMode {
 
         boolean intake = gamepad2.right_bumper;
         boolean reverseIntake = gamepad2.left_bumper;
+        boolean airPlaneLaunch = gamepad2.x;
 
-        42092b0242325b1e1d74f7da794351cff064b64e
+
         if (liftUp != 0) {
             liftPower = liftUp;
         }
@@ -74,6 +78,7 @@ public class MainTeleOp extends CommandOpMode {
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
         intakeMotor.setPower(intakePower);
+        airplaneServo.setPosition(airplanePosition);
 
     }
 
