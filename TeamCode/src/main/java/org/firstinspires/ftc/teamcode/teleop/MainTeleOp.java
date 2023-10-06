@@ -11,13 +11,14 @@ import com.qualcomm.robotcore.util.Range;
 public class MainTeleOp extends CommandOpMode {
 
     private double liftPower;
+    private double intakePower;
     private double frontLeftPower;
     private double backLeftPower;
     private double frontRightPower;
     private double backRightPower;
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
-
     DcMotorEx leftLiftMotor, rightLiftMotor;
+    DcMotorEx intakeMotor;
 
 
     @Override
@@ -28,22 +29,44 @@ public class MainTeleOp extends CommandOpMode {
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeftWheel");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRightWheel");
         backRight = hardwareMap.get(DcMotorEx.class, "backRightWheel");
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
 
     }
     @Override
     public void run() {
         super.run();
+<<<<<<< HEAD
         private double y = gamepad1.left_stick_y;
         private double x = gamepad1.left_stick_x;
         private double liftUp = gamepad2.left_trigger;
         private double liftDown = gamepad2.right_trigger;
         private double rx = gamepad1.right_stick;
         private double x2 = gamepad2.left_stick_x;
+=======
+        double y = gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x;
+        double liftUp = gamepad2.left_trigger;
+        double liftDown = gamepad2.right_trigger;
+        double rx = gamepad1.right_stick_x;
+        boolean intake = gamepad2.right_bumper;
+        boolean reverseIntake = gamepad2.left_bumper;
+
+>>>>>>> 42092b0242325b1e1d74f7da794351cff064b64e
         if (liftUp != 0) {
             liftPower = liftUp;
         }
         if (liftDown != 0) {
             liftPower = liftDown;
+        }
+
+        if (intake){
+            intakePower = 1;
+        }
+        else if (reverseIntake){
+            intakePower = -1;
+        }
+        else{
+            intakePower = 0;
         }
         frontLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         backLeftPower = Range.clip(-(y-x), -1.0, 1.0);
@@ -55,6 +78,7 @@ public class MainTeleOp extends CommandOpMode {
         backLeft.setPower(backLeftPower);
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
+        intakeMotor.setPower(intakePower);
 
     }
 
