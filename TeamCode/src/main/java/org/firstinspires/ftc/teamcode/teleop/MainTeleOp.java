@@ -18,10 +18,13 @@ public class MainTeleOp extends CommandOpMode {
     private double frontRightPower;
     private double backRightPower;
     private double airplanePosition = 0.0;
+    private double leftClawPosition = 0.0;
+    private double rightClawPosition = 0.0;
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     DcMotorEx leftLiftMotor, rightLiftMotor;
     DcMotorEx intakeMotor;
     Servo airplaneServo;
+    Servo leftClawServo, rightClawServo;
 
 
     @Override
@@ -34,6 +37,8 @@ public class MainTeleOp extends CommandOpMode {
         backRight = hardwareMap.get(DcMotorEx.class, "backRightWheel");
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
         airplaneServo = hardwareMap.get(Servo.class, "Airplane");
+        leftClawServo = hardwareMap.get(Servo.class, "Left Claw");
+        rightClawServo = hardwareMap.get(Servo.class, "Right Claw");
 
     }
     @Override
@@ -48,7 +53,10 @@ public class MainTeleOp extends CommandOpMode {
 
         boolean intake = gamepad2.right_bumper;
         boolean reverseIntake = gamepad2.left_bumper;
-        boolean airPlaneLaunch = gamepad2.x;
+        boolean airPlaneLaunch = gamepad2.y;
+        boolean leftClawToggle = gamepad2.x;
+        boolean rightClawToggle = gamepad2.b;
+        boolean bothClawToggle = gamepad2.a;
 
 
         if (liftUp != 0) {
@@ -71,6 +79,33 @@ public class MainTeleOp extends CommandOpMode {
         if(airPlaneLaunch){
             airplanePosition = 0.5;
         }
+        if(leftClawToggle){
+            if(leftClawPosition == 0.0){
+                leftClawPosition = 0.25;
+            }
+            else if(leftClawPosition == 0.25){
+                leftClawPosition = 0.0;
+            }
+
+        }
+        if(rightClawToggle){
+            if(rightClawPosition == 0.0){
+                rightClawPosition = 0.25;
+            }
+            else if(rightClawPosition == 0.25){
+                rightClawPosition = 0.0;
+            }
+        }
+        if(bothClawToggle){
+            if(leftClawPosition == 0.0 && rightClawPosition == 0.0){
+                leftClawPosition = 0.25;
+                rightClawPosition = 0.25;
+            }
+            else if (leftClawPosition == 0.25 && rightClawPosition == 0.25){
+                leftClawPosition = 0.0;
+                rightClawPosition = 0.0;
+            }
+        }
         frontLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         backLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         frontRightPower = Range.clip(y+x, -1.0, 1.0);
@@ -83,6 +118,8 @@ public class MainTeleOp extends CommandOpMode {
         backRight.setPower(backRightPower);
         intakeMotor.setPower(intakePower);
         airplaneServo.setPosition(airplanePosition);
+        leftClawServo.setPosition(leftClawPosition);
+        rightClawServo.setPosition(rightClawPosition);
 
     }
 
