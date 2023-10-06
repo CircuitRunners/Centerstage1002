@@ -34,24 +34,19 @@ public class MainTeleOp extends CommandOpMode {
     }
     @Override
     public void run() {
-        super.run();
-<<<<<<< HEAD
-        private double y = gamepad1.left_stick_y;
-        private double x = gamepad1.left_stick_x;
-        private double liftUp = gamepad2.left_trigger;
-        private double liftDown = gamepad2.right_trigger;
-        private double rx = gamepad1.right_stick;
-        private double x2 = gamepad2.left_stick_x;
-=======
+        super.run;
+        HEAD
         double y = gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
         double liftUp = gamepad2.left_trigger;
         double liftDown = gamepad2.right_trigger;
         double rx = gamepad1.right_stick_x;
+        double x2 = gamepad2.left_stick_x;
+
         boolean intake = gamepad2.right_bumper;
         boolean reverseIntake = gamepad2.left_bumper;
 
->>>>>>> 42092b0242325b1e1d74f7da794351cff064b64e
+        42092b0242325b1e1d74f7da794351cff064b64e
         if (liftUp != 0) {
             liftPower = liftUp;
         }
