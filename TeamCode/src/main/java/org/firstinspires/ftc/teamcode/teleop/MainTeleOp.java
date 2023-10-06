@@ -33,7 +33,7 @@ public class MainTeleOp extends CommandOpMode {
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRightWheel");
         backRight = hardwareMap.get(DcMotorEx.class, "backRightWheel");
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
-        airplaneServo = harwareMap.get(Servo.class, "Airplane");
+        airplaneServo = hardwareMap.get(Servo.class, "Airplane");
 
     }
     @Override
