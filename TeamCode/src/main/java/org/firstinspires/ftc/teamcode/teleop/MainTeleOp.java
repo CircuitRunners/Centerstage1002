@@ -43,7 +43,7 @@ public class MainTeleOp extends CommandOpMode {
     }
     @Override
     public void run() {
-        super.run;
+        super.run();
         double y = gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
         double liftUp = gamepad2.left_trigger;
@@ -109,7 +109,7 @@ public class MainTeleOp extends CommandOpMode {
         frontLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         backLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         frontRightPower = Range.clip(y+x, -1.0, 1.0);
-        backRightPower = Range.clip(y+x, -1.0, 1.0)
+        backRightPower = Range.clip(y+x, -1.0, 1.0);
         leftLiftMotor.setPower(liftPower);
         rightLiftMotor.setPower(-liftPower);
         frontLeft.setPower(frontLeftPower);
