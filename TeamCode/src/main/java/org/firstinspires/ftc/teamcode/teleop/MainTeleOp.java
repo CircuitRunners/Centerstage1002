@@ -117,6 +117,7 @@ public class MainTeleOp extends CommandOpMode {
             liftPower = liftDown;
         }
 
+
         if (intake){
             intakePower = intakePowerValue;
         }
@@ -126,6 +127,7 @@ public class MainTeleOp extends CommandOpMode {
         else{
             intakePower = 0;
         }
+
 
         if(airPlaneLaunch){
             airplanePosition = finalAirplanePosition;
@@ -139,6 +141,8 @@ public class MainTeleOp extends CommandOpMode {
             }
 
         }
+
+
         if(rightClawToggle){
             if(rightClawPosition == initialClawPosition){
                 rightClawPosition = extendedClawPosition;
@@ -147,6 +151,8 @@ public class MainTeleOp extends CommandOpMode {
                 rightClawPosition = initialClawPosition;
             }
         }
+
+
         if(bothClawToggle){
             if(leftClawPosition == initialClawPosition && rightClawPosition == initialClawPosition){
                 leftClawPosition = extendedClawPosition;
@@ -157,6 +163,8 @@ public class MainTeleOp extends CommandOpMode {
                 rightClawPosition = initialClawPosition;
             }
         }
+
+
         if(armToggle){
             if(leftArmPosition == initialArmPosition && rightArmPosition == initialArmPosition && angleServoPosition == angleInitialPosition){
                 leftArmPosition = extendedArmPosition;
@@ -170,6 +178,8 @@ public class MainTeleOp extends CommandOpMode {
                 angleServoPosition = angleInitialPosition;
             }
         }
+
+
         if(hangingUpToggle){
             if(hangingUpPosition == hangingUpExtendedPosition){
                 hangingUpPosition = hangingUpInitialPosition;
@@ -178,11 +188,15 @@ public class MainTeleOp extends CommandOpMode {
                 hangingUpPosition = hangingUpExtendedPosition;
             }
         }
+
+
         frontLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         backLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         frontRightPower = Range.clip(y+x, -1.0, 1.0);
         backRightPower = Range.clip(y+x, -1.0, 1.0);
         hangingMotorPower = Range.clip(y+x, -1.0, 1.0);
+
+
         leftLiftMotor.setPower(liftPower);
         rightLiftMotor.setPower(-liftPower);
         frontLeft.setPower(frontLeftPower);
