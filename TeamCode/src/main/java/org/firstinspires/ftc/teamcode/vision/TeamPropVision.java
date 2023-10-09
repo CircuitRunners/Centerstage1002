@@ -1,9 +1,11 @@
+package org.firstinspires.ftc.teamcode.vision;
+
 import org.opencv.core.*;
 import org.opencv.core.Core.*;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.Videoio;
-public class Main {
+public class TeamPropVision {
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
