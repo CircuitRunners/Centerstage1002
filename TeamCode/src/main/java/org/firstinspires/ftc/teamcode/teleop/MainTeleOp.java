@@ -34,8 +34,7 @@ public class MainTeleOp extends CommandOpMode {
     DcMotorEx leftLiftMotor, rightLiftMotor;
     DcMotorEx intakeMotor;
     Servo airplaneServo;
-    Servo leftClawServo;
-    Servo rightClawServo;
+    Servo leftClawServo, rightClawServo;
     Servo leftArm, rightArm;
 
 
