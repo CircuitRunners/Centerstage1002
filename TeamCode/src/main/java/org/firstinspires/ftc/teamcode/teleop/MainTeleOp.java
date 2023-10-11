@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -11,63 +14,43 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 public class MainTeleOp extends CommandOpMode {
 
-    //Drive base
+    private double liftPower;
+    private double intakePower;
     private double frontLeftPower;
     private double backLeftPower;
     private double frontRightPower;
     private double backRightPower;
-    private DcMotorEx frontLeft, backLeft, frontRight, backRight;
-
-
-    //Lift
-    private double liftPower;
-    DcMotorEx leftLiftMotor, rightLiftMotor;
-
-
-    //Intake
-    private double intakePower;
-    private double intakePowerValue = 1;
-    DcMotorEx intakeMotor;
-    private double reverseIntakePowerValue = -1;
-
-
-    //Claw
-    private double leftClawPosition = 0.0;
-    private double rightClawPosition = 0.0;
-    private double initialClawPosition;
-    private double extendedClawPosition;
-    private double angleInitialPosition;
-    private double angleFinalPosition;
-    private double angleServoPosition = angleInitialPosition;
-    Servo angleServo;
-    Servo leftClawServo, rightClawServo;
-
-
-    //Arm
-    private double extendedArmPosition;
-    private double initialArmPosition;
-    private double leftArmPosition = initialArmPosition;
-    private double rightArmPosition = initialArmPosition;
-    Servo leftArmServo, rightArmServo;
-
-
-    //Airplane
+    private double hangingMotorPower;
     private double initialAirplanePosition;
     private double airplanePosition = initialAirplanePosition;
+    private double leftClawPosition = 0.0;
+    private double rightClawPosition = 0.0;
+    private double leftArmPosition = 0.0;
+    private double rightArmPosition = 0.0;
+    private double extendedArmPosition;
+    private double initialArmPosition;
+    private double initialClawPosition;
+    private double extendedClawPosition;
     private double finalAirplanePosition;
-    Servo airplaneServo;
-
-
-    //Hanging
-    private double hangingUpInitialPosition;
-    private double hangingUpExtendedPosition;
-    private double hangingMotorPower;
+    private double intakePowerValue = 1;
+    private double outtakePowerValue = -1;
+    private double hangingUpInitialPosition = 0;
+    private double hangingUpExtendedPosition = 1;
     private double hangingUpPosition = hangingUpInitialPosition;
+    private double angleServoInitialPosition = 0;
+    private double angleServoFinalPosition = 1;
+    private double spinningMotorPower;
+    private double angleServoPosition = angleServoInitialPosition;
+    private DcMotorEx frontLeft, backLeft, frontRight, backRight;
+    DcMotorEx leftLiftMotor, rightLiftMotor;
+    DcMotorEx intakeMotor;
+    Servo airplaneServo;
+    Servo leftClawServo, rightClawServo;
+    Servo leftArmServo, rightArmServo;
     Servo hangingServo;
     DcMotorEx hangingMotor;
-
-
-
+    Servo angleServo;
+    DcMotorEx spinMotor;
 
 
     @Override
@@ -84,9 +67,10 @@ public class MainTeleOp extends CommandOpMode {
         rightClawServo = hardwareMap.get(Servo.class, "rightClaw");
         leftArmServo = hardwareMap.get(Servo.class, "leftArm");
         rightArmServo = hardwareMap.get(Servo.class, "rightArm");
-        hangingServo = hardwareMap.get(Servo.class, "hangingExtend");
-        hangingMotor = hardwareMap.get(DcMotorEx.class, "hangingRetract");
+        hangingServo = hardwareMap.get(Servo.class, "hangingUp");
+        hangingMotor = hardwareMap.get(DcMotorEx.class, "hangingDown");
         angleServo = hardwareMap.get(Servo.class, "angle");
+        spinMotor = hardwareMap.get(DcMotorEx.class, "spin");
 
 
     }
@@ -99,7 +83,8 @@ public class MainTeleOp extends CommandOpMode {
         double liftDown = gamepad2.right_trigger;
         double rx = gamepad1.right_stick_x;
         double x2 = gamepad2.left_stick_x;
-        boolean hangingDown = gamepad1.b;
+        double angle = gamepad2.right_stick_y;
+
         boolean intake = gamepad1.right_bumper;
         boolean reverseIntake = gamepad1.left_bumper;
         boolean airPlaneLaunch = gamepad2.y;
@@ -108,6 +93,9 @@ public class MainTeleOp extends CommandOpMode {
         boolean bothClawToggle = gamepad2.a;
         boolean armToggle = gamepad2.right_bumper;
         boolean hangingUpToggle = gamepad1.a;
+        boolean angleServoToggle = gamepad1.x;
+        boolean hangingDown = gamepad1.b;
+        boolean spinningToggle = gamepad1.y;
 
 
         if (liftUp != 0) {
@@ -117,17 +105,15 @@ public class MainTeleOp extends CommandOpMode {
             liftPower = liftDown;
         }
 
-
         if (intake){
             intakePower = intakePowerValue;
         }
         else if (reverseIntake){
-            intakePower = reverseIntakePowerValue;
+            intakePower = outtakePowerValue;
         }
         else{
             intakePower = 0;
         }
-
 
         if(airPlaneLaunch){
             airplanePosition = finalAirplanePosition;
@@ -141,8 +127,6 @@ public class MainTeleOp extends CommandOpMode {
             }
 
         }
-
-
         if(rightClawToggle){
             if(rightClawPosition == initialClawPosition){
                 rightClawPosition = extendedClawPosition;
@@ -151,8 +135,6 @@ public class MainTeleOp extends CommandOpMode {
                 rightClawPosition = initialClawPosition;
             }
         }
-
-
         if(bothClawToggle){
             if(leftClawPosition == initialClawPosition && rightClawPosition == initialClawPosition){
                 leftClawPosition = extendedClawPosition;
@@ -163,40 +145,36 @@ public class MainTeleOp extends CommandOpMode {
                 rightClawPosition = initialClawPosition;
             }
         }
-
-
         if(armToggle){
-            if(leftArmPosition == initialArmPosition && rightArmPosition == initialArmPosition && angleServoPosition == angleInitialPosition){
+            if(leftArmPosition == initialArmPosition && rightArmPosition == initialArmPosition){
                 leftArmPosition = extendedArmPosition;
                 rightArmPosition = extendedArmPosition;
-                angleServoPosition = angleFinalPosition;
-
             }
-            if(leftArmPosition == extendedArmPosition && rightArmPosition == extendedArmPosition && angleServoPosition == angleFinalPosition){
+            if(leftArmPosition == extendedArmPosition && rightArmPosition == extendedArmPosition){
                 leftArmPosition = initialArmPosition;
                 rightArmPosition = initialArmPosition;
-                angleServoPosition = angleInitialPosition;
             }
         }
-
-
         if(hangingUpToggle){
-            if(hangingUpPosition == hangingUpExtendedPosition){
-                hangingUpPosition = hangingUpInitialPosition;
-            }
-            if(hangingUpPosition == hangingUpInitialPosition){
+            if(hangingUpPosition == hangingUpInitialPosition) {
                 hangingUpPosition = hangingUpExtendedPosition;
             }
         }
-
-
+        if(angleServoToggle){
+            if(angleServoPosition == angleServoInitialPosition){
+                angleServoPosition = angleServoFinalPosition;
+            }
+            if(angleServoPosition == angleServoFinalPosition){
+                angleServoPosition = angleServoInitialPosition;
+            }
+        }
+        if
         frontLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         backLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         frontRightPower = Range.clip(y+x, -1.0, 1.0);
         backRightPower = Range.clip(y+x, -1.0, 1.0);
         hangingMotorPower = Range.clip(y+x, -1.0, 1.0);
-
-
+        spinningMotorPower = Range.clip(-(y-x), -1.0, 1.0);
         leftLiftMotor.setPower(liftPower);
         rightLiftMotor.setPower(-liftPower);
         frontLeft.setPower(frontLeftPower);
@@ -209,9 +187,8 @@ public class MainTeleOp extends CommandOpMode {
         rightClawServo.setPosition(rightClawPosition);
         leftArmServo.setPosition(leftArmPosition);
         rightArmServo.setPosition(rightArmPosition);
-        hangingMotor.setPower(hangingMotorPower);
-        hangingServo.setPosition(hangingUpPosition);
         angleServo.setPosition(angleServoPosition);
+
     }
 
 }
