@@ -14,12 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 public class MainTeleOp extends CommandOpMode {
 
-    private double liftPower;
-    private double intakePower;
-    private double frontLeftPower;
-    private double backLeftPower;
-    private double frontRightPower;
-    private double backRightPower;
+    private double liftPower, intakePower, frontLeftPower, backLeftPower, frontRightPower, backRightPower;
     private double hangingMotorPower;
     private double initialAirplanePosition;
     private double airplanePosition = initialAirplanePosition;
@@ -41,6 +36,7 @@ public class MainTeleOp extends CommandOpMode {
     private double angleServoFinalPosition = 1;
     private double spinningMotorPower;
     private double angleServoPosition = angleServoInitialPosition;
+
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     DcMotorEx leftLiftMotor, rightLiftMotor;
     DcMotorEx intakeMotor;
@@ -71,9 +67,8 @@ public class MainTeleOp extends CommandOpMode {
         hangingMotor = hardwareMap.get(DcMotorEx.class, "hangingDown");
         angleServo = hardwareMap.get(Servo.class, "angle");
         spinMotor = hardwareMap.get(DcMotorEx.class, "spin");
-
-
     }
+
     @Override
     public void run() {
         super.run();
@@ -168,7 +163,6 @@ public class MainTeleOp extends CommandOpMode {
                 angleServoPosition = angleServoInitialPosition;
             }
         }
-        if
         frontLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         backLeftPower = Range.clip(-(y-x), -1.0, 1.0);
         frontRightPower = Range.clip(y+x, -1.0, 1.0);
