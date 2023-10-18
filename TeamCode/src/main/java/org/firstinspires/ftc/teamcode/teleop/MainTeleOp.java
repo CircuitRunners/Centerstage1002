@@ -18,10 +18,7 @@ public class MainTeleOp extends CommandOpMode {
     private double hangingMotorPower;
     private double initialAirplanePosition;
     private double airplanePosition = initialAirplanePosition;
-    private double leftClawPosition = 0.0;
-    private double rightClawPosition = 0.0;
-    private double leftArmPosition = 0.0;
-    private double rightArmPosition = 0.0;
+    private double leftClawPosition = 0.0, rightClawPosition = 0.0, leftArmPosition = 0.0, rightArmPosition = 0.0;
     private double extendedArmPosition;
     private double initialArmPosition;
     private double initialClawPosition;
