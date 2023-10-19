@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.auto.cycle.medium;
+
+/*package org.firstinspires.ftc.teamcode.auto.cycle.medium;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.autocommands.DropPoleCommand;
@@ -102,3 +104,4 @@ public class LeftMediumFourCycleAuto extends CommandOpMode {
         telemetry.update();
     }
 }
+*/

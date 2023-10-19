@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.auto.cycle.medium;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -106,3 +107,4 @@ public class RightMediumFiveCycleAuto extends CommandOpMode {
         telemetry.update();
     }
 }
+*/

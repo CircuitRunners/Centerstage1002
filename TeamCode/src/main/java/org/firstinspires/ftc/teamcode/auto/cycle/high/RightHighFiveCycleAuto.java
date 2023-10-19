@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.auto.cycle.high;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -106,3 +107,4 @@ public class RightHighFiveCycleAuto extends CommandOpMode {
         telemetry.update();
     }
 }
+*/

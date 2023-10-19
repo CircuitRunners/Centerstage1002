@@ -97,7 +97,7 @@ public class CRITrajectories {
     private static final double endOpenActionScale = 0.962;
 
 
-    public static void  (SampleMecanumDrive drive) {
+    public static void thing  (SampleMecanumDrive drive) {
 
         rightPreloadToPole =
                 drive.trajectorySequenceBuilder(CRITrajectories.rightStartingPosition)

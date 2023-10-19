@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode.commands.autocommands;
+
+/*package org.firstinspires.ftc.teamcode.commands.autocommands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -82,3 +83,4 @@ public class GoToStackCommand extends ParallelCommandGroup {
     }
 
 }
+*/

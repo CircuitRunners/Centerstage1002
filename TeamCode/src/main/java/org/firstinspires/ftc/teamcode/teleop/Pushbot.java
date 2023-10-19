@@ -28,8 +28,8 @@ public class Pushbot extends CommandOpMode{
     @Override
     public void run(){
         super.run();
-        double y = gamepad1.left_stick_y;
-        double x = gamepad1.left_stick_x;
+        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.right_stick_x;
 
 
         frontLeftPower = Range.clip(-(y-x), -1.0, 1.0);
