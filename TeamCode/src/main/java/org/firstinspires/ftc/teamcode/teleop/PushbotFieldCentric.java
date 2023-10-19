@@ -14,7 +14,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
@@ -22,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class PushbotFieldCentric extends CommandOpMode{
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     private double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
-    private BNO055IMU imu;
+    private IMU imu;
     @Override
     public void initialize(){
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeftWheel");
@@ -50,7 +49,7 @@ public class PushbotFieldCentric extends CommandOpMode{
             imu.resetYaw();
         }
 
-        double botHeading = imu.getRobotYawPitchRollAngle().getYaw(AngleUnit.RADIANS);
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
         rotX = rotX * 1.1;
