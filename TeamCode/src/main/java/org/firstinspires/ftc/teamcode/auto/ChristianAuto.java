@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -13,8 +14,8 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.BeaconDetector;
 
 
-@Autonomous (name="Parking Auto (Red, Outside)")
-public class LeftAuto extends CommandOpMode {
+@Autonomous (name="Christian's Amazing Autonomous Sequential Command Op Mode")
+public class ChristianAuto extends CommandOpMode {
 
     private double powerFullMultiplier = DynamicConstants.multiplier;
     private SampleMecanumDrive drive;
@@ -42,9 +43,9 @@ public class LeftAuto extends CommandOpMode {
             .strafeRight(powerFullMultiplier*(tile * 2 - square_edge))
             .build();
         TrajectorySequence leftPark = drive.trajectorySequenceBuilder(left)
-            .forward(powerFullMultiplier*(square_edge + 2 * tile))
-            .strafeRight(powerFullMultiplier*(tile * 4 - square_edge))
-            .build();
+                .splineToConstantHeading(new Vector2d(-24, -12), Math.toRadians(0))
+                .strafeRight(tile * 3.5 - square_edge)
+                .build();
 
         while(opModeInInit()){
 //            beaconId = beaconDetector.update();

@@ -69,7 +69,7 @@ public class TeamPropVision {
         }
     }
 
-    public void processFrame(Mat frame) {
+    public int processFrame(Mat frame) {
         int width = frame.cols();
         int height = frame.rows();
 
@@ -93,5 +93,7 @@ public class TeamPropVision {
 
         // Reset the area
         Arrays.fill(areaInZone, 0);
+
+        return mostLikelyZone;
     }
 }

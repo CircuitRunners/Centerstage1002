@@ -23,11 +23,11 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(left)
-                                .splineToConstantHeading(new Vector2d(-24, -24), Math.toRadians(0))
+                                .splineToConstantHeading(new Vector2d(-24, -12), Math.toRadians(0))
 
 
                                // .turn(Math.toRadians(Math.random() *360))
-                                .forward(tile * 4 - square_edge + 10)
+                                .strafeRight(tile * 3.5 - square_edge)
                                 .build()
                 );
 
