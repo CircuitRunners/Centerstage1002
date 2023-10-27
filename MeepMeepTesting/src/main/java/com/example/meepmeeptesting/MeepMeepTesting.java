@@ -23,10 +23,10 @@ public class MeepMeepTesting {
                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                        .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(left)
-                                       .splineTo(new Vector2d(-38, -34), Math.toRadians(180))
-                                       .back(2)
-                                       .strafeRight(tile)
-                                       .back(tile* 4 - square_edge)
+                                       .splineTo(new Vector2d(-32, -35), Math.toRadians(0))
+                                       .back(5)
+                                       .strafeLeft(tile)
+                                       .forward(tile * 4 - square_edge * 2)
                                        .build()
                                );//purple to left & park
                       /* .followTrajectorySequence(drive ->
@@ -63,6 +63,24 @@ public class MeepMeepTesting {
 //                        .strafeRight(tile * 2 - square_edge)
 //                        .build()
 //        ); park from right to park zone
+
+
+
+
+        //This is red team side opposite backboard, left line
+       // MeepMeep meepMeep = new MeepMeep(800);
+
+      //  RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+        //        .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+         //       .followTrajectorySequence(drive ->
+          //                      drive.trajectorySequenceBuilder(left)
+          //                              .splineTo(new Vector2d(-46, -43), Math.toRadians(90))
+          //                              .back(4)
+           //                             .strafeRight(half_tile - square_edge)
+            //                            .forward(tile + half_tile)
+            //                            .strafeRight(tile * 4 - square_edge * 2)
+             //                           .build()
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_OFFICIAL)
                 .setDarkMode(true)
