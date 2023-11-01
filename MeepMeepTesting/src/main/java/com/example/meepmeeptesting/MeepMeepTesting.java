@@ -107,6 +107,7 @@ public class MeepMeepTesting {
                 //                            .forward(tile + half_tile)
                 //                            .strafeRight(tile * 4 - square_edge * 2)
                  //                           .build()
+ //                                    );
         //This is red team side opposite backboard, right line
         //private static Pose2d right= new Pose2d(12, -61.5, Math.toRadians(90));
         //private static Pose2d left= new Pose2d(-36, -61.5, Math.toRadians(90));
@@ -126,6 +127,7 @@ public class MeepMeepTesting {
         //.strafeLeft(tile)
         //.forward(tile * 4 - square_edge * 2)
         //.build()
+        //);
 
         //This is red team side opposite backboard, center line
         //private static Pose2d right_red = new Pose2d(12, -61.5, Math.toRadians(90));
@@ -165,6 +167,7 @@ public class MeepMeepTesting {
 //                                            .strafeLeft(tile + square_edge * 3)
 //                                            .back(tile)
 //                                            .build()
+        //                            );
         //This is red team side backboard, left line
 //        private static double tile = 24;
 //        private static double half_tile = 12;
@@ -187,8 +190,9 @@ public class MeepMeepTesting {
 //                                            .splineTo(new Vector2d(9, -35), Math.toRadians(180))
 //                                            .back(4)
 //                                            .strafeLeft(tile)
-//                                            .back(tile * 2 - square_edge * 2)
+//                                            .back(tile * 2 - square_edge* 2)
 //                                            .build()
+        //                            );
         //This is red team side backboard, center line
 //        private static Pose2d right= new Pose2d(12, -61.5, Math.toRadians(90));
 //        private static Pose2d left= new Pose2d(-36, -61.5, Math.toRadians(90));
@@ -207,6 +211,7 @@ public class MeepMeepTesting {
 //                                            .back(tile + square_edge)
 //                                            .strafeRight(tile * 2 - square_edge * 2)
 //                                            .build()
+        //                            );
         //This is blue team side backboard, right line
 //        private static Pose2d right_red = new Pose2d(12, -61.5, Math.toRadians(90));
 //        private static Pose2d left_red = new Pose2d(-36, -61.5, Math.toRadians(90));
@@ -226,6 +231,7 @@ public class MeepMeepTesting {
 //                                            .strafeRight(tile + square_edge * 3)
 //                                            .back(tile)
 //                                            .build()
+        //                            );
         //This is blue team side backboard, left line
 //        private static Pose2d right_red = new Pose2d(12, -61.5, Math.toRadians(90));
 //        private static Pose2d left_red = new Pose2d(-36, -61.5, Math.toRadians(90));
@@ -245,6 +251,7 @@ public class MeepMeepTesting {
 //                                            .strafeRight(tile)
 //                                            .back(tile + half_tile + square_edge * 3)
 //                                            .build()
+        //                            );
         //This is blue team side backboard, center line
 //        private static Pose2d right_red = new Pose2d(12, -61.5, Math.toRadians(90));
 //        private static Pose2d left_red = new Pose2d(-36, -61.5, Math.toRadians(90));
@@ -263,6 +270,7 @@ public class MeepMeepTesting {
 //                                            .back(tile + square_edge)
 //                                            .strafeLeft(tile * 2)
 //                                            .build()
+        //                            );
         //This is blue team side opposite backboard, right line
 //        private static Pose2d right_red = new Pose2d(12, -61.5, Math.toRadians(90));
 //        private static Pose2d left_red = new Pose2d(-36, -61.5, Math.toRadians(90));
@@ -282,6 +290,7 @@ public class MeepMeepTesting {
 //                                            .splineTo(new Vector2d(-33, 10), Math.toRadians(180))
 //                                            .forward(tile * 4 - half_tile + square_edge * 4)
 //                                            .build()
+        //                            );
         //This is blue team side opposite backboard, center line
 //        private static Pose2d right_red = new Pose2d(12, -61.5, Math.toRadians(90));
 //        private static Pose2d left_red = new Pose2d(-36, -61.5, Math.toRadians(90));
@@ -302,6 +311,7 @@ public class MeepMeepTesting {
 //                                            .splineTo(new Vector2d(-33, 10), Math.toRadians(90))
 //                                            .back(tile * 4 - half_tile + square_edge * 4)
 //                                            .build()
+        //                            );
         //This is blue team side opposite backboard, center line
 //        private static Pose2d right_red = new Pose2d(12, -61.5, Math.toRadians(90));
 //        private static Pose2d left_red = new Pose2d(-36, -61.5, Math.toRadians(90));
@@ -323,6 +333,7 @@ public class MeepMeepTesting {
 //                                            .splineTo(new Vector2d(-30, 8), Math.toRadians(0))
 //                                            .forward(tile * 4 - half_tile)
 //                                            .build()
+        //                            );
 
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_OFFICIAL)
