@@ -29,8 +29,7 @@ public class MeepMeepTesting {
                                        .back(6)
                                        .strafeLeft(half_tile - square_edge)
                                        .forward(tile + half_tile)
-                                       .splineTo(new Vector2d(-30, 8), Math.toRadians(0))
-                                       .forward(tile * 4 - half_tile)
+                                       .strafeLeft(tile * 4 - half_tile + square_edge * 3)
                                        .build()
                                );//purple to left & park
                       /* .followTrajectorySequence(drive ->
