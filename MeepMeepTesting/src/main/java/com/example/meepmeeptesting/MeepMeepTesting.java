@@ -22,8 +22,16 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-               .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                       .followTrajectorySequence(drive ->
+               //.setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                  .followTrajectorySequence(drive ->
+                                   drive.trajectorySequenceBuilder(right_red)
+                                           .forward(1.25*tile - square_edge)
+                                           .back(1.1*tile)
+                                           .strafeRight(tile*2)
+                                           .build()
+                        );
+                      /* .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(left_blue)
                                        .splineTo(new Vector2d(-46, 38), Math.toRadians(-90))
                                        .back(6)
@@ -32,15 +40,15 @@ public class MeepMeepTesting {
                                        .splineTo(new Vector2d(-30, 8), Math.toRadians(0))
                                        .forward(tile * 4 - half_tile)
                                        .build()
-                               );//purple to left & park
+                               );*///purple to left & park
                       /* .followTrajectorySequence(drive ->
-                               drive.trajectorySequenceBuilder(left)
+                               drive.trajectorySequenceBuilder(left_red)
                                        .splineToLinearHeading(new Pose2d(-34, -34), Math.toRadians(90))
                                        .back(2)
                                        .strafeLeft(tile)
                                        .forward(tile* 4 - square_edge)
                                        .build()
-                               ); purple to right & park*/
+                               ); *///purple to right & park
 
 
 
@@ -52,7 +60,7 @@ public class MeepMeepTesting {
                                 .forward(tile)
                                 .strafeRight(tile * 4.5 - square_edge)
                                 .build()
-                );purple to middle &park*/
+                );*///purple to middle &park
 
 
 //        .followTrajectorySequence(drive ->
