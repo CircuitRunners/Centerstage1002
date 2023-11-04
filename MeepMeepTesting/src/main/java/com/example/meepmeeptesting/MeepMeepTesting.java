@@ -24,22 +24,22 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                //.setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                  .followTrajectorySequence(drive ->
+                 /* .followTrajectorySequence(drive ->
                                    drive.trajectorySequenceBuilder(right_red)
                                            .forward(1.25*tile - square_edge)
                                            .back(1.1*tile)
                                            .strafeRight(tile*2)
                                            .build()
-                        );
-                      /* .followTrajectorySequence(drive ->
+                        );*/
+                       .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(left_blue)
-                                       .splineTo(new Vector2d(-46, 38), Math.toRadians(-90))
-                                       .back(6)
-                                       .strafeLeft(half_tile - square_edge)
-                                       .forward(tile + half_tile)
-                                       .strafeLeft(tile * 4 - half_tile + square_edge * 3)
+                                       .splineTo(new Vector2d(-32, 35), Math.toRadians(0))
+                                       .back(5)
+                                       .strafeRight(tile)
+                                       .forward(tile * 4 - square_edge * 2)
                                        .build()
-                               );*///purple to left & park
+
+                               );//purple to left & park
                       /* .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(left_red)
                                        .splineToLinearHeading(new Pose2d(-34, -34), Math.toRadians(90))
