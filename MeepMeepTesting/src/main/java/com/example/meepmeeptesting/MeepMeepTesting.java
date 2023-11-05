@@ -12,10 +12,11 @@ public class MeepMeepTesting {
     private static double robot_len = 9;
     private static double square_edge = 1.5;
 
-    private static Pose2d right_red = new Pose2d(12, -61.5, Math.toRadians(90));
-    private static Pose2d left_red = new Pose2d(-36, -61.5, Math.toRadians(90));
-    private static Pose2d right_blue = new Pose2d(12, 61.5, Math.toRadians(-90));
-    private static Pose2d left_blue = new Pose2d(-36, 61.5, Math.toRadians(-90));
+
+    private static Pose2d back_red = new Pose2d(12, -61.5, Math.toRadians(90));
+    private static Pose2d front_red = new Pose2d(-36, -61.5, Math.toRadians(90));
+    private static Pose2d back_blue = new Pose2d(12, 61.5, Math.toRadians(-90));
+    private static Pose2d front_blue = new Pose2d(-36, 61.5, Math.toRadians(-90));
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
@@ -32,13 +33,16 @@ public class MeepMeepTesting {
                                            .build()
                         );*/
                        .followTrajectorySequence(drive ->
-                               drive.trajectorySequenceBuilder(left_blue)
-                                       .splineTo(new Vector2d(-32, 35), Math.toRadians(0))
-                                       .back(5)
-                                       .strafeRight(tile)
-                                       .forward(tile * 4 - square_edge * 2)
+                               drive.trajectorySequenceBuilder(front_blue)
+                                       .forward(1.25 * tile - square_edge)
+                                       .back(2)
+                                       .strafeRight(0.5 * tile)
+                                       .forward(tile)
+                                       .turn(Math.toRadians(90))
+                                       .forward(0.5*tile)
+                                       .forward(tile * 3.5 - square_edge)
+                                       .strafeLeft(tile)
                                        .build()
-
                                );//purple to left & park
                       /* .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(left_red)
