@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.BeaconDetector;
+import org.firstinspires.ftc.teamcode.auto.TrajectorySequences;
 
 
 @Autonomous (name="Parking Auto (Blue, Stage)")
@@ -46,19 +47,7 @@ public class RightAuto2 extends CommandOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPose);
 
-        TrajectorySequence rightPark = drive.trajectorySequenceBuilder(right)
-            .strafeLeft(powerFullMultiplier*(tile * 2 - square_edge))
-            .build();
 
-        // CHANGE THIS RIGHT VALUE THIS IS BAD
-        TrajectorySequence backOff = drive.trajectorySequenceBuilder(right)
-                .back(half_tile)
-                .build();
-
-        TrajectorySequence leftPark = drive.trajectorySequenceBuilder(left)
-            .forward(powerFullMultiplier*(square_edge + 2 * tile))
-            .strafeRight(powerFullMultiplier*(tile * 4 - square_edge))
-            .build();
 
         while(opModeInInit()){
 //            beaconId = beaconDetector.update();
@@ -84,23 +73,21 @@ public class RightAuto2 extends CommandOpMode {
 
         schedule(
             new SequentialCommandGroup(
-                new TrajectorySequenceCommand(drive, rightPark),
-                new ParallelCommandGroup(
-                        new TrajectorySequenceCommand(drive, backOff),
-                        new InstantCommand(() -> {
-                            intake.setPower(-0.6);
-                        })
-                ),
-
-                new WaitCommand(5000),
-                new InstantCommand(() -> {
-                    intake.setPower(0);
-                })
-            )
+                    switch(beaconId){
+                        case LEFT:
+                            schedule(new TrajectorySequenceCommand(drive, blueBackLeftLine));
+                            break;
+                        case CENTER:
+                            schedule(new TrajectorySequenceCommand(drive, blueBackCenterLine));
+                            break;
+                        case RIGHT:
+                            schedule(new TrajectorySequenceCommand(drive, blueBackRightLine));
+                            break;
+                    }
+                new TrajectorySequenceCommand(drive, parkFromBack);
+                    );
         );
 
     };
-
-
 
 }
