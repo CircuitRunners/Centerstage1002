@@ -61,8 +61,8 @@ public class BlueAudience {
                                 schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.redFrontRightLine));
                                 break;
                         }
-        new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBack);
-        new TrajectorySequenceCommand(drive, TrajectorySequences.leftYellowPixel);
+        new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromRedFront);
+        new TrajectorySequenceCommand(drive, TrajectorySequences.redFrontYellowPixel);
 
                             );
         );

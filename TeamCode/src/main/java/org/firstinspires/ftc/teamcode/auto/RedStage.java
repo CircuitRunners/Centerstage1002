@@ -78,8 +78,8 @@ public class BlueStage extends CommandOpMode {
                                 schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.redBackRightLine));
                                 break;
                         }
-        new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromFront);
-        new TrajectorySequenceCommand(drive, TrajectorySequences.rightYellowPixel));
+        new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromRedBack);
+        new TrajectorySequenceCommand(drive, TrajectorySequences.redBackYellowPixel));
                     );
 
     };
