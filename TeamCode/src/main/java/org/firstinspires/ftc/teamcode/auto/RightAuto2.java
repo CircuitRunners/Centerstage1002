@@ -70,7 +70,7 @@ public class RightAuto2 extends CommandOpMode {
 //                schedule(new TrajectorySequenceCommand(drive, rightTrajectoryAbs));
 //                break;
 //        }
-
+/*
         schedule(
             new SequentialCommandGroup(
                     switch(beaconId){
@@ -87,7 +87,7 @@ public class RightAuto2 extends CommandOpMode {
                 new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBack);
                     );
         );
-
+*/
     };
 
 }
