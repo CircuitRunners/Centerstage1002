@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class TrajectorySequences {
 
     private double powerFullMultiplier = DynamicConstants.multiplier;
-    private SampleMecanumDrive drive;
+    private static SampleMecanumDrive drive;
 
 //    private BeaconDetector beaconDetector;
 //    private BeaconDetector.BeaconTags beaconId = BeaconDetector.BeaconTags.LEFT;
@@ -33,20 +33,20 @@ public class TrajectorySequences {
 
 
     //RedBack
-    TrajectorySequence redBackCenterLine = drive.trajectorySequenceBuilder(back_red)
+    public static TrajectorySequence redBackCenterLine = drive.trajectorySequenceBuilder(back_red)
             .forward(1.25 * tile - square_edge)
             .back(1.1 * tile)
             .turn(Math.toRadians(-90))
             .build();
 
-    TrajectorySequence redBackRightLine = drive.trajectorySequenceBuilder(back_red)
+    public static TrajectorySequence redBackRightLine = drive.trajectorySequenceBuilder(back_red)
             .splineTo(new Vector2d(14, -35), Math.toRadians(0))
             .back(4)
             .strafeRight(tile)
             .forward(2)
             .build();
 
-    TrajectorySequence redBackLeftLine = drive.trajectorySequenceBuilder(back_red)
+    public static TrajectorySequence redBackLeftLine = drive.trajectorySequenceBuilder(back_red)
             .splineTo(new Vector2d(9, -35), Math.toRadians(180))
             .back(4)
             .strafeLeft(tile)
@@ -57,7 +57,7 @@ public class TrajectorySequences {
 
 
     //RedFront
-    TrajectorySequence redFrontCenterLine = drive.trajectorySequenceBuilder(front_red)
+    public static TrajectorySequence redFrontCenterLine = drive.trajectorySequenceBuilder(front_red)
             .forward(1.25 * tile - square_edge)
             .back(2)
             .strafeLeft(0.5 * tile)
@@ -66,13 +66,13 @@ public class TrajectorySequences {
             .forward(0.5*tile)
             .build();
 
-    TrajectorySequence redFrontRightLine = drive.trajectorySequenceBuilder(front_red)
+    public static TrajectorySequence redFrontRightLine = drive.trajectorySequenceBuilder(front_red)
             .splineTo(new Vector2d(-32, -35), Math.toRadians(0))
             .back(5)
             .strafeLeft(tile)
             .build();
 
-    TrajectorySequence redFrontLeftLine = drive.trajectorySequenceBuilder(front_red)
+    public static TrajectorySequence redFrontLeftLine = drive.trajectorySequenceBuilder(front_red)
             .splineTo(new Vector2d(-38, -35), Math.toRadians(180))
             .back(5)
             .strafeRight(tile)
@@ -81,13 +81,13 @@ public class TrajectorySequences {
 
 
     //BlueBack
-    TrajectorySequence blueBackCenterLine = drive.trajectorySequenceBuilder(back_blue)
+    public static TrajectorySequence blueBackCenterLine = drive.trajectorySequenceBuilder(back_blue)
             .forward(1.25 * tile - square_edge)
             .back(1.1 * tile)
             .turn(Math.toRadians(90))
             .build();
 
-    TrajectorySequence blueBackRightLine = drive.trajectorySequenceBuilder(back_blue)
+    public static TrajectorySequence blueBackRightLine = drive.trajectorySequenceBuilder(back_blue)
             .splineTo(new Vector2d(9, 35), Math.toRadians(180))
             .back(4)
             .strafeRight(tile)
@@ -95,7 +95,7 @@ public class TrajectorySequences {
             .back(2)
             .build();
 
-    TrajectorySequence blueBackLeftLine = drive.trajectorySequenceBuilder(back_blue)
+    public static TrajectorySequence blueBackLeftLine = drive.trajectorySequenceBuilder(back_blue)
             .splineTo(new Vector2d(14, 35), Math.toRadians(0))
             .back(4)
             .strafeLeft(tile)
@@ -106,7 +106,7 @@ public class TrajectorySequences {
 
 
     //BlueFront
-    TrajectorySequence blueFrontCenterLine = drive.trajectorySequenceBuilder(front_blue)
+    public static TrajectorySequence blueFrontCenterLine = drive.trajectorySequenceBuilder(front_blue)
             .forward(1.25 * tile - square_edge)
             .back(2)
             .strafeRight(0.5 * tile)
@@ -116,13 +116,13 @@ public class TrajectorySequences {
             .build();
 
 
-    TrajectorySequence blueFrontRightLine = drive.trajectorySequenceBuilder(front_blue)
+    public static TrajectorySequence blueFrontRightLine = drive.trajectorySequenceBuilder(front_blue)
             .splineTo(new Vector2d(-38, 34), Math.toRadians(180))
             .back(2)
             .strafeLeft(tile)
             .build();
 
-    TrajectorySequence blueFrontLeftLine = drive.trajectorySequenceBuilder(front_blue)
+    public static TrajectorySequence blueFrontLeftLine = drive.trajectorySequenceBuilder(front_blue)
             .splineTo(new Vector2d(-32, 35), Math.toRadians(0))
             .back(5)
             .strafeRight(tile)
@@ -132,21 +132,21 @@ public class TrajectorySequences {
 
 
     //Parking
-    TrajectorySequence parkFromBack = drive.trajectorySequenceBuilder(back_red)
+    public static TrajectorySequence parkFromBack = drive.trajectorySequenceBuilder(back_red)
             .forward(tile * 1.6 - square_edge)
             .build();
 
-    TrajectorySequence parkFromFront = drive.trajectorySequenceBuilder(front_red)
+    public static TrajectorySequence parkFromFront = drive.trajectorySequenceBuilder(front_red)
             .forward(tile * 3.5 - square_edge)
             .build();
 
 
 
     //Green Pixel
-    TrajectorySequence rightGreenPixel = drive.trajectorySequenceBuilder(back_red)
+    public static TrajectorySequence rightGreenPixel = drive.trajectorySequenceBuilder(back_red)
             .strafeLeft(0.5*tile)
             .build();
-    TrajectorySequence leftGreenPixel = drive.trajectorySequenceBuilder(front_red)
+    public static TrajectorySequence leftGreenPixel = drive.trajectorySequenceBuilder(front_red)
             .strafeLeft(0.5*tile)
             .build();
 

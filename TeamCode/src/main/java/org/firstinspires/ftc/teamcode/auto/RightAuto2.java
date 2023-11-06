@@ -75,16 +75,16 @@ public class RightAuto2 extends CommandOpMode {
             new SequentialCommandGroup(
                     switch(beaconId){
                         case LEFT:
-                            schedule(new TrajectorySequenceCommand(drive, blueBackLeftLine));
+                            schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine));
                             break;
                         case CENTER:
-                            schedule(new TrajectorySequenceCommand(drive, blueBackCenterLine));
+                            schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine));
                             break;
                         case RIGHT:
-                            schedule(new TrajectorySequenceCommand(drive, blueBackRightLine));
+                            schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine));
                             break;
                     }
-                new TrajectorySequenceCommand(drive, parkFromBack);
+                new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBack);
                     );
         );
 
