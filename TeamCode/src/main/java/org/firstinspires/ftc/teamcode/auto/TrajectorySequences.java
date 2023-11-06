@@ -27,6 +27,8 @@ public class TrajectorySequences {
     private static Pose2d front_red = new Pose2d(-36, -61.5, Math.toRadians(90));
     private static Pose2d back_blue = new Pose2d(12, 61.5, Math.toRadians(-90));
     private static Pose2d front_blue = new Pose2d(-36, 61.5, Math.toRadians(-90));
+    private static Pose2d right_Pixel = new Pose2d(44, 61.5, Math.toRadians(0));
+    private static Pose2d left_Pixel = new Pose2d(44, 61.5, Math.toRadians(0));
 
     private DcMotorEx intake;
 
@@ -143,8 +145,8 @@ public class TrajectorySequences {
 
 
     //Yellow Pixel
-    public static TrajectorySequence rightYellowPixel = drive.trajectorySequenceBuilder(back_red)
-            .strafeLeft(0.5*tile)
+    public static TrajectorySequence rightYellowPixelLeftTag = drive.trajectorySequenceBuilder(left_Pixel)
+            .strafeRight(half_tile + square_edge * 4 + 4)
             .build();
     public static TrajectorySequence leftYellowPixel = drive.trajectorySequenceBuilder(front_red)
             .strafeRight(0.5*tile)

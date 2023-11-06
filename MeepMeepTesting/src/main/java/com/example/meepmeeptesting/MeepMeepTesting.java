@@ -1,7 +1,6 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
@@ -17,6 +16,8 @@ public class MeepMeepTesting {
     private static Pose2d front_red = new Pose2d(-36, -61.5, Math.toRadians(90));
     private static Pose2d back_blue = new Pose2d(12, 61.5, Math.toRadians(-90));
     private static Pose2d front_blue = new Pose2d(-36, 61.5, Math.toRadians(-90));
+    private static Pose2d right_Pixel = new Pose2d(44, 61.5, Math.toRadians(0));
+    private static Pose2d left_Pixel = new Pose2d(44, 61.5, Math.toRadians(0));
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
@@ -33,16 +34,10 @@ public class MeepMeepTesting {
                                            .build()
                         );*/
                        .followTrajectorySequence(drive ->
-                               drive.trajectorySequenceBuilder(front_blue)
-                                       .forward(1.25 * tile - square_edge)
-                                       .back(2)
-                                       .strafeRight(0.5 * tile)
-                                       .forward(tile)
-                                       .turn(Math.toRadians(90))
-                                       .forward(0.5*tile)
-                                       .forward(tile * 3.5 - square_edge)
-                                       .strafeLeft(tile)
+                               drive.trajectorySequenceBuilder(right_Pixel)
+                                       .strafeRight(half_tile + square_edge * 4 + 4)
                                        .build()
+
                                );//purple to left & park
                       /* .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(left_red)
