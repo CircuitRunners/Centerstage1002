@@ -1,15 +1,19 @@
 package org.firstinspires.ftc.teamcode.vision;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.*;
 
+
 public class TeamPropVision {
 
-    private Deque<Point>[] buffer = new Deque[ZONE_COUNT];
-    private double[] areaInZone = new double[ZONE_COUNT];
+    private static Deque<Point>[] buffer = new Deque[ZONE_COUNT];
+    private static double[] areaInZone = new double[ZONE_COUNT];
 
 
     static {
@@ -19,7 +23,7 @@ public class TeamPropVision {
     private static final int BUFFER_SIZE = 100;
     private static final int ZONE_COUNT = 3;
     private static final int MIN_AREA = 300;
-    private Telemetry telemetry;
+    private static Telemetry telemetry;
 
     public TeamPropVision(Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -28,7 +32,7 @@ public class TeamPropVision {
         }
     }
 
-    public void detectRedObject(Mat frame, int zoneNum) {
+    public static void detectRedObject(Mat frame, int zoneNum) {
         Mat hsv = new Mat();
         Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_BGR2HSV);
 
@@ -69,7 +73,7 @@ public class TeamPropVision {
         }
     }
 
-    public int processFrame(Mat frame) {
+    public static int processFrame(Mat frame) {
         int width = frame.cols();
         int height = frame.rows();
 

@@ -64,7 +64,7 @@ public class BlueStage extends CommandOpMode {
 //                schedule(new TrajectorySequenceCommand(drive, rightTrajectoryAbs));
 //                break;
 //        }
-
+/*
         schedule(
             new SequentialCommandGroup(
                     switch(beaconId){
@@ -81,7 +81,12 @@ public class BlueStage extends CommandOpMode {
                 new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromFront);
                 new TrajectorySequenceCommand(drive, TrajectorySequences.leftYellowPixel));
                     );
-
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/auto/RightAuto2.java
+        );
+*/
+//=======
+//
+//>>>>>>> af6c8f62fd6dd52a4b32f2e02c19ce7226ced30c:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/auto/BlueStage.java
     };
 
 }
