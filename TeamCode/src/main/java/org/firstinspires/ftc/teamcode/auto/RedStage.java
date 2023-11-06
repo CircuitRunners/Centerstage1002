@@ -4,23 +4,17 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.vision.BeaconDetector;
-import org.firstinspires.ftc.teamcode.auto.TrajectorySequences;
 
 
-@Autonomous (name="Parking Auto (Blue, Stage)")
-public class RightAuto2 extends CommandOpMode {
+@Autonomous (name="Parking Auto (Red, Stage)")
+public class BlueStage extends CommandOpMode {
 
     private double powerFullMultiplier = DynamicConstants.multiplier;
     private SampleMecanumDrive drive;
@@ -70,24 +64,24 @@ public class RightAuto2 extends CommandOpMode {
 //                schedule(new TrajectorySequenceCommand(drive, rightTrajectoryAbs));
 //                break;
 //        }
-/*
+
         schedule(
-            new SequentialCommandGroup(
-                    switch(beaconId){
-                        case LEFT:
-                            schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine));
-                            break;
-                        case CENTER:
-                            schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine));
-                            break;
-                        case RIGHT:
-                            schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine));
-                            break;
-                    }
-                new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBack);
+                new SequentialCommandGroup(
+                        switch(beaconId){
+                            case LEFT:
+                                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.redBackLeftLine));
+                                break;
+                            case CENTER:
+                                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.redBackCenterLine));
+                                break;
+                            case RIGHT:
+                                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.redBackRightLine));
+                                break;
+                        }
+        new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromFront);
+        new TrajectorySequenceCommand(drive, TrajectorySequences.rightYellowPixel));
                     );
-        );
-*/
+
     };
 
 }

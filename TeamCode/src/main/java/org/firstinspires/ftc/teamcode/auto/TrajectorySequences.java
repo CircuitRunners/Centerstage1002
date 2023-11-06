@@ -147,7 +147,7 @@ public class TrajectorySequences {
             .strafeLeft(0.5*tile)
             .build();
     public static TrajectorySequence leftYellowPixel = drive.trajectorySequenceBuilder(front_red)
-            .strafeLeft(0.5*tile)
+            .strafeRight(0.5*tile)
             .build();
 
 }
