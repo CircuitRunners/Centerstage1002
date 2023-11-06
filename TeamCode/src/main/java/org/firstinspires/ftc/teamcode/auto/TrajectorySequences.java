@@ -142,11 +142,11 @@ public class TrajectorySequences {
 
 
 
-    //Green Pixel
-    public static TrajectorySequence rightGreenPixel = drive.trajectorySequenceBuilder(back_red)
+    //Yellow Pixel
+    public static TrajectorySequence rightYellowPixel = drive.trajectorySequenceBuilder(back_red)
             .strafeLeft(0.5*tile)
             .build();
-    public static TrajectorySequence leftGreenPixel = drive.trajectorySequenceBuilder(front_red)
+    public static TrajectorySequence leftYellowPixel = drive.trajectorySequenceBuilder(front_red)
             .strafeLeft(0.5*tile)
             .build();
 
