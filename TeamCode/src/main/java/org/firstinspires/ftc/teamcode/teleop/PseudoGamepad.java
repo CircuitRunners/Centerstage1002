@@ -35,6 +35,10 @@ public class PseudoGamepad {
         innerGamepad = gpad;
     }
 
+    public void rumble (int msDuration) {
+        innerGamepad.rumble(msDuration);
+    }
+
     public static PseudoGamepad parse(String str) {
         PseudoGamepad gamepad = new PseudoGamepad();
 
