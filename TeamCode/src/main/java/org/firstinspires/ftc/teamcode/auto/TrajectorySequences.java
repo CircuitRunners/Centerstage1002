@@ -60,136 +60,136 @@ public class TrajectorySequences {
 
 
 
-static void generateTrajectories() {
+    public static void generateTrajectories() {
 
-    //RedBack
-    redBackCenterLine = drive.trajectorySequenceBuilder(back_red)
-            .forward(1.25 * tile - square_edge)
-            .back(1.1 * tile)
-            .turn(Math.toRadians(-90))
-            .build();
+        //RedBack
+        redBackCenterLine = drive.trajectorySequenceBuilder(back_red)
+                .forward(1.25 * tile - square_edge)
+                .back(1.1 * tile)
+                .turn(Math.toRadians(-90))
+                .build();
 
-    redBackRightLine = drive.trajectorySequenceBuilder(back_red)
-            .splineTo(new Vector2d(14, -35), Math.toRadians(0))
-            .back(4)
-            .strafeRight(tile)
-            .forward(2)
-            .build();
+        redBackRightLine = drive.trajectorySequenceBuilder(back_red)
+                .splineTo(new Vector2d(14, -35), Math.toRadians(0))
+                .back(4)
+                .strafeRight(tile)
+                .forward(2)
+                .build();
 
-    redBackLeftLine = drive.trajectorySequenceBuilder(back_red)
-            .splineTo(new Vector2d(9, -35), Math.toRadians(180))
-            .back(4)
-            .strafeLeft(tile)
-            .turn(Math.toRadians(-180))
-            .back(2)
-            .build();
-
-
-    //RedFront
-    redFrontCenterLine = drive.trajectorySequenceBuilder(front_red)
-            .forward(1.25 * tile - square_edge)
-            .back(2)
-            .strafeLeft(0.5 * tile)
-            .forward(tile)
-            .turn(Math.toRadians(-90))
-            .forward(0.5 * tile)
-            .build();
-
-    redFrontRightLine = drive.trajectorySequenceBuilder(front_red)
-            .splineTo(new Vector2d(-32, -35), Math.toRadians(0))
-            .back(5)
-            .strafeLeft(tile)
-            .build();
-
-    redFrontLeftLine = drive.trajectorySequenceBuilder(front_red)
-            .splineTo(new Vector2d(-38, -35), Math.toRadians(180))
-            .back(5)
-            .strafeRight(tile)
-            .build();
+        redBackLeftLine = drive.trajectorySequenceBuilder(back_red)
+                .splineTo(new Vector2d(9, -35), Math.toRadians(180))
+                .back(4)
+                .strafeLeft(tile)
+                .turn(Math.toRadians(-180))
+                .back(2)
+                .build();
 
 
-    //BlueBack
-    blueBackCenterLine = drive.trajectorySequenceBuilder(back_blue)
-            .forward(1.25 * tile - square_edge)
-            .back(1.1 * tile)
-            .turn(Math.toRadians(90))
-            .build();
+        //RedFront
+        redFrontCenterLine = drive.trajectorySequenceBuilder(front_red)
+                .forward(1.25 * tile - square_edge)
+                .back(2)
+                .strafeLeft(0.5 * tile)
+                .forward(tile)
+                .turn(Math.toRadians(-90))
+                .forward(0.5 * tile)
+                .build();
 
-    blueBackRightLine = drive.trajectorySequenceBuilder(back_blue)
-            .splineTo(new Vector2d(9, 35), Math.toRadians(180))
-            .back(4)
-            .strafeRight(tile)
-            .turn(Math.toRadians(180))
-            .back(2)
-            .build();
+        redFrontRightLine = drive.trajectorySequenceBuilder(front_red)
+                .splineTo(new Vector2d(-32, -35), Math.toRadians(0))
+                .back(5)
+                .strafeLeft(tile)
+                .build();
 
-    blueBackLeftLine = drive.trajectorySequenceBuilder(back_blue)
-            .splineTo(new Vector2d(14, 35), Math.toRadians(0))
-            .back(4)
-            .strafeLeft(tile)
-            .forward(2)
-            .build();
-
-
-    //BlueFront
-    blueFrontCenterLine = drive.trajectorySequenceBuilder(front_blue)
-            .forward(1.25 * tile - square_edge)
-            .back(2)
-            .strafeRight(0.5 * tile)
-            .forward(tile)
-            .turn(Math.toRadians(90))
-            .forward(0.5 * tile)
-            .build();
+        redFrontLeftLine = drive.trajectorySequenceBuilder(front_red)
+                .splineTo(new Vector2d(-38, -35), Math.toRadians(180))
+                .back(5)
+                .strafeRight(tile)
+                .build();
 
 
-    blueFrontRightLine = drive.trajectorySequenceBuilder(front_blue)
-            .splineTo(new Vector2d(-38, 34), Math.toRadians(180))
-            .back(2)
-            .strafeLeft(tile)
-            .build();
+        //BlueBack
+        blueBackCenterLine = drive.trajectorySequenceBuilder(back_blue)
+                .forward(1.25 * tile - square_edge)
+                .back(1.1 * tile)
+                .turn(Math.toRadians(90))
+                .build();
 
-    blueFrontLeftLine = drive.trajectorySequenceBuilder(front_blue)
-            .splineTo(new Vector2d(-32, 35), Math.toRadians(0))
-            .back(5)
-            .strafeRight(tile)
-            .build();
+        blueBackRightLine = drive.trajectorySequenceBuilder(back_blue)
+                .splineTo(new Vector2d(9, 35), Math.toRadians(180))
+                .back(4)
+                .strafeRight(tile)
+                .turn(Math.toRadians(180))
+                .back(2)
+                .build();
 
-
-    //Parking
-    parkFromRedFront = drive.trajectorySequenceBuilder(redFrontCenterLine.end())
-            .forward(tile * 1.6 - square_edge)
-            .build();
-    parkFromRedBack = drive.trajectorySequenceBuilder(redBackCenterLine.end())
-            .forward(tile * 1.6 - square_edge)
-            .build();
-
-    parkFromBlueFront = drive.trajectorySequenceBuilder(blueBackCenterLine.end())
-            .forward(tile * 3.5 - square_edge)
-            .build();
-    parkFromBlueBack = drive.trajectorySequenceBuilder(blueFrontCenterLine.end())
-            .forward(tile * 3.5 - square_edge)
-            .build();
+        blueBackLeftLine = drive.trajectorySequenceBuilder(back_blue)
+                .splineTo(new Vector2d(14, 35), Math.toRadians(0))
+                .back(4)
+                .strafeLeft(tile)
+                .forward(2)
+                .build();
 
 
-    //Yellow Pixel
+        //BlueFront
+        blueFrontCenterLine = drive.trajectorySequenceBuilder(front_blue)
+                .forward(1.25 * tile - square_edge)
+                .back(2)
+                .strafeRight(0.5 * tile)
+                .forward(tile)
+                .turn(Math.toRadians(90))
+                .forward(0.5 * tile)
+                .build();
 
-    redFrontYellowPixel = drive.trajectorySequenceBuilder(parkFromRedFront.end())
-            .strafeLeft(0.5 * tile)
-            .build();
 
-    rightYellowPixelLeftTag = drive.trajectorySequenceBuilder(left_Pixel)
-            .strafeRight(half_tile + square_edge * 4 + 4)
+        blueFrontRightLine = drive.trajectorySequenceBuilder(front_blue)
+                .splineTo(new Vector2d(-38, 34), Math.toRadians(180))
+                .back(2)
+                .strafeLeft(tile)
+                .build();
 
-            .build();
-    redBackYellowPixel = drive.trajectorySequenceBuilder(parkFromRedBack.end())
-            .strafeRight(0.5 * tile)
-            .build();
-    blueFrontYellowPixel = drive.trajectorySequenceBuilder(parkFromBlueFront.end())
-            .strafeLeft(0.5 * tile)
-            .build();
-    blueBackYellowPixel = drive.trajectorySequenceBuilder(parkFromBlueBack.end())
-            .strafeRight(0.5 * tile)
-            .build();
+        blueFrontLeftLine = drive.trajectorySequenceBuilder(front_blue)
+                .splineTo(new Vector2d(-32, 35), Math.toRadians(0))
+                .back(5)
+                .strafeRight(tile)
+                .build();
 
-}
+
+        //Parking
+        parkFromRedFront = drive.trajectorySequenceBuilder(redFrontCenterLine.end())
+                .forward(tile * 1.6 - square_edge)
+                .build();
+        parkFromRedBack = drive.trajectorySequenceBuilder(redBackCenterLine.end())
+                .forward(tile * 1.6 - square_edge)
+                .build();
+
+        parkFromBlueFront = drive.trajectorySequenceBuilder(blueBackCenterLine.end())
+                .forward(tile * 3.5 - square_edge)
+                .build();
+        parkFromBlueBack = drive.trajectorySequenceBuilder(blueFrontCenterLine.end())
+                .forward(tile * 3.5 - square_edge)
+                .build();
+
+
+        //Yellow Pixel
+
+        redFrontYellowPixel = drive.trajectorySequenceBuilder(parkFromRedFront.end())
+                .strafeLeft(0.5 * tile)
+                .build();
+
+        rightYellowPixelLeftTag = drive.trajectorySequenceBuilder(left_Pixel)
+                .strafeRight(half_tile + square_edge * 4 + 4)
+
+                .build();
+        redBackYellowPixel = drive.trajectorySequenceBuilder(parkFromRedBack.end())
+                .strafeRight(0.5 * tile)
+                .build();
+        blueFrontYellowPixel = drive.trajectorySequenceBuilder(parkFromBlueFront.end())
+                .strafeLeft(0.5 * tile)
+                .build();
+        blueBackYellowPixel = drive.trajectorySequenceBuilder(parkFromBlueBack.end())
+                .strafeRight(0.5 * tile)
+                .build();
+
+    }
 }

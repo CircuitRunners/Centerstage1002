@@ -14,9 +14,6 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.vision.TeamPropVision;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
 
 @TeleOp (name="MainTeleOp")
 public class MainTeleOp extends CommandOpMode{
@@ -68,8 +65,6 @@ public class MainTeleOp extends CommandOpMode{
         );
 
         imu.initialize(parameters);
-
-        TeamPropVision.processFrame(new Mat(3,3, CvType.CV_32FC1));
     }
 
 

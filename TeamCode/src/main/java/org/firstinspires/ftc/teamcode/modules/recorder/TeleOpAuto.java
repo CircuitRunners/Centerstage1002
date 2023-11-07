@@ -106,7 +106,6 @@ public class TeleOpAuto extends CommandOpMode {
 
         if (gamepad1.x) {
             imu.resetYaw();
-            gamepad1.rumble(100);
         }
 
         lift.setLiftPower(0);

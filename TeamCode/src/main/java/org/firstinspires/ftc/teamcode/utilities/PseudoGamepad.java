@@ -31,8 +31,8 @@ public class PseudoGamepad {
 
     public Gamepad innerGamepad;
 
-    public void from(Gamepad gpad) {
-        innerGamepad = gpad;
+    public void from(Gamepad gPad) {
+        innerGamepad = gPad;
     }
 
     public void rumble (int msDuration) {

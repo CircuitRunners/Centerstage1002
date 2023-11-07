@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import static java.lang.Math.toRadians;
 
+import android.icu.util.ULocale;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -11,16 +13,17 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
-
+// Complete! :) [who needs I&R anyways?]
 @Autonomous (name="Parking Auto (Blue, Stage)")
 public class BlueStage extends CommandOpMode {
 
     private double powerFullMultiplier = DynamicConstants.multiplier;
     private SampleMecanumDrive drive;
 
-//    private BeaconDetector beaconDetector;
-//    private BeaconDetector.BeaconTags beaconId = BeaconDetector.BeaconTags.LEFT;
+    private TeamPropDetector detector;
+    private int locationID = 1; // set to center by default
 
     private Pose2d startPose = new Pose2d(0, 0, toRadians(0.0));
     private static double tile = 24;
@@ -41,38 +44,26 @@ public class BlueStage extends CommandOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPose);
 
-
-
         while(opModeInInit()){
-//            beaconId = beaconDetector.update();
-//            telemetry.addLine("Ready for start!");
-//            telemetry.addData("Beacon", beaconId);
+            locationID = detector.update();
+            telemetry.addLine("Ready for start!");
+            telemetry.addData("Prop", locationID);
             telemetry.update();
         }
 
-//        beaconDetector.stopStream();
+        detector.stopStream();
 
+        switch(locationID) {
+            case 0: // Left
+                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine));
+            case 1: // Middle
+                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine));
+            case 2: // Right
+                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine));
+        };
 
-
-        schedule(
-            new SequentialCommandGroup(
-                    switch(beaconId){
-                        case LEFT:
-                            schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine));
-                            break;
-                        case CENTER:
-                            schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine));
-                            break;
-                        case RIGHT:
-                            schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine));
-                            break;
-                    }
-                new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBlueBack);
-                new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackYellowPixel);
-                    );
-
-        );
-
+        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBlueBack));
+        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackYellowPixel));
     };
 
 }
