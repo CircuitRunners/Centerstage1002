@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.utilities;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.hardware.lynx.LynxModule;
