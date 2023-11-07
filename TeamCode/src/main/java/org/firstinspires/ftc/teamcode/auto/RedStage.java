@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 
 @Autonomous (name="Parking Auto (Red, Stage)")
-public class BlueStage extends CommandOpMode {
+public class RedStage extends CommandOpMode {
 
     private double powerFullMultiplier = DynamicConstants.multiplier;
     private SampleMecanumDrive drive;

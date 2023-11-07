@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous(name="Parking Auto (Red, Audience)")
-public class BlueAudience {
+public class RedAudience {
     private double powerFullMultiplier = DynamicConstants.multiplier;
     private SampleMecanumDrive drive;
 
