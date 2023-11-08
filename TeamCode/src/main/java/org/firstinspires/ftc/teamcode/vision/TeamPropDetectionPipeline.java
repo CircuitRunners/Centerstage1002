@@ -25,6 +25,9 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
     private static double[] areaInZone = new double[ZONE_COUNT];
     private static final int MIN_AREA = 300;
 
+    private Mat leftZone, rightZone, middleZone;
+    private static Mat hsv, mask1, mask2, mask, kernel, hierarchy;
+
     @Override
     public void init(Mat firstFrame) {
         for (int i = 0; i < ZONE_COUNT; i++) {
@@ -42,9 +45,9 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         int width = input.cols();
         int height = input.rows();
 
-        Mat leftZone = input.submat(new Rect(0, 0, width / 3, height));
-        Mat middleZone = input.submat(new Rect(width / 3, 0, width / 3, height));
-        Mat rightZone = input.submat(new Rect(2 * width / 3, 0, width / 3, height));
+        leftZone = input.submat(new Rect(0, 0, width / 3, height));
+        middleZone = input.submat(new Rect(width / 3, 0, width / 3, height));
+        rightZone = input.submat(new Rect(2 * width / 3, 0, width / 3, height));
 
         detectRedObject(leftZone, 0);
         detectRedObject(middleZone, 1);
@@ -70,7 +73,7 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
     }
 
     public static void detectRedObject(Mat frame, int zoneNum) {
-        Mat hsv = new Mat();
+        hsv = new Mat();
         Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_BGR2HSV);
 
         // Split the HSV image into separate channels
@@ -83,19 +86,19 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         // Merge the channels back into one image
         Core.merge(hsvChannels, hsv);
 
-        Mat mask1 = new Mat();
-        Mat mask2 = new Mat();
+        mask1 = new Mat();
+        mask2 = new Mat();
         Core.inRange(hsv, new Scalar(0, 120, 70), new Scalar(10, 255, 255), mask1);
         Core.inRange(hsv, new Scalar(160, 120, 70), new Scalar(180, 255, 255), mask2);
-        Mat mask = new Mat();
+        mask = new Mat();
         Core.addWeighted(mask1, 1.0, mask2, 1.0, 0.0, mask);
 
         // Perform morphological operations
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+        kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
         Imgproc.morphologyEx(mask, mask, Imgproc.MORPH_OPEN, kernel);
 
         List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
+        hierarchy = new Mat();
         Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         for (MatOfPoint contour : contours) {

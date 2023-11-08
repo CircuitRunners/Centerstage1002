@@ -15,8 +15,8 @@ public class TeamPropDetector {
     private OpenCvCamera camera;
     private TeamPropDetectionPipeline teamPropPipeline;
 
-    public TeamPropDetector(HardwareMap hardwareMap, boolean useWebcamOne, TeamPropDetectionPipeline teamPropPipeline) {
-        this.teamPropPipeline = teamPropPipeline;
+    public TeamPropDetector(HardwareMap hardwareMap, boolean useWebcamOne) {
+        this.teamPropPipeline = new TeamPropDetectionPipeline();
 
         // Obtain the GUI element for showing the camera stream
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());

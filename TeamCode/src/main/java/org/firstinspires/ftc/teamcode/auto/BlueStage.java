@@ -37,6 +37,8 @@ public class BlueStage extends CommandOpMode {
     private DcMotorEx intake;
     @Override
     public void initialize(){
+
+        detector = new TeamPropDetector(hardwareMap, true);
         schedule(new BulkCacheCommand(hardwareMap));
 
 
@@ -44,6 +46,7 @@ public class BlueStage extends CommandOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPose);
 
+        detector.startStream();
         while(opModeInInit()){
             locationID = detector.update();
             telemetry.addLine("Ready for start!");
