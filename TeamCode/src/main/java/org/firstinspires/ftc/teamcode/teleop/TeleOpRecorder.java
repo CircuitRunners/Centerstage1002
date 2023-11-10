@@ -29,6 +29,9 @@ public class TeleOpRecorder extends CommandOpMode {
     private String previousGamepad1, previousGamepad2;
     private long recordingStartTime;
 
+    private boolean recordingFinished;
+    private boolean writeInProgress;
+
     // TeleOp Declarations
 
     private DcMotorEx frontLeft, backLeft, frontRight, backRight, intakeMotor;
@@ -64,6 +67,29 @@ public class TeleOpRecorder extends CommandOpMode {
         // Check if the right d-pad is pressed to stop recording
         if (gamepad1.dpad_right && isRecording) {
             isRecording = false;
+            recordingFinished = true;
+        }
+
+        if (recordingFinished && !writeInProgress) {
+            writeInProgress = true;
+
+            int runNumber = 1;
+            // Check for existing files and increment runNumber if necessary
+            File file;
+            do {
+                telemetry.addLine(Environment.getExternalStorageDirectory().getPath()+"/FIRST/gamepadData" + runNumber + ".txt");
+                telemetry.update();
+                file = new File(Environment.getExternalStorageDirectory().getPath()+"/FIRST/gamepadData" + runNumber + ".txt");
+                runNumber++;
+            } while (file.exists());
+            // Write the gamepad data to a file when the OpMode is stopped
+            try (PrintWriter out = new PrintWriter(Environment.getExternalStorageDirectory().getPath()+"/FIRST/gamepadData" + runNumber + ".txt")) {
+                for (String data : gamepadData) {
+                    out.println(data);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         // Save the recording to the file only if there's a difference
@@ -86,24 +112,6 @@ public class TeleOpRecorder extends CommandOpMode {
         teleOpRun();
     }
 
-    @Override
-    public void reset() {
-        int runNumber = 1;
-        // Check for existing files and increment runNumber if necessary
-        File file;
-        do {
-            file = new File(Environment.getExternalStorageDirectory().getPath()+"/FIRST/gamepadData" + runNumber + ".txt");
-            runNumber++;
-        } while (file.exists());
-        // Write the gamepad data to a file when the OpMode is stopped
-        try (PrintWriter out = new PrintWriter(Environment.getExternalStorageDirectory().getPath()+"/FIRST/gamepadData.txt")) {
-            for (String data : gamepadData) {
-                out.println(data);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     public void teleOpInitialize () {
         lift = new Lift(hardwareMap);
 

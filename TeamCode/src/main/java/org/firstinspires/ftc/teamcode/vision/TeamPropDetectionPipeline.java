@@ -25,8 +25,7 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
     private static double[] areaInZone = new double[ZONE_COUNT];
     private static final int MIN_AREA = 300;
 
-    private Mat leftZone, rightZone, middleZone;
-    private static Mat hsv, mask1, mask2, mask, kernel, hierarchy;
+    private Mat leftZone, middleZone, rightZone;
 
     @Override
     public void init(Mat firstFrame) {
@@ -45,9 +44,16 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         int width = input.cols();
         int height = input.rows();
 
+        List<Mat> matsToRelease = new ArrayList<>();
+
         leftZone = input.submat(new Rect(0, 0, width / 3, height));
         middleZone = input.submat(new Rect(width / 3, 0, width / 3, height));
         rightZone = input.submat(new Rect(2 * width / 3, 0, width / 3, height));
+
+        // Add submats to the list of Mats to be released
+        matsToRelease.add(leftZone);
+        matsToRelease.add(middleZone);
+        matsToRelease.add(rightZone);
 
         detectRedObject(leftZone, 0);
         detectRedObject(middleZone, 1);
@@ -64,6 +70,9 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         Arrays.fill(areaInZone, 0);
 
         teamPropZone = mostLikelyZone;
+
+        releaseMats(matsToRelease);
+
         return input; // wont show nothin
     }
 
@@ -72,9 +81,10 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         return teamPropZone;
     }
 
-    public static void detectRedObject(Mat frame, int zoneNum) {
-        hsv = new Mat();
-        Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_BGR2HSV);
+    public void detectRedObject(Mat frame, int zoneNum) {
+        Mat hsv = new Mat();
+        Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGBA2RGB);
+        Imgproc.cvtColor(hsv, hsv, Imgproc.COLOR_RGB2HSV);
 
         // Split the HSV image into separate channels
         List<Mat> hsvChannels = new ArrayList<>();
@@ -86,19 +96,21 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         // Merge the channels back into one image
         Core.merge(hsvChannels, hsv);
 
-        mask1 = new Mat();
-        mask2 = new Mat();
+        Mat mask1 = new Mat();
+        Mat mask2 = new Mat();
+        Mat mask = new Mat();
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+        Mat hierarchy = new Mat();
+        // All mats to release at the end
+        List<Mat> matsToRelease = Arrays.asList(hsv, mask1, mask2, mask, kernel, hierarchy);
+
         Core.inRange(hsv, new Scalar(0, 120, 70), new Scalar(10, 255, 255), mask1);
         Core.inRange(hsv, new Scalar(160, 120, 70), new Scalar(180, 255, 255), mask2);
-        mask = new Mat();
         Core.addWeighted(mask1, 1.0, mask2, 1.0, 0.0, mask);
 
         // Perform morphological operations
-        kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
         Imgproc.morphologyEx(mask, mask, Imgproc.MORPH_OPEN, kernel);
-
         List<MatOfPoint> contours = new ArrayList<>();
-        hierarchy = new Mat();
         Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         for (MatOfPoint contour : contours) {
@@ -110,6 +122,15 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
             }
             buffer[zoneNum].addLast(new Point(rect.x, rect.y));  // Add the new position to the end of the buffer
             areaInZone[zoneNum] += area;
+        }
+
+        releaseMats(matsToRelease);
+    }
+    private void releaseMats(List<Mat> mats) {
+        for (Mat mat : mats) {
+            if (mat != null) {
+                mat.release();
+            }
         }
     }
 }
