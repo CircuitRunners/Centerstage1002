@@ -12,14 +12,18 @@ public class Lift extends SubsystemBase {
 
     public enum LiftPositions {
         DOWN(0),
-        SHORT(83),
-        MID(376),
-        HIGH(685);
+        SHORT(93),
+        MID(844),
+        HIGH(2500);
 
         public int position;
 
         LiftPositions(int position){
             this.position = position;
+        }
+
+        public int getPosition() {
+            return this.position;
         }
     }
 
@@ -39,6 +43,9 @@ public class Lift extends SubsystemBase {
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -52,8 +59,8 @@ public class Lift extends SubsystemBase {
     }
 
     public void setLiftPower(double power){
-        leftMotor.setPower(power);
-        rightMotor.setPower(-power);
+        leftMotor.setPower(-power);
+        rightMotor.setPower(+power);
     }
 
     public void stop(){
@@ -61,7 +68,8 @@ public class Lift extends SubsystemBase {
     }
 
     public double getLiftPosition(){
-        return leftMotor.getCurrentPosition();
+        // THIS IS NEGATED BECAUSE THE VALUES ARE ALL NEGATIVE
+        return -leftMotor.getCurrentPosition();
     }
 
     public double getLiftVelocity(){
@@ -69,7 +77,7 @@ public class Lift extends SubsystemBase {
     }
 
     public boolean atUpperLimit(){
-        return getLiftPosition() > 830;
+        return getLiftPosition() > 2550;
     }
 
     public boolean atLowerLimit(){

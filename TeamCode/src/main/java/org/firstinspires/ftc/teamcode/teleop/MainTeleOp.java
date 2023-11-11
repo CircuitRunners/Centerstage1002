@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.PerpetualCommand;
+import com.arcrobotics.ftclib.command.button.Trigger;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +16,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
+import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
@@ -20,8 +27,12 @@ public class MainTeleOp extends CommandOpMode{
     private DcMotorEx frontLeft, backLeft, frontRight, backRight, intakeMotor;
     private double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
     private Lift lift;
-    private ServoImplEx airplaneLauncher;
+    private ServoImplEx airplaneLauncher, rightArm, leftArm, claw;
     private IMU imu;
+
+    private ManualLiftCommand manualLiftCommand;
+    private ManualLiftResetCommand manualLiftResetCommand;
+
     @Override
     public void initialize(){
         schedule(new BulkCacheCommand(hardwareMap));
@@ -52,10 +63,13 @@ public class MainTeleOp extends CommandOpMode{
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         airplaneLauncher = hardwareMap.get(ServoImplEx.class, "airplaneLauncher");
+        leftArm = hardwareMap.get(ServoImplEx.class, "leftArm");
+        rightArm = hardwareMap.get(ServoImplEx.class, "rightArm");
+        claw = hardwareMap.get(ServoImplEx.class, "claw");
 
         imu = hardwareMap.get(IMU.class, "imu");
 
-        airplaneLauncher.setPosition(0.72);
+        airplaneLauncher.setPosition(0.58);
 
         IMU.Parameters parameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
@@ -72,46 +86,85 @@ public class MainTeleOp extends CommandOpMode{
     public void run() {
         super.run();
         double y = -gamepad1.left_stick_y;
-        double x = gamepad1.left_stick_x * 1.06; // change 1.06 to counter bad strafing
+        double x = gamepad1.left_stick_x * 1.06; //TODO change 1.06 to counter bad strafing
         double rx = gamepad1.right_stick_x;
 
+        // Reset heading with MATH
         if (gamepad1.x) {
             imu.resetYaw();
             gamepad1.rumble(100);
         }
 
+        // Make lift not do stupid :)
         lift.setLiftPower(0);
 
         telemetry.addData("Lift Position", lift.getLiftPosition());
 
-        if (Math.abs(gamepad2.left_stick_y) > 0.05) {
+        // Lift
+        if (Math.abs(gamepad2.left_stick_y) > 0.05) { // <-- Debounce
             lift.setLiftPower(gamepad2.left_stick_y);
         }
 
-        if (Math.abs(gamepad2.right_trigger) > 0.05) {
+        // Intake Assembly
+        if (Math.abs(gamepad1.right_trigger) > 0.05) {
             // Outtake
-            intakeMotor.setPower(-gamepad2.right_trigger * (3.0/4.0));
-        } else if (Math.abs(gamepad2.left_trigger) > 0.05) {
+            intakeMotor.setPower(-gamepad1.right_trigger);
+        } else if (Math.abs(gamepad1.left_trigger) > 0.05) {
             // Intake
-            intakeMotor.setPower(gamepad2.left_trigger * (3.0/4.0));
+            intakeMotor.setPower(gamepad1.left_trigger);
         } else {
             intakeMotor.setPower(0);
         }
 
-        if (Math.abs(gamepad2.right_stick_y) > 0.05) { //debounce
-            airplaneLauncher.setPosition(Math.abs(gamepad2.right_stick_y));
+//        if (Math.abs(gamepad2.right_stick_y) > 0.05) { //debounce
+//            airplaneLauncher.setPosition(Math.abs(gamepad2.right_stick_y));
+//        }
+
+//        telemetry.addData("AirplaneL Position", airplaneLauncher.getPosition());
+
+        // Airplane Launcher
+//        if (gamepad2.dpad_up) {
+//            airplaneLauncher.setPosition(0.58);
+//        }
+        if (gamepad2.a) {
+            airplaneLauncher.setPosition(0.50);
         }
 
-        telemetry.addData("AirplaneL Position", airplaneLauncher.getPosition());
-
-        if (gamepad2.dpad_up){
-            airplaneLauncher.setPosition(0.72);
+        // Claw
+        if (gamepad2.dpad_right) {
+            claw.setPosition(.54);
         }
-        else if (gamepad2.dpad_down) {
-            airplaneLauncher.setPosition(0.18);
+        else if (gamepad2.dpad_left) {
+            claw.setPosition(.44);
         }
 
+        // right arm .448 up
+        // right .9045 down
+        // .54 claw open
+        // .44 claw closed
+        // left arm up .488
+        // left arm .9499
 
+        telemetry.addLine("right " + String.valueOf(gamepad2.right_trigger));
+        telemetry.addLine("left "+String.valueOf(gamepad2.left_trigger));
+
+        if (Math.abs(gamepad2.right_trigger) > 0.05) {
+            // Outtake
+            rightArm.setPosition(gamepad2.right_trigger);
+        }
+        if (Math.abs(gamepad2.left_trigger) > 0.05) {
+            // Outtake
+            leftArm.setPosition(gamepad2.left_trigger);
+        }
+
+        // Arm commands
+        if (gamepad2.right_bumper) {
+            leftArm.setPosition(.25); //.488
+            rightArm.setPosition(.448); //SOL
+        } else if (gamepad2.left_bumper) {
+            leftArm.setPosition(.9499);
+            rightArm.setPosition(.8949);
+        }
 
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         Vector2d vec = new Vector2d(x, y).rotated(-botHeading);
@@ -124,7 +177,6 @@ public class MainTeleOp extends CommandOpMode{
 
         frontLeftPower = (y + x + rx) / denominator; // forward is positive
         backLeftPower = (y - x + rx) / denominator; // positive
-
         frontRightPower = (y - x - rx) / denominator; // forward is negative
         backRightPower = (y + x - rx) / denominator; // negative
 

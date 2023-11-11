@@ -28,7 +28,6 @@ public class LiftPositionCommand extends CommandBase {
     public LiftPositionCommand(Lift lift, int targetPosition, boolean holdAtEnd){
         addRequirements(lift);
 
-
         this.holdAtEnd = holdAtEnd;
         this.lift = lift;
         this.targetPosition = targetPosition;
@@ -74,8 +73,9 @@ public class LiftPositionCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted){
-        if (holdAtEnd) lift.setLiftPower(0.2);
-        else lift.stop();
+//        if (holdAtEnd) lift.setLiftPower(0.2);
+//        else lift.stop();
+        lift.stop();
     }
 
 }
