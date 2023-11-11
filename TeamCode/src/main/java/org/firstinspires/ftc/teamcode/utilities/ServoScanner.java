@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 @TeleOp (name="ServoScanner")
 public class ServoScanner extends CommandOpMode {
 
-    private String deviceName = "rightArm";
+    private String deviceName = "leftArm";
     private double stepValue = 0.1;
     private double pos = 0;
 

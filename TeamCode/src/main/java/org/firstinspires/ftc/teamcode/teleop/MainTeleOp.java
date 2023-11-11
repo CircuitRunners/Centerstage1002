@@ -22,6 +22,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
+
+
 @TeleOp (name="MainTeleOp")
 public class MainTeleOp extends CommandOpMode{
     private DcMotorEx frontLeft, backLeft, frontRight, backRight, intakeMotor;
@@ -159,11 +161,11 @@ public class MainTeleOp extends CommandOpMode{
 
         // Arm commands
         if (gamepad2.right_bumper) {
-            leftArm.setPosition(.25); //.488
-            rightArm.setPosition(.448); //SOL
+            leftArm.setPosition(.42); //.488
+            rightArm.setPosition(.0); // CHANGED
         } else if (gamepad2.left_bumper) {
-            leftArm.setPosition(.9499);
-            rightArm.setPosition(.8949);
+            leftArm.setPosition(.84);
+            rightArm.setPosition(.5);
         }
 
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
