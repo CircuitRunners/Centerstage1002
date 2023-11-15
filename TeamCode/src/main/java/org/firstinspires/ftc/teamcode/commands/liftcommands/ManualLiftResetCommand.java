@@ -8,9 +8,6 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 public class ManualLiftResetCommand extends CommandBase {
-
-
-
     private final Lift lift;
     private final GamepadEx manipulator;
 

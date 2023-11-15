@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Environment;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -31,6 +36,7 @@ public class TeleOpRecorder extends CommandOpMode {
 
     private boolean recordingFinished;
     private boolean writeInProgress;
+    private static final String BASE_FOLDER_NAME = "FIRST";
 
     // TeleOp Declarations
 
@@ -38,6 +44,7 @@ public class TeleOpRecorder extends CommandOpMode {
     private double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
     private Lift lift;
     private ServoImplEx airplaneLauncher;
+    private String directoryPath;
     private IMU imu;
 
     // End TeleOp Declarations
@@ -45,10 +52,30 @@ public class TeleOpRecorder extends CommandOpMode {
     @Override
     public void initialize() {
         schedule(new BulkCacheCommand(hardwareMap));
+        File file = new File("/sdcard/file124.txt");
 
         gamepadData = new ArrayList<>();
         previousGamepad1 = "";
         previousGamepad2 = "";
+
+
+        directoryPath =  "/sdcard/" + BASE_FOLDER_NAME + "/gamepadData";
+//        directoryPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + BASE_FOLDER_NAME + "/gamepadData";
+
+        telemetry.addLine(directoryPath);
+        telemetry.update();
+
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            boolean success = directory.mkdirs();
+            if (!success) {
+                telemetry.addLine("Failed to create directory: " + directoryPath);
+                telemetry.update();
+            }
+        }
+
+//        File directory = new File(directoryPath);
+//        directory.mkdir();
 
         // The rest of your initialization code...
         teleOpInitialize();
@@ -57,6 +84,7 @@ public class TeleOpRecorder extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+
         long timestamp;
         // Check if the left d-pad is pressed to start recording
         if (gamepad1.dpad_left && !isRecording) {
@@ -71,25 +99,24 @@ public class TeleOpRecorder extends CommandOpMode {
         }
 
         if (recordingFinished && !writeInProgress) {
-            writeInProgress = true;
-
             int runNumber = 1;
             // Check for existing files and increment runNumber if necessary
             File file;
             do {
-                telemetry.addLine(Environment.getExternalStorageDirectory().getPath()+"/FIRST/gamepadData" + runNumber + ".txt");
+                telemetry.addLine(directoryPath + runNumber + ".txt");
                 telemetry.update();
-                file = new File(Environment.getExternalStorageDirectory().getPath()+"/FIRST/gamepadData" + runNumber + ".txt");
+                file = new File(directoryPath + runNumber + ".txt");
                 runNumber++;
             } while (file.exists());
             // Write the gamepad data to a file when the OpMode is stopped
-            try (PrintWriter out = new PrintWriter(Environment.getExternalStorageDirectory().getPath()+"/FIRST/gamepadData" + runNumber + ".txt")) {
+            try (PrintWriter out = new PrintWriter(directoryPath + runNumber + ".txt")) {
                 for (String data : gamepadData) {
                     out.println(data);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            writeInProgress = true;
         }
 
         // Save the recording to the file only if there's a difference
