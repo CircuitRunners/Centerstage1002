@@ -36,12 +36,10 @@ public class MeepMeepTesting {
                                drive.trajectorySequenceBuilder(front_blue)
                                        .forward(1.25 * tile - square_edge)
                                        .back(2)
-                                       .strafeRight(0.5 * tile)
+                                       .strafeLeft(0.5 * tile)
                                        .forward(tile)
-                                       .turn(Math.toRadians(90))
-                                       .forward(0.5*tile)
-                                       .forward(tile * 3.5 - square_edge)
-                                       .strafeLeft(tile)
+                                       .turn(Math.toRadians(-90))
+                                       .forward(0.5 * tile)
                                        .build()
                                );//purple to left & park
                       /* .followTrajectorySequence(drive ->

@@ -41,7 +41,7 @@ public class VisionTest extends CommandOpMode {
         detector = new TeamPropDetector(hardwareMap, true);
         schedule(new BulkCacheCommand(hardwareMap));
 
-        
+
 
         detector.startStream();
         while(opModeInInit()){
