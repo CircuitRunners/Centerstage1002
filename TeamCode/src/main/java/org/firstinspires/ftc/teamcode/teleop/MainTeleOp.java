@@ -3,22 +3,16 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.PerpetualCommand;
-import com.arcrobotics.ftclib.command.button.Trigger;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
@@ -27,9 +21,13 @@ import org.firstinspires.ftc.teamcode.subsystems.Lift;
 @TeleOp (name="MainTeleOp")
 public class MainTeleOp extends CommandOpMode{
     private DcMotorEx frontLeft, backLeft, frontRight, backRight, intakeMotor;
+    private DcMotorEx[] drivebaseMotors;
     private double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
     private Lift lift;
-    private ServoImplEx airplaneLauncher, rightArm, leftArm, claw;
+
+    private AirplaneLauncher airplaneLauncher;
+
+    private ServoImplEx rightArm, leftArm, claw;
     private IMU imu;
 
     private ManualLiftCommand manualLiftCommand;
@@ -37,39 +35,41 @@ public class MainTeleOp extends CommandOpMode{
 
     @Override
     public void initialize(){
+        // Use a bulk cache to loop faster using old values instead of blocking a thread kinda
         schedule(new BulkCacheCommand(hardwareMap));
 
+        // Subsystems
         lift = new Lift(hardwareMap);
+        airplaneLauncher = new AirplaneLauncher(hardwareMap);
+
+        // Vanilla initializations
+        imu = hardwareMap.get(IMU.class, "imu");
 
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
-
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-//        DcMotorEx[] allMotors =
-
-
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
 
-
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        drivebaseMotors = new DcMotorEx[] {frontLeft, backLeft, frontRight, backRight};
 
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
 
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // Modifications of Vanilla
+        for (DcMotorEx motor : drivebaseMotors) {
+            motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        }
 
-        airplaneLauncher = hardwareMap.get(ServoImplEx.class, "airplaneLauncher");
+        intakeMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+
+
         leftArm = hardwareMap.get(ServoImplEx.class, "leftArm");
         rightArm = hardwareMap.get(ServoImplEx.class, "rightArm");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
 
-        imu = hardwareMap.get(IMU.class, "imu");
+
 
         airplaneLauncher.setPosition(0.58);
 
@@ -93,7 +93,7 @@ public class MainTeleOp extends CommandOpMode{
 
         // Reset heading with MATH
         if (gamepad1.x) {
-            imu.resetYaw();
+            // reset stuff here
             gamepad1.rumble(100);
         }
 

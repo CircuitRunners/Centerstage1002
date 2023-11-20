@@ -120,6 +120,7 @@ public class Arm extends SubsystemBase {
         rightServo.setPosition(ArmPositions.DOWN.position);
     }
 
+
     //Set a preset level
     public void setLevel(ArmPositions level){
         setPosition(level.position);

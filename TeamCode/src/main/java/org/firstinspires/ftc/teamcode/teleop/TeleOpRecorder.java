@@ -18,10 +18,12 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -36,7 +38,8 @@ public class TeleOpRecorder extends CommandOpMode {
 
     private boolean recordingFinished;
     private boolean writeInProgress;
-    private static final String BASE_FOLDER_NAME = "FIRST";
+
+    private FileWriter fileWriter;
 
     // TeleOp Declarations
 
@@ -44,38 +47,26 @@ public class TeleOpRecorder extends CommandOpMode {
     private double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
     private Lift lift;
     private ServoImplEx airplaneLauncher;
-    private String directoryPath;
+    private File dataDir;
+    private String dataDirPath;
     private IMU imu;
+    private final String FILE_PREFIX = "tele_recorder_data";
 
     // End TeleOp Declarations
 
     @Override
     public void initialize() {
         schedule(new BulkCacheCommand(hardwareMap));
-        File file = new File("/sdcard/file124.txt");
+
+        dataDir = AppUtil.ROBOT_DATA_DIR;
+        dataDirPath = dataDir.getAbsolutePath();
 
         gamepadData = new ArrayList<>();
         previousGamepad1 = "";
         previousGamepad2 = "";
 
-
-        directoryPath =  "/sdcard/" + BASE_FOLDER_NAME + "/gamepadData";
-//        directoryPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + BASE_FOLDER_NAME + "/gamepadData";
-
-        telemetry.addLine(directoryPath);
+        telemetry.addLine(dataDirPath);
         telemetry.update();
-
-        File directory = new File(directoryPath);
-        if (!directory.exists()) {
-            boolean success = directory.mkdirs();
-            if (!success) {
-                telemetry.addLine("Failed to create directory: " + directoryPath);
-                telemetry.update();
-            }
-        }
-
-//        File directory = new File(directoryPath);
-//        directory.mkdir();
 
         // The rest of your initialization code...
         teleOpInitialize();
@@ -99,17 +90,28 @@ public class TeleOpRecorder extends CommandOpMode {
         }
 
         if (recordingFinished && !writeInProgress) {
-            int runNumber = 1;
-            // Check for existing files and increment runNumber if necessary
             File file;
+
+            boolean isFileCreated; // is false by default
+            int runNumber = 1;
+
+            // Quick one to create a new file w/number
+            // Do while runs one iteration of the loop BEFORE checking condition
             do {
-                telemetry.addLine(directoryPath + runNumber + ".txt");
-                telemetry.update();
-                file = new File(directoryPath + runNumber + ".txt");
-                runNumber++;
-            } while (file.exists());
-            // Write the gamepad data to a file when the OpMode is stopped
-            try (PrintWriter out = new PrintWriter(directoryPath + runNumber + ".txt")) {
+                file = new File(dataDir, String.format("%s%d.txt", FILE_PREFIX, runNumber));
+                try {
+                    isFileCreated = file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    break;
+                }
+                if (!isFileCreated) {
+                    runNumber++;
+                }
+            } while (!isFileCreated);
+
+            // This writes gamepadData out to the file itself
+            try (PrintWriter out = new PrintWriter(file)) {
                 for (String data : gamepadData) {
                     out.println(data);
                 }
@@ -206,11 +208,10 @@ public class TeleOpRecorder extends CommandOpMode {
             intakeMotor.setPower(0);
         }
 
-        if (Math.abs(gamepad2.right_stick_y) > 0.05) { //debounce
-            airplaneLauncher.setPosition(Math.abs(gamepad2.right_stick_y));
-        }
+
 
         telemetry.addData("AirplaneL Position", airplaneLauncher.getPosition());
+
 
         if (gamepad2.dpad_up){
             airplaneLauncher.setPosition(0.72);

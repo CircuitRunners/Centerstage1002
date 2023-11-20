@@ -40,6 +40,8 @@ public class MeepMeepTesting {
                                        .forward(tile)
                                        .turn(Math.toRadians(-90))
                                        .forward(0.5 * tile)
+                                       .splineTo(new Vector2d(-34, 0), Math.toRadians(90))
+                                       .splineTo(new Vector2d(-60, 0), Math.toRadians(90))
                                        .build()
                                );//purple to left & park
                       /* .followTrajectorySequence(drive ->

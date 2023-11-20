@@ -2,55 +2,66 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class AirplaneLauncher extends SubsystemBase {
 
-    public enum ClawPosition {
-        CLOSE(0.44),
-        OPEN(0.54),
-        FULL_OPEN(0.337); // nbot thing
+    // Declarations
 
+    public enum LauncherPosition {
+        SPRUNG(0.72), // Replace with the actual servo value for the SPRUNG position
+        LAUNCH(0.18); // Replace with the actual servo value for the LAUNCH position
 
-        public double position;
+        public final double position;
 
-        ClawPosition(double position){
+        LauncherPosition(double position){
             this.position = position;
         }
     }
 
-    private ClawPosition clawPosition;
+    private ServoImplEx launcherServo;
 
-    private ServoImplEx claw;
-
-    //Servos for the linkages
     public AirplaneLauncher(HardwareMap hardwareMap){
-        //Retrieve servos from the hardware map
-        claw = hardwareMap.get(ServoImplEx.class, "claw");
+        // Retrieve the servo from the hardware map
+        launcherServo = hardwareMap.get(ServoImplEx.class, "airplaneLauncher");
 
-        claw.setPwmRange(new PwmControl.PwmRange(500, 2500));
-
-//        fullOpen();
-        clawPosition = ClawPosition.OPEN;
+        // Initialize to the SPRUNG position
+        cock();
     }
 
-    public ClawPosition getClawPosition() {
-        return clawPosition;
+    // Normal use functions
+
+    // Function in all subsystems to take in all relevant machine states
+    // E.g. for airplane launcher open and close bindings
+    public void processInput (boolean dpad_up, boolean dpad_down) {
+        if (dpad_up){
+            launch();
+        }
+        else if (dpad_down) {
+            cock();
+        }
+    }
+    // Method to set the launcher to the LAUNCH position
+    public void launch() {
+        launcherServo.setPosition(LauncherPosition.LAUNCH.position);
+    }
+    // Method to set the launcher to the SPRUNG position
+    public void cock() {
+        launcherServo.setPosition(LauncherPosition.SPRUNG.position);
     }
 
-    public void close() {
-        claw.setPosition(ClawPosition.CLOSE.position);
-        clawPosition = ClawPosition.CLOSE;
-    }
+    // Special methods
 
-    public void open() {
-        claw.setPosition(ClawPosition.OPEN.position);
-        clawPosition = ClawPosition.OPEN;
+    // Method to get the current position of the launcher servo
+    public double getPosition() {
+        return launcherServo.getPosition();
     }
-
-    public void fullOpen() {
-        claw.setPosition(ClawPosition.FULL_OPEN.position);
-        clawPosition = ClawPosition.FULL_OPEN;
+    // Method to disable the PWM signal to the servo
+    public void disableServo() {
+        launcherServo.setPwmDisable();
+    }
+    // Method to re-enable the PWM signal to the servo
+    public void enableServo() {
+        launcherServo.setPwmEnable();
     }
 }

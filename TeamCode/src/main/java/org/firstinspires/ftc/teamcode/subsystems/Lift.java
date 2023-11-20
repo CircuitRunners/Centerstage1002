@@ -38,14 +38,19 @@ public class Lift extends SubsystemBase {
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftLift");
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightLift");
 
+        // Zero both the motors
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // We don't need to use builtin PID
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        //TODO MAKE SURE THIS WORKS
         leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        // Negate the gravity when stopped
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
