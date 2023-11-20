@@ -145,7 +145,7 @@ public class Arm extends SubsystemBase {
 //    GETTERS
 
     // Helper method to log the current positions of the servos to telemetry
-    private String getState() {
+    public String getState() {
         return String.format("L: %s\nR: %s", leftServo.getPosition(), rightServo.getPosition());
     }
     public double getLeftPosition(){
