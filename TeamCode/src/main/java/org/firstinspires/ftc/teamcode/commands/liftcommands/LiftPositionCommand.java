@@ -75,7 +75,7 @@ public class LiftPositionCommand extends CommandBase {
     public void end(boolean interrupted){
 //        if (holdAtEnd) lift.setLiftPower(0.2);
 //        else lift.stop();
-        lift.stop();
+        lift.brake();
     }
 
 }

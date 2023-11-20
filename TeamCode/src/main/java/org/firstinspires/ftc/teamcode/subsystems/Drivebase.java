@@ -17,19 +17,24 @@ public class Drivebase extends SubsystemBase {
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     private DcMotorEx[] allDrivebaseMotors;
     private IMU imu;
-    private Parameters parameters;
+    private static Parameters parameters = new Parameters(
+            new RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                    RevHubOrientationOnRobot.UsbFacingDirection.UP
+            )
+    );;
 
     // Default constructor
     public Drivebase(HardwareMap hardwareMap) {
-        this(hardwareMap, defaultIMUParameters()); // Call the constructor with default parameters
+        this(hardwareMap, parameters); // Call the constructor with default parameters
     }
 
     // Constructor with IMU parameters
     public Drivebase(HardwareMap hardwareMap, Parameters parameters) {
         // Drivetrain motors setup
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
 
         allDrivebaseMotors = new DcMotorEx[]{frontLeft, backLeft, frontRight, backRight};
@@ -37,25 +42,12 @@ public class Drivebase extends SubsystemBase {
         // We love the IMU..!
         imu = hardwareMap.get(IMU.class, "imu");
 
-        this.parameters = parameters;
-
         // Begin doing things
         setMotorBehavior(allDrivebaseMotors);
-        initializeIMU(this.parameters); // Initialize IMU with the given parameters
+        initializeIMU(parameters); // Initialize IMU with the given parameters
     }
 
-    private static Parameters defaultIMUParameters() {
-        // This is where you change the default parameters for the IMU!
-        Parameters defaultParameters = new Parameters(
-            new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP
-            )
-        );
-        return defaultParameters;
-    }
-
-    public void setMotorBehavior (DcMotorEx[] motors) {
+    private void setMotorBehavior (DcMotorEx[] motors) {
         // Set motor directions and zero power behavior
         frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
         backLeft.setDirection(DcMotorEx.Direction.REVERSE);
@@ -66,8 +58,7 @@ public class Drivebase extends SubsystemBase {
         }
     }
 
-
-    public void initializeIMU (IMU.Parameters parameters) {
+    public void initializeIMU (Parameters parameters) {
         imu.initialize(parameters);
     }
 
@@ -81,7 +72,7 @@ public class Drivebase extends SubsystemBase {
         return variable;
     }
 
-    public double transformYInput (double y) {
+    private double transformYInput (double y) {
         y = preprocessInput(y);
 
         // Actual processing
@@ -92,7 +83,7 @@ public class Drivebase extends SubsystemBase {
         return y;
     }
 
-    public double transformXInput (double x) {
+    private double transformXInput (double x) {
         x = preprocessInput(x);
 
         // Actual processing
@@ -104,7 +95,7 @@ public class Drivebase extends SubsystemBase {
         return x;
     }
 
-    public double transformRotationInput (double rx) {
+    private double transformRotationInput (double rx) {
         rx = preprocessInput(rx);
 
         // Actual processing
@@ -114,11 +105,11 @@ public class Drivebase extends SubsystemBase {
         return rx;
     }
 
-    public void drive(double y, double x, double rx) {
+    public void drive(double left_stick_y, double left_stick_x, double right_stick_x) {
 
-        y = transformYInput(y); // strafe forward back
-        x = transformXInput(x); // strafe right and left
-        rx = transformRotationInput(rx); // turn left right angular
+        double y = transformYInput(left_stick_y); // y && strafe forward back
+        double x = transformXInput(left_stick_x); // x && strafe right and left
+        double rx = transformRotationInput(right_stick_x); // rx && turn left right angular
 
         // Calculate the robot's heading from the IMU
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);

@@ -59,10 +59,13 @@ public class BlueStage extends CommandOpMode {
         switch(locationID) {
             case 0: // Left
                 schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine));
+                break;
             case 1: // Middle
                 schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine));
+                break;
             case 2: // Right
                 schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine));
+                break;
         };
 
         schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBlueBack));

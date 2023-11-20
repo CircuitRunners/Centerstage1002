@@ -8,8 +8,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class Lift extends SubsystemBase {
-
-
     public enum LiftPositions {
         DOWN(0),
         SHORT(93),
@@ -60,15 +58,16 @@ public class Lift extends SubsystemBase {
 
     @Override
     public void periodic(){
-        //happens every loop
+        // happens every loop
     }
 
     public void setLiftPower(double power){
+        //TODO this could be the PID demon
         leftMotor.setPower(-power);
         rightMotor.setPower(+power);
     }
 
-    public void stop(){
+    public void brake(){
         setLiftPower(0);
     }
 

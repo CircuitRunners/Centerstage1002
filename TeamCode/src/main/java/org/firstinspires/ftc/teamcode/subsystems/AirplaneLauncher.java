@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 public class AirplaneLauncher extends SubsystemBase {
 
     // Declarations
-
     public enum LauncherPosition {
         SPRUNG(0.72), // Replace with the actual servo value for the SPRUNG position
         LAUNCH(0.18); // Replace with the actual servo value for the LAUNCH position
@@ -33,11 +32,11 @@ public class AirplaneLauncher extends SubsystemBase {
 
     // Function in all subsystems to take in all relevant machine states
     // E.g. for airplane launcher open and close bindings
-    public void processInput (boolean dpad_up, boolean dpad_down) {
-        if (dpad_up){
+    public void processInput (boolean launch_button, boolean reset_button) {
+        if (launch_button){
             launch();
         }
-        else if (dpad_down) {
+        else if (reset_button) {
             cock();
         }
     }
@@ -57,11 +56,11 @@ public class AirplaneLauncher extends SubsystemBase {
         return launcherServo.getPosition();
     }
     // Method to disable the PWM signal to the servo
-    public void disableServo() {
+    public void tuningModeOn() {
         launcherServo.setPwmDisable();
     }
     // Method to re-enable the PWM signal to the servo
-    public void enableServo() {
+    public void tuningModeOff() {
         launcherServo.setPwmEnable();
     }
 }
