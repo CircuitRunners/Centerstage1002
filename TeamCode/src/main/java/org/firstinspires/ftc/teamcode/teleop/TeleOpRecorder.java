@@ -59,7 +59,7 @@ public class TeleOpRecorder extends CommandOpMode {
         schedule(new BulkCacheCommand(hardwareMap));
 
         dataDir = AppUtil.ROBOT_DATA_DIR;
-        dataDirPath = dataDir.getAbsolutePath();
+        dataDirPath = dataDir.getPath();
 
         gamepadData = new ArrayList<>();
         previousGamepad1 = "";
@@ -79,12 +79,16 @@ public class TeleOpRecorder extends CommandOpMode {
         long timestamp;
         // Check if the left d-pad is pressed to start recording
         if (gamepad1.dpad_left && !isRecording) {
+            telemetry.addLine("Started recording");
+            telemetry.update();
             isRecording = true;
             recordingStartTime = System.currentTimeMillis();
         }
 
         // Check if the right d-pad is pressed to stop recording
         if (gamepad1.dpad_right && isRecording) {
+            telemetry.addLine("Stopped Recording");
+            telemetry.update();
             isRecording = false;
             recordingFinished = true;
         }

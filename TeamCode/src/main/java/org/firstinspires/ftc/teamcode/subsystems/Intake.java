@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+// Certified Validated!
 public class Intake extends SubsystemBase {
     private DcMotorEx intakeMotor;
     private ElapsedTime runtime;
@@ -21,9 +22,9 @@ public class Intake extends SubsystemBase {
     }
 
     public enum IntakePowers implements PowerSetting {
-        FAST(0.72), // really fast but enough to grip
-        NORMAL(0.18), // normal
-        SLOW(0.18); // slow
+        FAST(1), // really fast but enough to grip
+        NORMAL(.6), // normal
+        SLOW(0.35); // slow
 
         public final double speed;
 
@@ -66,6 +67,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void setPower(double powerLeft, double powerRight) {
+        setPower(0);
         // Set dynamic powers!
         powerRight = squash(powerRight);
         powerLeft = squash(powerLeft);

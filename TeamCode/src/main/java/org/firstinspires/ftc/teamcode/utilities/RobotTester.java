@@ -22,7 +22,6 @@ public class RobotTester extends CommandOpMode {
     private Lift lift;
     private Transfer transfer;
     private boolean testing = false;
-
     private double stepValue = 0.1;
     private double intakePower = 0;
 
@@ -83,20 +82,19 @@ public class RobotTester extends CommandOpMode {
         super.run();
         if (testing) {
             if ((Math.abs(gamepad1.left_stick_y) > 0.01) && gamepad1.square) intakePower = gamepad1.left_stick_y;
-
-            telemetry.addData("Arm", arm.getState());
-            telemetry.addData("Arm Reg", arm.getRegressionResults());
-            telemetry.addData("Airplane Launcher", airplaneLauncher.getPosition());
-            telemetry.addData("Transfer", transfer.getPosition());
-
-            telemetry.addData("Intake Power", intake.getPower());
-            telemetry.addData("Step Value", stepValue);
-            telemetry.addData("Step Value", gamepad1.left_stick_y);
-
-            telemetry.addData("Lift Position", lift.getLiftPosition());
-            intake.setPower(intakePower);
-
-            telemetry.update();
         }
+        telemetry.addData("Arm", arm.getState());
+        telemetry.addData("Arm Reg", arm.getRegressionResults());
+        telemetry.addData("Airplane Launcher", airplaneLauncher.getPosition());
+        telemetry.addData("Transfer", transfer.getPosition());
+
+        telemetry.addData("Intake Power", intake.getPower());
+        telemetry.addData("Step Value", stepValue);
+        telemetry.addData("Step Value", gamepad1.left_stick_y);
+
+        telemetry.addData("Lift Position", lift.getLiftPosition());
+        intake.setPower(intakePower);
+
+        telemetry.update();
     }
 }

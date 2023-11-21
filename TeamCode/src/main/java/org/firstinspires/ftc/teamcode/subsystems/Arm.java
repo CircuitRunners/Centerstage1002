@@ -146,7 +146,16 @@ public class Arm extends SubsystemBase {
 
     // Helper method to log the current positions of the servos to telemetry
     public String getState() {
-        return String.format("L: %s\nR: %s", leftServo.getPosition(), rightServo.getPosition());
+        leftServo.setPwmEnable();
+        rightServo.setPwmEnable();
+        leftServo.setPosition(0.5);
+        rightServo.setPosition(0.5);
+
+        String theReturnStuff = String.format("L: %s\nR: %s", leftServo.getPosition(), rightServo.getPosition());
+
+        leftServo.setPwmDisable();
+        rightServo.setPwmDisable();
+        return theReturnStuff;
     }
     public double getLeftPosition(){
         return leftServo.getPosition();
