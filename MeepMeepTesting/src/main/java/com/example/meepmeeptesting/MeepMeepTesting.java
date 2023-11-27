@@ -33,16 +33,23 @@ public class MeepMeepTesting {
                                            .build()
                         );*/
                        .followTrajectorySequence(drive ->
-                               drive.trajectorySequenceBuilder(front_blue)
-                                       .forward(1.25 * tile - square_edge)
-                                       .back(2)
-                                       .strafeLeft(0.5 * tile)
-                                       .forward(tile)
-                                       .turn(Math.toRadians(-90))
-                                       .forward(0.5 * tile)
-                                       .splineTo(new Vector2d(-34, 0), Math.toRadians(90))
-                                       .splineTo(new Vector2d(-60, 0), Math.toRadians(90))
+                               drive.trajectorySequenceBuilder(back_blue)
+                                       .UNSTABLE_addTemporalMarkerOffset(5.01,() -> {})
+                                       .splineTo(new Vector2d(9.61, 34.00), Math.toRadians(180.00))
+                                       .splineTo(new Vector2d(24.00, 34.00), Math.toRadians(180.00))
+                                       .splineTo(new Vector2d(37.65, 47.05), Math.toRadians(-7.80))
+                                       .lineToSplineHeading(new Pose2d(49.00, 47.00, Math.toRadians(0.00)))
+                                       .lineToConstantHeading(new Vector2d(49.00, 31.00))
+                                       .lineToSplineHeading(new Pose2d(32.07, 30.31, Math.toRadians(0.00)))
+                                       .lineToSplineHeading(new Pose2d(15.19, 12.70, Math.toRadians(181.03)))
+                                       .lineToSplineHeading(new Pose2d(-60.00, 12.00, Math.toRadians(180.00)))
+                                       .lineToConstantHeading(new Vector2d(59.23, 12.55))
                                        .build()
+
+
+
+
+
                                );//purple to left & park
                       /* .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(left_red)
