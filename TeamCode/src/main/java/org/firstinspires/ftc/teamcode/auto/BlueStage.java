@@ -60,11 +60,11 @@ public class BlueStage extends CommandOpMode {
         //2 cycle purple yellow cycle
         switch (locationID){
             case 0: //Left
-                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLineTotal));
+                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine2Cycle));
             case 1: //Center
-                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLineTotal));
+                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine2Cycle));
             case 2: //Right
-                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLineTotal));
+                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine2Cycle));
         }
 
         //Alternative purple yellow auto

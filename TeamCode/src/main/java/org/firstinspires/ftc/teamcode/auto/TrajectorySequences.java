@@ -32,7 +32,7 @@ public class TrajectorySequences {
 
     private DcMotorEx intake;
 
-    public static TrajectorySequence redBackCenterLine, redBackRightLine, redBackLeftLine, redFrontCenterLine, redFrontRightLine, redFrontLeftLine, blueBackCenterLine2Cycle, blueBackRightLine2Cycle, blueBackLeftLine2Cycle, blueBackCenterLine, blueBackRightLine, blueBackLeftLine, blueFrontCenterLine, blueFrontRightLine, blueFrontLeftLine, parkFromRedBack, parkFromRedFront, parkFromBlueBack, parkFromBlueFront, redFrontYellowPixel, redBackYellowPixel, blueFrontYellowPixel, blueBackYellowPixel, rightYellowPixelLeftTag ;
+    public static TrajectorySequence redBackCenterLine2Cycle, redBackRightLine2Cycle,redBackLeftLine2Cycle, redBackCenterLine, redBackRightLine, redBackLeftLine, redFrontCenterLine, redFrontRightLine, redFrontLeftLine, blueBackCenterLine2Cycle, blueBackRightLine2Cycle, blueBackLeftLine2Cycle, blueBackCenterLine, blueBackRightLine, blueBackLeftLine, blueFrontCenterLine, blueFrontRightLine, blueFrontLeftLine, parkFromRedBack, parkFromRedFront, parkFromBlueBack, parkFromBlueFront, redFrontYellowPixel, redBackYellowPixel, blueFrontYellowPixel, blueBackYellowPixel, rightYellowPixelLeftTag ;
 
 
 
@@ -40,6 +40,73 @@ public class TrajectorySequences {
     public static void generateTrajectories() {
 
         //RedBack
+
+        redBackCenterLine2Cycle = drive.trajectorySequenceBuilder(back_red)
+                .lineTo(new Vector2d(12.00, -33))
+                .lineTo(new Vector2d(12.00, -42.00))
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(48.00, -42.00))
+                .lineTo(new Vector2d(48.00, -36.00))
+                .lineTo(new Vector2d(48.00, -29.00))
+                .splineTo(new Vector2d(39.00, -12.00), Math.toRadians(180.00))
+                .lineTo(new Vector2d(-53.00, -12.00))
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(48.00, -12.00))
+                .turn(Math.toRadians(180))
+                .lineTo(new Vector2d(48.00, -29.00))
+                .back(4)
+                .splineToLinearHeading(new Pose2d(39, -12, Math.toRadians(-90)), Math.toRadians(0))
+                .lineTo(new Vector2d(-53.00, -12.00))
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(48.00, -12.00))
+                .turn(Math.toRadians(180))
+                .lineTo(new Vector2d(48.00, -36.00))
+                .build();
+
+        redBackRightLine2Cycle = drive.trajectorySequenceBuilder(back_red)
+                .splineTo(new Vector2d(14, -35), Math.toRadians(0))
+                .lineTo(new Vector2d(12.00, -42.00))
+                .lineTo(new Vector2d(48.00, -42.00))
+                .lineTo(new Vector2d(48.00, -36.00))
+                .lineTo(new Vector2d(48.00, -29.00))
+                .splineTo(new Vector2d(39.00, -12.00), Math.toRadians(180.00))
+                .lineTo(new Vector2d(-53.00, -12.00))
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(48.00, -12.00))
+                .turn(Math.toRadians(180))
+                .lineTo(new Vector2d(48.00, -29.00))
+                .back(4)
+                .splineToLinearHeading(new Pose2d(39, -12, Math.toRadians(-90)), Math.toRadians(0))
+                .lineTo(new Vector2d(-53.00, -12.00))
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(48.00, -12.00))
+                .turn(Math.toRadians(180))
+                .lineTo(new Vector2d(48.00, -36.00))
+                .build();
+
+        redBackLeftLine2Cycle = drive.trajectorySequenceBuilder(back_red)
+                .splineTo(new Vector2d(9, -35), Math.toRadians(180))
+                .lineTo(new Vector2d(12.00, -42.00))
+                .turn(Math.toRadians(180))
+                .lineTo(new Vector2d(48.00, -42.00))
+                .lineTo(new Vector2d(48.00, -36.00))
+                .lineTo(new Vector2d(48.00, -29.00))
+                .splineTo(new Vector2d(39.00, -12.00), Math.toRadians(180.00))
+                .lineTo(new Vector2d(-53.00, -12.00))
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(48.00, -12.00))
+                .turn(Math.toRadians(180))
+                .lineTo(new Vector2d(48.00, -29.00))
+                .back(4)
+                .splineToLinearHeading(new Pose2d(39, -12, Math.toRadians(-90)), Math.toRadians(0))
+                .lineTo(new Vector2d(-53.00, -12.00))
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(48.00, -12.00))
+                .turn(Math.toRadians(180))
+                .lineTo(new Vector2d(48.00, -36.00))
+                .build();
+
+
         redBackCenterLine = drive.trajectorySequenceBuilder(back_red)
                 .forward(1.25 * tile - square_edge)
                 .back(1.1 * tile)
