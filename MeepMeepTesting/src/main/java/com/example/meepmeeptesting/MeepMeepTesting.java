@@ -34,17 +34,27 @@ public class MeepMeepTesting {
                         );*/
                        .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(back_blue)
-                                       .UNSTABLE_addTemporalMarkerOffset(5.01,() -> {})
-                                       .splineTo(new Vector2d(9.61, 34.00), Math.toRadians(180.00))
-                                       .splineTo(new Vector2d(24.00, 34.00), Math.toRadians(180.00))
-                                       .splineTo(new Vector2d(37.65, 47.05), Math.toRadians(-7.80))
-                                       .lineToSplineHeading(new Pose2d(49.00, 47.00, Math.toRadians(0.00)))
-                                       .lineToConstantHeading(new Vector2d(49.00, 31.00))
-                                       .lineToSplineHeading(new Pose2d(32.07, 30.31, Math.toRadians(0.00)))
-                                       .lineToSplineHeading(new Pose2d(15.19, 12.70, Math.toRadians(181.03)))
-                                       .lineToSplineHeading(new Pose2d(-60.00, 12.00, Math.toRadians(180.00)))
-                                       .lineToConstantHeading(new Vector2d(59.23, 12.55))
+                                       .splineTo(new Vector2d(14, 35), Math.toRadians(0))
+                                       .lineTo(new Vector2d(12.00, 42.00))
+                                       .lineTo(new Vector2d(48.00, 42.00))
+                                       .lineTo(new Vector2d(48.00, 36.00))
+                                       .lineTo(new Vector2d(48.00, 29.00))
+                                       .splineTo(new Vector2d(39.00, 12.00), Math.toRadians(180.00))
+                                       .lineTo(new Vector2d(-53.00, 12.00))
+                                       .turn(Math.toRadians(-90))
+                                       .lineTo(new Vector2d(48.00, 12.00))
+                                       .turn(Math.toRadians(180))
+                                       .lineTo(new Vector2d(48.00, 29.00))
+                                       .back(4)
+                                       .splineToLinearHeading(new Pose2d(39, 12, Math.toRadians(-90)), Math.toRadians(0))
+                                       .lineTo(new Vector2d(-53.00, 12.00))
+                                       .turn(Math.toRadians(-90))
+                                       .lineTo(new Vector2d(48.00, 12.00))
+                                       .turn(Math.toRadians(180))
+                                       .lineTo(new Vector2d(48.00, 36.00))
                                        .build()
+
+
 
 
 

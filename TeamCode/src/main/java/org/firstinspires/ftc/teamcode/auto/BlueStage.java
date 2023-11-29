@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
 // Complete! :) [who needs I&R anyways?]
@@ -56,20 +57,31 @@ public class BlueStage extends CommandOpMode {
 
         detector.stopStream();
 
-        switch(locationID) {
-            case 0: // Left
-                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine));
-                break;
-            case 1: // Middle
-                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine));
-                break;
-            case 2: // Right
-                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine));
-                break;
-        };
+        //2 cycle purple yellow cycle
+        switch (locationID){
+            case 0: //Left
+                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLineTotal));
+            case 1: //Center
+                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLineTotal));
+            case 2: //Right
+                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLineTotal));
+        }
 
-        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBlueBack));
-        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackYellowPixel));
+        //Alternative purple yellow auto
+//        switch(locationID) {
+//            case 0: // Left
+//                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine));
+//                break;
+//            case 1: // Middle
+//                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine));
+//                break;
+//            case 2: // Right
+//                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine));
+//                break;
+//        };
+//
+//        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBlueBack));
+//        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackYellowPixel));
     };
 
 }
