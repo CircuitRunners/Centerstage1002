@@ -32,7 +32,7 @@ public class TrajectorySequences {
 
     private DcMotorEx intake;
 
-    public static TrajectorySequence redBackCenterLine, redBackRightLine, redBackLeftLine, redFrontCenterLine, redFrontRightLine, redFrontLeftLine, blueBackCenterLineTotal, blueBackRightLineTotal, blueBackLeftLineTotal, blueBackCenterLine, blueBackRightLine, blueBackLeftLine, blueFrontCenterLine, blueFrontRightLine, blueFrontLeftLine, parkFromRedBack, parkFromRedFront, parkFromBlueBack, parkFromBlueFront, redFrontYellowPixel, redBackYellowPixel, blueFrontYellowPixel, blueBackYellowPixel, rightYellowPixelLeftTag ;
+    public static TrajectorySequence redBackCenterLine, redBackRightLine, redBackLeftLine, redFrontCenterLine, redFrontRightLine, redFrontLeftLine, blueBackCenterLine2Cycle, blueBackRightLine2Cycle, blueBackLeftLine2Cycle, blueBackCenterLine, blueBackRightLine, blueBackLeftLine, blueFrontCenterLine, blueFrontRightLine, blueFrontLeftLine, parkFromRedBack, parkFromRedFront, parkFromBlueBack, parkFromBlueFront, redFrontYellowPixel, redBackYellowPixel, blueFrontYellowPixel, blueBackYellowPixel, rightYellowPixelLeftTag ;
 
 
 
@@ -87,7 +87,7 @@ public class TrajectorySequences {
 
         //BlueBack
 
-        blueBackCenterLineTotal = drive.trajectorySequenceBuilder(back_blue)
+        blueBackCenterLine2Cycle = drive.trajectorySequenceBuilder(back_blue)
                 .lineTo(new Vector2d(12.00, 33))
                 .lineTo(new Vector2d(12.00, 42.00))
                 .turn(Math.toRadians(90))
@@ -109,7 +109,7 @@ public class TrajectorySequences {
                 .lineTo(new Vector2d(48.00, 36.00))
                 .build();
 
-        blueBackRightLineTotal = drive.trajectorySequenceBuilder(back_blue)
+        blueBackRightLine2Cycle = drive.trajectorySequenceBuilder(back_blue)
                 .splineTo(new Vector2d(9, 35), Math.toRadians(180))
                 .lineTo(new Vector2d(12.00, 42.00))
                 .turn(Math.toRadians(180))
@@ -131,7 +131,7 @@ public class TrajectorySequences {
                 .lineTo(new Vector2d(48.00, 36.00))
                 .build();
 
-        blueBackLeftLineTotal = drive.trajectorySequenceBuilder((back_blue))
+        blueBackLeftLine2Cycle = drive.trajectorySequenceBuilder((back_blue))
                 .splineTo(new Vector2d(14, 35), Math.toRadians(0))
                 .lineTo(new Vector2d(12.00, 42.00))
                 .lineTo(new Vector2d(48.00, 42.00))
