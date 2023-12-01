@@ -39,35 +39,35 @@ public class BlueStage extends CommandOpMode {
     @Override
     public void initialize(){
 
-        detector = new TeamPropDetector(hardwareMap, true);
+        //detector = new TeamPropDetector(hardwareMap, true);
         schedule(new BulkCacheCommand(hardwareMap));
-
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPose);
 
-        detector.startStream();
+//        detector.startStream();
         while(opModeInInit()){
-            locationID = detector.update();
-            telemetry.addLine("Ready for start!");
-            telemetry.addData("Prop", locationID);
+            //locationID = detector.update();
+            //telemetry.addLine("Ready for start!");
+            //telemetry.addData("Prop", locationID);
             telemetry.update();
         }
 
-        detector.stopStream();
+//        detector.stopStream();
 
-        //2 cycle purple yellow cycle
-        switch (locationID){
+        //crazy 2 cycle purple yellow cycle
+        int thing = 1;
+        switch (thing){
             case 0: //Left
-                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine2Cycle));
+                schedule(new SequentialCommandGroup((new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine2Cycle))));
             case 1: //Center
-                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine2Cycle));
+                schedule(new SequentialCommandGroup((new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine2Cycle))));
             case 2: //Right
                 schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine2Cycle));
         }
 
-        //Alternative purple yellow auto
+        //purple yellow auto
 //        switch(locationID) {
 //            case 0: // Left
 //                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine));
@@ -79,7 +79,7 @@ public class BlueStage extends CommandOpMode {
 //                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine));
 //                break;
 //        };
-//
+
 //        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBlueBack));
 //        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackYellowPixel));
     };
