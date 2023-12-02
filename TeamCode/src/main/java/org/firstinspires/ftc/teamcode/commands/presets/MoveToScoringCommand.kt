@@ -5,13 +5,15 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm
 import com.arcrobotics.ftclib.command.ParallelCommandGroup
 import org.firstinspires.ftc.teamcode.commands.liftcommands.LiftPositionCommand
 import com.arcrobotics.ftclib.command.InstantCommand
+import com.arcrobotics.ftclib.command.SequentialCommandGroup
+import com.arcrobotics.ftclib.command.WaitCommand
 import org.firstinspires.ftc.teamcode.subsystems.Arm.ArmPositions
 import org.firstinspires.ftc.teamcode.subsystems.Lift.LiftPositions
+import org.firstinspires.ftc.teamcode.subsystems.Transfer
 
-class MoveToScoringCommand(lift: Lift, arm: Arm, preset: Presets) : ParallelCommandGroup() {
+class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Transfer, preset: Presets) : ParallelCommandGroup() {
 
     enum class Presets {
-        DOWN,
         SHORT,
         MID,
         HIGH
@@ -19,9 +21,11 @@ class MoveToScoringCommand(lift: Lift, arm: Arm, preset: Presets) : ParallelComm
 
     init {
         addCommands(
+            ParallelCommandGroup(
+                InstantCommand({
+                    claw.close()
+                }),
                 when (preset) {
-                    Presets.DOWN ->
-                        LiftPositionCommand(lift, LiftPositions.DOWN.position, true)
                     Presets.SHORT ->
                         LiftPositionCommand(lift, LiftPositions.SHORT.position, true)
                     Presets.MID ->
@@ -30,17 +34,13 @@ class MoveToScoringCommand(lift: Lift, arm: Arm, preset: Presets) : ParallelComm
                         LiftPositionCommand(lift, LiftPositions.HIGH.position, true)
 
                 },
-
-//                InstantCommand({
-//                    when (preset) {
-//                        Presets.DOWN -> arm.position = ArmPositions.GROUND.position
-//                        else -> arm.position = ArmPositions.SCORING.position
-//                    }
-//                }),
-
-                InstantCommand({
-//                    if(claw.clawPosition == Claw.ClawPosition.FULL_OPEN) claw.close()
-                }),
+                SequentialCommandGroup(
+                    WaitCommand(650),
+                    InstantCommand({
+                        arm.up()
+                    }),
+                )
+            )
         )
         addRequirements(lift)
     }

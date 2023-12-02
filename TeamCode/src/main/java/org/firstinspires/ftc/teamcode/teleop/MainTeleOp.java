@@ -6,6 +6,10 @@ import static org.firstinspires.ftc.teamcode.utilities.Utilities.debounce;
 import android.annotation.SuppressLint;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.PerpetualCommand;
+import com.arcrobotics.ftclib.command.button.Trigger;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -13,6 +17,8 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
+import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommand;
+import org.firstinspires.ftc.teamcode.commands.presets.RetractOuttakeCommand;
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
@@ -20,8 +26,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-
-
 
 @TeleOp (name="MainTeleOp")
 public class MainTeleOp extends CommandOpMode {
@@ -51,6 +55,9 @@ public class MainTeleOp extends CommandOpMode {
         // Use a bulk cache to loop faster using old values instead of blocking a thread kinda
         schedule(new BulkCacheCommand(hardwareMap));
 
+        GamepadEx driver = new GamepadEx(gamepad1);
+        GamepadEx manipulator = new GamepadEx(gamepad2);
+
         // Subsystems
         lift = new Lift(hardwareMap);
         airplaneLauncher = new AirplaneLauncher(hardwareMap);
@@ -58,6 +65,36 @@ public class MainTeleOp extends CommandOpMode {
         arm = new Arm(hardwareMap);
         transfer = new Transfer(hardwareMap);
         intake = new Intake(hardwareMap);
+
+        manualLiftCommand = new ManualLiftCommand(lift, manipulator);
+        manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
+
+        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
+
+        new Trigger(() -> manipulator.getLeftY() > 0.4)
+                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.HIGH)
+                        .withTimeout(1900)
+                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+
+        new Trigger(() -> manipulator.getLeftY() < -0.6)
+                .whenActive(new RetractOuttakeCommand(lift, arm, transfer)
+                        .withTimeout(1900)
+                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+
+        //Mid preset
+        new Trigger(() -> manipulator.getRightY() > -0.4)
+                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.MID)
+                        .withTimeout(1900)
+                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+
+        //Short preset
+        new Trigger(() -> manipulator.getRightY() < 0.4)
+                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.SHORT)
+                        .withTimeout(1900)
+                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+
+        manipulator.getGamepadButton(GamepadKeys.Button.Y) // Playstation Triangle
+                .whenHeld(manualLiftResetCommand);
     }
 
 
@@ -75,12 +112,12 @@ public class MainTeleOp extends CommandOpMode {
         }
 
 
-        // Lift brakes when not doing anything
-        lift.brake();
-
-        if (debounce(gamepad2.left_stick_y)) {
-            lift.setLiftPower(gamepad2.left_stick_y);
-        }
+//        // Lift brakes when not doing anything
+//        lift.brake();
+//
+//        if (debounce(gamepad2.left_stick_y)) {
+//            lift.setLiftPower(gamepad2.left_stick_y);
+//        }
 
         // Intake Assembly
         intake.setPower(gamepad1.left_trigger, gamepad1.right_trigger);
@@ -116,28 +153,28 @@ public class MainTeleOp extends CommandOpMode {
             isTransport = true;
         }
 
-        int sign = 0;
-        if (gamepad2.dpad_up) {
-            sign = 1;
-        } else if (gamepad2.dpad_down) {
-            sign = -1;
-        } else {
-            isPressed = false;
-        }
-
-        if (sign != 0 && !isPressed) {
-            isPressed = true;
-            if (isUp) {
-                upOffset += sign*overallOffset;
-                arm.toPosition(Arm.ArmPositions.SCORING.position + upOffset);
-            } else if (isDown) {
-                downOffset += sign*overallOffset;
-                arm.toPosition(Arm.ArmPositions.DOWN.position + downOffset);
-            } else if (isTransport) {
-                transportOffset += sign*overallOffset;
-                arm.toPosition(Arm.ArmPositions.TRANSPORT.position + transportOffset);
-            }
-        }
+//        int sign = 0;
+//        if (gamepad2.dpad_up) {
+//            sign = 1;
+//        } else if (gamepad2.dpad_down) {
+//            sign = -1;
+//        } else {
+//            isPressed = false;
+//        }
+//
+//        if (sign != 0 && !isPressed) {
+//            isPressed = true;
+//            if (isUp) {
+//                upOffset += sign*overallOffset;
+//                arm.toPosition(Arm.ArmPositions.SCORING.position + upOffset);
+//            } else if (isDown) {
+//                downOffset += sign*overallOffset;
+//                arm.toPosition(Arm.ArmPositions.DOWN.position + downOffset);
+//            } else if (isTransport) {
+//                transportOffset += sign*overallOffset;
+//                arm.toPosition(Arm.ArmPositions.TRANSPORT.position + transportOffset);
+//            }
+//        }
 
         telemetry.addData("Offsets", String.format("up %f, down %f, trans %f", upOffset, downOffset, transportOffset));
 

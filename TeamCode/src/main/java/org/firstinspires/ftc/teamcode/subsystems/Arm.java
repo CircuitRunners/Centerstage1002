@@ -28,7 +28,8 @@ public class Arm extends SubsystemBase {
 
     public enum ArmPositions {
         DOWN(0.87),
-        TRANSPORT(0.83 + 0.1), // This secures in places
+        FIT(0.93),
+        TRANSPORT(0.90), // This secures in places
         SCORING(0.37);
 
         public double position;
@@ -118,6 +119,16 @@ public class Arm extends SubsystemBase {
     public void down(){
         setPosition(ArmPositions.DOWN.position);
     }
+
+    public void up(){
+        setPosition(ArmPositions.SCORING.position);
+    }
+
+    public void fit(){
+        setPosition(ArmPositions.FIT.position);
+    }
+
+    public void transport () { setPosition(ArmPositions.TRANSPORT.position);}
 
     // Bypasses the profile
     public void forceDown(){

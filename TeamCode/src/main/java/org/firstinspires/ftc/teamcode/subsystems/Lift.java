@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 public class Lift extends SubsystemBase {
     public enum LiftPositions {
         DOWN(0),
-        SHORT(93),
-        MID(844),
-        HIGH(2500);
+        SHORT(500),
+        MID(1000),
+        HIGH(2000);
 
         public int position;
 
@@ -45,11 +45,11 @@ public class Lift extends SubsystemBase {
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //TODO MAKE SURE THIS WORKS
+        // leftMotor not reversed?!
         leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Negate the gravity when stopped
-        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // change to brake if bad
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -63,8 +63,8 @@ public class Lift extends SubsystemBase {
 
     public void setLiftPower(double power){
         //TODO this could be the PID demon
-        leftMotor.setPower(-power);
-        rightMotor.setPower(+power);
+        leftMotor.setPower(power);
+        rightMotor.setPower(power);
     }
 
     public void brake(){
@@ -73,7 +73,7 @@ public class Lift extends SubsystemBase {
 
     public double getLiftPosition(){
         // THIS IS NEGATED BECAUSE THE VALUES ARE ALL NEGATIVE
-        return -leftMotor.getCurrentPosition();
+        return leftMotor.getCurrentPosition();
     }
 
     public double getLiftVelocity(){
@@ -90,7 +90,10 @@ public class Lift extends SubsystemBase {
 
     public void resetLiftPosition(){
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public double getVoltageComp(){

@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 
+// BEFORE ANYTHIN IS CHANGED DO NOT USE THIS UNLESS TUNED
+
 @Config
 public class ProfiledLiftPositionCommand extends CommandBase {
 
@@ -61,9 +63,6 @@ public class ProfiledLiftPositionCommand extends CommandBase {
 
     @Override
     public void initialize() {
-
-
-
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(lift.getLiftPosition(), lift.getLiftVelocity()),
                 new MotionState(targetPosition, 0),
