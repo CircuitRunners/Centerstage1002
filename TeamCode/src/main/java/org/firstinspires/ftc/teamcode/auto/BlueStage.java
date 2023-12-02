@@ -6,7 +6,10 @@ import android.icu.util.ULocale;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -46,6 +49,20 @@ public class BlueStage extends CommandOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPose);
 
+        TrajectorySequence leftPark = drive.trajectorySequenceBuilder(right)
+                .strafeLeft(powerFullMultiplier*(tile * 2 - square_edge))
+                .build();
+
+        // CHANGE THIS RIGHT VALUE THIS IS BAD
+        TrajectorySequence backOff = drive.trajectorySequenceBuilder(right)
+                .back(half_tile)
+                .build();
+
+        TrajectorySequence rightPark = drive.trajectorySequenceBuilder(left)
+                .forward(powerFullMultiplier*(square_edge + 2 * tile))
+                .strafeLeft(powerFullMultiplier*(tile * 4 - square_edge))
+                .build();
+
 //        detector.startStream();
         while(opModeInInit()){
             //locationID = detector.update();
@@ -56,16 +73,16 @@ public class BlueStage extends CommandOpMode {
 
 //        detector.stopStream();
 
-        //crazy 2 cycle purple yellow cycle
-        int thing = 1;
-        switch (thing){
-            case 0: //Left
-                schedule(new SequentialCommandGroup((new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine2Cycle))));
-            case 1: //Center
-                schedule(new SequentialCommandGroup((new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine2Cycle))));
-            case 2: //Right
-                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine2Cycle));
-        }
+//        //crazy 2 cycle purple yellow cycle
+//        int thing = 1;
+//        switch (thing){
+//            case 0: //Left
+//                schedule(new SequentialCommandGroup((new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackLeftLine2Cycle))));
+//            case 1: //Center
+//                schedule(new SequentialCommandGroup((new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackCenterLine2Cycle))));
+//            case 2: //Right
+//                schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackRightLine2Cycle));
+//        }
 
         //purple yellow auto
 //        switch(locationID) {
@@ -80,8 +97,25 @@ public class BlueStage extends CommandOpMode {
 //                break;
 //        };
 
-//        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBlueBack));
+//       schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBlueBack));
 //        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackYellowPixel));
+
+        schedule(
+                new SequentialCommandGroup(
+                        new TrajectorySequenceCommand(drive, rightPark),
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, backOff),
+                                new InstantCommand(() -> {
+                                    intake.setPower(-0.6);
+                                })
+                        ),
+
+                        new WaitCommand(5000),
+                        new InstantCommand(() -> {
+                            intake.setPower(0);
+                        })
+                )
+        );
     };
 
 }
