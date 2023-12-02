@@ -27,9 +27,9 @@ public class Arm extends SubsystemBase {
     static double slope = regressionResult[0], intercept = regressionResult[1];
 
     public enum ArmPositions {
-        DOWN(0.03),
-        TRANSPORT(0.64),
-        SCORING(0.7);
+        DOWN(0.87),
+        TRANSPORT(0.83 + 0.1), // This secures in places
+        SCORING(0.37);
 
         public double position;
 
@@ -38,7 +38,7 @@ public class Arm extends SubsystemBase {
         }
 
         public double getRightPosition() {
-            return this.position * slope + intercept;
+            return this.position;
         }
     }
 
@@ -70,7 +70,7 @@ public class Arm extends SubsystemBase {
         if(!armProfile.isFinished(timer.seconds())) {
             // Read the current target for the profile
             double leftPosition = armProfile.calculate(timer.seconds()).position;
-            double rightPosition = leftPosition * slope + intercept; // Calculate right position using regression
+            double rightPosition = leftPosition; //* slope + intercept; // Calculate right position using regression
 
             // Set servo positions according to the profile
             leftServo.setPosition(leftPosition);
@@ -130,6 +130,10 @@ public class Arm extends SubsystemBase {
         setPosition(level.position);
     }
 
+    public void toPosition(double level){
+        setPosition(level);
+    }
+
     // Disabling the servos to start tuning
     public void tuningModeOn() {
         leftServo.setPwmDisable();
@@ -143,6 +147,10 @@ public class Arm extends SubsystemBase {
     }
 
 //    GETTERS
+    public void forceSet (ArmPositions positions) {
+        leftServo.setPosition(positions.position);
+        rightServo.setPosition(positions.position);
+    }
 
     // Helper method to log the current positions of the servos to telemetry
     public String getState() {

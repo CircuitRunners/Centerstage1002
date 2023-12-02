@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.utilities.Utilities.debounce;
 
+import android.annotation.SuppressLint;
+
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -40,6 +42,10 @@ public class MainTeleOp extends CommandOpMode {
     private ManualLiftCommand manualLiftCommand;
     private ManualLiftResetCommand manualLiftResetCommand;
 
+    private boolean isUp = false, isDown = true, isTransport = false, isPressed = false;
+    private double upOffset, downOffset, transportOffset;
+    private double overallOffset = 0.05;
+
     @Override
     public void initialize(){
         // Use a bulk cache to loop faster using old values instead of blocking a thread kinda
@@ -55,6 +61,7 @@ public class MainTeleOp extends CommandOpMode {
     }
 
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void run() {
         super.run();
@@ -62,7 +69,7 @@ public class MainTeleOp extends CommandOpMode {
         drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
         // Reset heading with MATH
-        if (gamepad1.cross) {
+        if (gamepad1.square) {
             drivebase.resetHeading();
             gamepad1.rumble(50);
         }
@@ -90,12 +97,49 @@ public class MainTeleOp extends CommandOpMode {
 
         // Arm commands
         if (gamepad2.right_bumper) { // outtake
-            arm.toPosition(Arm.ArmPositions.SCORING);
+            arm.toPosition(Arm.ArmPositions.SCORING.position + upOffset);
+
+            isDown = false;
+            isUp = true;
+            isTransport = false;
         } else if (gamepad2.left_bumper) { //intake
-            arm.toPosition(Arm.ArmPositions.DOWN);
-        } else if (gamepad1.cross) { //transport
-            arm.toPosition(Arm.ArmPositions.TRANSPORT);
+            arm.toPosition(Arm.ArmPositions.DOWN.position + downOffset);
+
+            isDown = true;
+            isUp = false;
+            isTransport = false;
+        } else if (gamepad2.square) { //transport
+            arm.toPosition(Arm.ArmPositions.TRANSPORT.position + transportOffset);
+
+            isDown = false;
+            isUp = false;
+            isTransport = true;
         }
+
+        int sign = 0;
+        if (gamepad2.dpad_up) {
+            sign = 1;
+        } else if (gamepad2.dpad_down) {
+            sign = -1;
+        } else {
+            isPressed = false;
+        }
+
+        if (sign != 0 && !isPressed) {
+            isPressed = true;
+            if (isUp) {
+                upOffset += sign*overallOffset;
+                arm.toPosition(Arm.ArmPositions.SCORING.position + upOffset);
+            } else if (isDown) {
+                downOffset += sign*overallOffset;
+                arm.toPosition(Arm.ArmPositions.DOWN.position + downOffset);
+            } else if (isTransport) {
+                transportOffset += sign*overallOffset;
+                arm.toPosition(Arm.ArmPositions.TRANSPORT.position + transportOffset);
+            }
+        }
+
+        telemetry.addData("Offsets", String.format("up %f, down %f, trans %f", upOffset, downOffset, transportOffset));
 
         telemetry.update();
     }

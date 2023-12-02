@@ -12,9 +12,8 @@ public class Transfer extends SubsystemBase {
     }
 
     public enum IntakePositions {
-        FULLOPEN(0.03),
-        OPEN(0.03),
-        CLOSE(0.7);
+        OPEN(0.343),
+        CLOSE(0.443);
 
         public double position;
 
@@ -29,10 +28,6 @@ public class Transfer extends SubsystemBase {
 
     public void open(){
         setPosition(IntakePositions.OPEN.position);
-    }
-
-    public void fullopen(){
-        setPosition(IntakePositions.FULLOPEN.position);
     }
 
     public void setPosition(double position) {
