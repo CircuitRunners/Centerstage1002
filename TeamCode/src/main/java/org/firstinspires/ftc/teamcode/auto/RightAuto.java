@@ -45,9 +45,9 @@ public class RightAuto extends CommandOpMode {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPose);
-
+//powerful multiplier is doubling distance
         TrajectorySequence rightPark = drive.trajectorySequenceBuilder(right)
-                .strafeRight(powerFullMultiplier*(tile * 2 - square_edge))
+                .strafeRight(tile * 2 - square_edge)
                 .build();
 
         // CHANGE THIS RIGHT VALUE THIS IS BAD
@@ -56,8 +56,8 @@ public class RightAuto extends CommandOpMode {
                 .build();
 
         TrajectorySequence leftPark = drive.trajectorySequenceBuilder(left)
-                .forward(powerFullMultiplier*(square_edge + 2 * tile))
-                .strafeRight(powerFullMultiplier*(tile * 4 - square_edge))
+                .forward(square_edge + 2 * tile)
+                .strafeRight(tile * 4 - square_edge)
                 .build();
 
         while(opModeInInit()){

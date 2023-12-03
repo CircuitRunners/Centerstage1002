@@ -7,6 +7,8 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
+
+
     private static double tile = 24;
     private static double half_tile = 12;
     private static double robot_len = 9;
@@ -17,6 +19,8 @@ public class MeepMeepTesting {
     private static Pose2d front_red = new Pose2d(-36, -61.5, Math.toRadians(90));
     private static Pose2d back_blue = new Pose2d(12, 61.5, Math.toRadians(-90));
     private static Pose2d front_blue = new Pose2d(-36, 61.5, Math.toRadians(-90));
+    private static Pose2d right= new Pose2d(12, -61.5, Math.toRadians(90));
+    private static Pose2d left= new Pose2d(-36, -61.5, Math.toRadians(90));
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
@@ -33,26 +37,8 @@ public class MeepMeepTesting {
                                            .build()
                         );*/
                        .followTrajectorySequence(drive ->
-                               drive.trajectorySequenceBuilder(back_red)
-                                       .splineTo(new Vector2d(9, -35), Math.toRadians(180))
-                                       .lineTo(new Vector2d(12.00, -42.00))
-                                       .turn(Math.toRadians(180))
-                                       .lineTo(new Vector2d(48.00, -42.00))
-                                       .lineTo(new Vector2d(48.00, -36.00))
-                                       .lineTo(new Vector2d(48.00, -29.00))
-                                       .splineTo(new Vector2d(39.00, -12.00), Math.toRadians(180.00))
-                                       .lineTo(new Vector2d(-53.00, -12.00))
-                                       .turn(Math.toRadians(90))
-                                       .lineTo(new Vector2d(48.00, -12.00))
-                                       .turn(Math.toRadians(180))
-                                       .lineTo(new Vector2d(48.00, -29.00))
-                                       .back(4)
-                                       .splineToLinearHeading(new Pose2d(39, -12, Math.toRadians(-90)), Math.toRadians(0))
-                                       .lineTo(new Vector2d(-53.00, -12.00))
-                                       .turn(Math.toRadians(-90))
-                                       .lineTo(new Vector2d(48.00, -12.00))
-                                       .turn(Math.toRadians(180))
-                                       .lineTo(new Vector2d(48.00, -36.00))
+                               drive.trajectorySequenceBuilder(right)
+                                       .strafeRight(2*(tile * 2 - square_edge))
                                        .build()
 
 

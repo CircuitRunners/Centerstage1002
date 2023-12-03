@@ -56,8 +56,9 @@ public class RedAudience extends CommandOpMode {
                 .build();
 
         TrajectorySequence leftPark = drive.trajectorySequenceBuilder(left)
-                .forward(powerFullMultiplier*(square_edge + 2 * tile))
-                .strafeRight(powerFullMultiplier*(tile * 4 - square_edge))
+                .forward(1.5*(square_edge + 2 * tile))
+                .turn(Math.toRadians(-90))
+                .forward(   1.5*(tile * 4 - square_edge))
                 .build();
 
         while(opModeInInit()){
