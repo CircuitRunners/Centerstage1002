@@ -22,10 +22,14 @@ import org.firstinspires.ftc.teamcode.commands.presets.RetractOuttakeCommand;
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
+import org.firstinspires.ftc.teamcode.subsystems.ExtendoArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import com.kauailabs.navx.ftc.AHRS;
 
 @TeleOp (name="MainTeleOp")
 public class MainTeleOp extends CommandOpMode {
@@ -39,6 +43,8 @@ public class MainTeleOp extends CommandOpMode {
     private Arm arm;
     private Transfer transfer;
     private Intake intake;
+    private ExtendoArm frontArm;
+    private AHRS altHeadRefSys;
 
     private ServoImplEx rightArm, leftArm, claw;
     private IMU imu;
@@ -57,6 +63,8 @@ public class MainTeleOp extends CommandOpMode {
 
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx manipulator = new GamepadEx(gamepad2);
+
+        altHeadRefSys = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
 
         // Subsystems
         lift = new Lift(hardwareMap);
@@ -95,6 +103,7 @@ public class MainTeleOp extends CommandOpMode {
 
         manipulator.getGamepadButton(GamepadKeys.Button.Y) // Playstation Triangle
                 .whenHeld(manualLiftResetCommand);
+        frontArm = new ExtendoArm(hardwareMap);
     }
 
 
@@ -153,30 +162,11 @@ public class MainTeleOp extends CommandOpMode {
             isTransport = true;
         }
 
-//        int sign = 0;
-//        if (gamepad2.dpad_up) {
-//            sign = 1;
-//        } else if (gamepad2.dpad_down) {
-//            sign = -1;
-//        } else {
-//            isPressed = false;
-//        }
-//
-//        if (sign != 0 && !isPressed) {
-//            isPressed = true;
-//            if (isUp) {
-//                upOffset += sign*overallOffset;
-//                arm.toPosition(Arm.ArmPositions.SCORING.position + upOffset);
-//            } else if (isDown) {
-//                downOffset += sign*overallOffset;
-//                arm.toPosition(Arm.ArmPositions.DOWN.position + downOffset);
-//            } else if (isTransport) {
-//                transportOffset += sign*overallOffset;
-//                arm.toPosition(Arm.ArmPositions.TRANSPORT.position + transportOffset);
-//            }
-//        }
-
-        telemetry.addData("Offsets", String.format("up %f, down %f, trans %f", upOffset, downOffset, transportOffset));
+        if(gamepad2.y){
+            frontArm.up();
+        } else if(gamepad2.a){
+            frontArm.down();
+        }
 
         telemetry.update();
     }

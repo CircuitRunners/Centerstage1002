@@ -25,6 +25,8 @@ android {
 }
 
 dependencies {
+    implementation(name: 'navx_ftc-release', ext: 'aar')
+
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 

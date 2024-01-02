@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -18,9 +19,9 @@ public class Arm extends SubsystemBase {
     // THIS ONLY CALCULATES REGRESSION AND OFFSET!
     // CHANGE ACTUAL VALUES IN THE ARM POSITIONS ENUM BELOW!
     private static double[][] servoPositions = {
-            {0.03, 0.13}, // DOWN positions (left, right)
-            {0.64, 0.74}, // TRANSPORT positions (left, right)
-            {0.7, 0.8}    // SCORING positions (left, right)
+        {0.03, 0.13}, // DOWN positions (left, right)
+        {0.64, 0.74}, // TRANSPORT positions (left, right)
+        {0.7, 0.8}    // SCORING positions (left, right)
     };
 
     static double[] regressionResult = linearRegression(servoPositions);
@@ -93,6 +94,21 @@ public class Arm extends SubsystemBase {
             timer.reset();
         }
         prevTarget = target;
+    }
+
+    public double[] getServoPositions (HardwareMap hardwareMap) {
+        AnalogInput leftAnalogInput = hardwareMap.get(AnalogInput.class, "leftArmAnalog");
+        AnalogInput rightAnalogInput = hardwareMap.get(AnalogInput.class, "rightArmAnalog");
+
+        return new double[]{
+            analogInputToPosition(leftAnalogInput),
+            analogInputToPosition(rightAnalogInput),
+        };
+    }
+
+    public double analogInputToPosition (AnalogInput analogInput) {
+        double position = analogInput.getVoltage() / 3.3 * 360;
+        return position;
     }
 
     public static double[] linearRegression(double[][] dataPoints) {
@@ -176,6 +192,7 @@ public class Arm extends SubsystemBase {
         rightServo.setPwmDisable();
         return theReturnStuff;
     }
+
     public double getLeftPosition(){
         return leftServo.getPosition();
     }
