@@ -28,8 +28,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Transfer;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
-import com.kauailabs.navx.ftc.AHRS;
+//import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+//import com.kauailabs.navx.ftc.AHRS;
 
 @TeleOp (name="MainTeleOp")
 public class MainTeleOp extends CommandOpMode {
@@ -38,13 +38,13 @@ public class MainTeleOp extends CommandOpMode {
     private double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
 
     private Lift lift;
-    private AirplaneLauncher airplaneLauncher;
+//    private AirplaneLauncher airplaneLauncher;
     private Drivebase drivebase;
     private Arm arm;
     private Transfer transfer;
     private Intake intake;
     private ExtendoArm frontArm;
-    private AHRS altHeadRefSys;
+//    private AHRS altHeadRefSys;
 
     private ServoImplEx rightArm, leftArm, claw;
     private IMU imu;
@@ -64,11 +64,11 @@ public class MainTeleOp extends CommandOpMode {
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx manipulator = new GamepadEx(gamepad2);
 
-        altHeadRefSys = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
+//        altHeadRefSys = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
 
         // Subsystems
-        lift = new Lift(hardwareMap);
-        airplaneLauncher = new AirplaneLauncher(hardwareMap);
+//        lift = new Lift(hardwareMap);
+//        airplaneLauncher = new AirplaneLauncher(hardwareMap);
         drivebase = new Drivebase(hardwareMap);
         arm = new Arm(hardwareMap);
         transfer = new Transfer(hardwareMap);
@@ -77,32 +77,32 @@ public class MainTeleOp extends CommandOpMode {
         manualLiftCommand = new ManualLiftCommand(lift, manipulator);
         manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
 
-        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
+//        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 
-        new Trigger(() -> manipulator.getLeftY() > 0.4)
-                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.HIGH)
-                        .withTimeout(1900)
-                        .interruptOn(() -> manualLiftCommand.isManualActive()));
-
-        new Trigger(() -> manipulator.getLeftY() < -0.6)
-                .whenActive(new RetractOuttakeCommand(lift, arm, transfer)
-                        .withTimeout(1900)
-                        .interruptOn(() -> manualLiftCommand.isManualActive()));
-
-        //Mid preset
-        new Trigger(() -> manipulator.getRightY() > -0.4)
-                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.MID)
-                        .withTimeout(1900)
-                        .interruptOn(() -> manualLiftCommand.isManualActive()));
-
-        //Short preset
-        new Trigger(() -> manipulator.getRightY() < 0.4)
-                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.SHORT)
-                        .withTimeout(1900)
-                        .interruptOn(() -> manualLiftCommand.isManualActive()));
-
-        manipulator.getGamepadButton(GamepadKeys.Button.Y) // Playstation Triangle
-                .whenHeld(manualLiftResetCommand);
+//        new Trigger(() -> manipulator.getLeftY() > 0.4)
+//                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.HIGH)
+//                        .withTimeout(1900)
+//                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+//
+//        new Trigger(() -> manipulator.getLeftY() < -0.6)
+//                .whenActive(new RetractOuttakeCommand(lift, arm, transfer)
+//                        .withTimeout(1900)
+//                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+//
+//        //Mid preset
+//        new Trigger(() -> manipulator.getRightY() > -0.4)
+//                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.MID)
+//                        .withTimeout(1900)
+//                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+//
+//        //Short preset
+//        new Trigger(() -> manipulator.getRightY() < 0.4)
+//                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.SHORT)
+//                        .withTimeout(1900)
+//                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+//
+//        manipulator.getGamepadButton(GamepadKeys.Button.Y) // Playstation Triangle
+//                .whenHeld(manualLiftResetCommand);
         frontArm = new ExtendoArm(hardwareMap);
     }
 
@@ -132,7 +132,7 @@ public class MainTeleOp extends CommandOpMode {
         intake.setPower(gamepad1.left_trigger, gamepad1.right_trigger);
 
         // Airplane Launcher
-        airplaneLauncher.processInput(gamepad2.cross, false);
+//        airplaneLauncher.processInput(gamepad2.cross, false);
 
         // Transfer/Claw
         if (gamepad1.right_bumper) {
@@ -143,23 +143,15 @@ public class MainTeleOp extends CommandOpMode {
 
         // Arm commands
         if (gamepad2.right_bumper) { // outtake
-            arm.toPosition(Arm.ArmPositions.SCORING.position + upOffset);
+            arm.toPosition(Arm.ArmPositions.SCORING.getLeftPosition() + upOffset);
 
             isDown = false;
             isUp = true;
-            isTransport = false;
         } else if (gamepad2.left_bumper) { //intake
-            arm.toPosition(Arm.ArmPositions.DOWN.position + downOffset);
+            arm.toPosition(Arm.ArmPositions.DOWN.getLeftPosition() + downOffset);
 
             isDown = true;
             isUp = false;
-            isTransport = false;
-        } else if (gamepad2.square) { //transport
-            arm.toPosition(Arm.ArmPositions.TRANSPORT.position + transportOffset);
-
-            isDown = false;
-            isUp = false;
-            isTransport = true;
         }
 
         if(gamepad2.y){

@@ -16,31 +16,25 @@ public class Arm extends SubsystemBase {
     private ServoImplEx leftServo;
     private ServoImplEx rightServo;
 
-    // THIS ONLY CALCULATES REGRESSION AND OFFSET!
-    // CHANGE ACTUAL VALUES IN THE ARM POSITIONS ENUM BELOW!
-    private static double[][] servoPositions = {
-        {0.03, 0.13}, // DOWN positions (left, right)
-        {0.64, 0.74}, // TRANSPORT positions (left, right)
-        {0.7, 0.8}    // SCORING positions (left, right)
-    };
-
-    static double[] regressionResult = linearRegression(servoPositions);
-    static double slope = regressionResult[0], intercept = regressionResult[1];
-
     public enum ArmPositions {
-        DOWN(0.87),
-        FIT(0.93),
-        TRANSPORT(0.90), // This secures in places
-        SCORING(0.37);
+        // (left, right)
+        DOWN(0.61, 0.54), // 0.61 0.82
+        SCORING(0.9, 0.058); // 0.9 0.333
 
-        public double position;
+        private final double position_right;
+        private final double position_left;
 
-        ArmPositions(double position){
-            this.position = position;
+        ArmPositions(double position_left, double position_right) {
+            this.position_right = position_right;
+            this.position_left = position_left;
         }
 
         public double getRightPosition() {
-            return this.position;
+            return this.position_right;
+        }
+
+        public double getLeftPosition() {
+            return this.position_left;
         }
     }
 
@@ -53,26 +47,34 @@ public class Arm extends SubsystemBase {
 
     // Motion profile constraints
     // TODO EDIT THESE
-    private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(1.6, 1.8);
+    private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0.2, 1.8);
 
 //    PROCESSORS
 
     // Motion profile, initialize to start at down
-    private TrapezoidProfile armProfile = new TrapezoidProfile(
+    private TrapezoidProfile leftArmProfile = new TrapezoidProfile(
             constraints,
-            new TrapezoidProfile.State(ArmPositions.DOWN.position, 0),
-            new TrapezoidProfile.State(ArmPositions.DOWN.position, 0)
+            new TrapezoidProfile.State(ArmPositions.DOWN.position_left, 0),
+            new TrapezoidProfile.State(ArmPositions.DOWN.position_left, 0)
+    );
+
+    private TrapezoidProfile rightArmProfile = new TrapezoidProfile(
+            constraints,
+            new TrapezoidProfile.State(ArmPositions.DOWN.position_right, 0),
+            new TrapezoidProfile.State(ArmPositions.DOWN.position_right, 0)
     );
 
     private ElapsedTime timer = new ElapsedTime();
-    private double prevTarget = ArmPositions.DOWN.position;
+
+    private double prevTargetLeft = ArmPositions.DOWN.position_left;
+    private double prevTargetRight = ArmPositions.DOWN.position_right;
 
     @Override
     public void periodic(){
-        if(!armProfile.isFinished(timer.seconds())) {
+        if(!leftArmProfile.isFinished(timer.seconds())) {
             // Read the current target for the profile
-            double leftPosition = armProfile.calculate(timer.seconds()).position;
-            double rightPosition = leftPosition; //* slope + intercept; // Calculate right position using regression
+            double leftPosition = leftArmProfile.calculate(timer.seconds()).position;
+            double rightPosition = rightArmProfile.calculate(timer.seconds()).position;
 
             // Set servo positions according to the profile
             leftServo.setPosition(leftPosition);
@@ -81,10 +83,20 @@ public class Arm extends SubsystemBase {
     }
 
     // Set the servos to a numerical position
-    public void setPosition(double target) {
+    public void setPosition(ArmPositions target) {
+        setLeftPosition(target.position_left);
+        setRightPosition(target.position_right);
+    }
+
+    public void setPosition (double forced) {
+        leftServo.setPosition(forced);
+        rightServo.setPosition(forced);
+    }
+
+    private void setLeftPosition (double target) {
         // Create a new profile starting from the last position command
-        if(prevTarget != target){
-            armProfile = new TrapezoidProfile(
+        if(prevTargetLeft != target){
+            leftArmProfile = new TrapezoidProfile(
                     constraints,
                     new TrapezoidProfile.State(target, 0),
                     new TrapezoidProfile.State(leftServo.getPosition(), 0)
@@ -93,9 +105,23 @@ public class Arm extends SubsystemBase {
             //Reset the timer
             timer.reset();
         }
-        prevTarget = target;
+        prevTargetLeft = target;
     }
 
+    private void setRightPosition (double target) {
+        // Create a new profile starting from the last position command
+        if(prevTargetRight != target){
+            rightArmProfile = new TrapezoidProfile(
+                    constraints,
+                    new TrapezoidProfile.State(target, 0),
+                    new TrapezoidProfile.State(rightServo.getPosition(), 0)
+            );
+
+            //Reset the timer
+            timer.reset();
+        }
+        prevTargetRight = target;
+    }
     public double[] getServoPositions (HardwareMap hardwareMap) {
         AnalogInput leftAnalogInput = hardwareMap.get(AnalogInput.class, "leftArmAnalog");
         AnalogInput rightAnalogInput = hardwareMap.get(AnalogInput.class, "rightArmAnalog");
@@ -111,50 +137,21 @@ public class Arm extends SubsystemBase {
         return position;
     }
 
-    public static double[] linearRegression(double[][] dataPoints) {
-        int n = dataPoints.length;
-        double sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
-
-        for (double[] point : dataPoints) {
-            sumX += point[0]; // Sum of left servo positions
-            sumY += point[1]; // Sum of right servo positions
-            sumXY += point[0] * point[1]; // Sum of product of left and right positions
-            sumXX += point[0] * point[0]; // Sum of square of left positions
-        }
-
-        double slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
-        double intercept = (sumY - slope * sumX) / n;
-
-        return new double[]{slope, intercept};
-    }
-
-
 //    SETTERS
 
     // All the way to the rest position
     public void down(){
-        setPosition(ArmPositions.DOWN.position);
+        setPosition(ArmPositions.DOWN);
     }
 
     public void up(){
-        setPosition(ArmPositions.SCORING.position);
+        setPosition(ArmPositions.SCORING);
     }
-
-    public void fit(){
-        setPosition(ArmPositions.FIT.position);
-    }
-
-    public void transport () { setPosition(ArmPositions.TRANSPORT.position);}
 
     // Bypasses the profile
     public void forceDown(){
-        leftServo.setPosition(ArmPositions.DOWN.position);
-        rightServo.setPosition(ArmPositions.DOWN.getRightPosition());
-    }
-
-    // Goes to a position
-    public void toPosition(ArmPositions level){
-        setPosition(level.position);
+        leftServo.setPosition(ArmPositions.DOWN.position_left);
+        rightServo.setPosition(ArmPositions.DOWN.position_right);
     }
 
     public void toPosition(double level){
@@ -174,9 +171,9 @@ public class Arm extends SubsystemBase {
     }
 
 //    GETTERS
-    public void forceSet (ArmPositions positions) {
-        leftServo.setPosition(positions.position);
-        rightServo.setPosition(positions.position);
+    public void forceSet (ArmPositions position) {
+        leftServo.setPosition(position.position_left);
+        rightServo.setPosition(position.position_right);
     }
 
     // Helper method to log the current positions of the servos to telemetry
@@ -199,9 +196,5 @@ public class Arm extends SubsystemBase {
 
     public double getRightPosition(){
         return rightServo.getPosition();
-    }
-
-    public String getRegressionResults() {
-        return String.format("Best fit line: slope = %s, intercept = %s", slope, intercept);
     }
 }

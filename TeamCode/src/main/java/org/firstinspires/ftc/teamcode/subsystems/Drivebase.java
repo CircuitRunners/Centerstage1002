@@ -19,8 +19,8 @@ public class Drivebase extends SubsystemBase {
     private IMU imu;
     private static Parameters parameters = new Parameters(
             new RevHubOrientationOnRobot(
-                    RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                    RevHubOrientationOnRobot.UsbFacingDirection.UP
+                    RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                    RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
             )
     );;
 

@@ -84,7 +84,6 @@ public class RobotTester extends CommandOpMode {
             if ((Math.abs(gamepad1.left_stick_y) > 0.01) && gamepad1.square) intakePower = gamepad1.left_stick_y;
         }
         telemetry.addData("Arm", arm.getState());
-        telemetry.addData("Arm Reg", arm.getRegressionResults());
         telemetry.addData("Airplane Launcher", airplaneLauncher.getPosition());
         telemetry.addData("Transfer", transfer.getPosition());
 

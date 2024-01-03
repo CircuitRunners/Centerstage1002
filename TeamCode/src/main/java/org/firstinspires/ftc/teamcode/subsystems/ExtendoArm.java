@@ -39,8 +39,8 @@ public class ExtendoArm extends SubsystemBase {
     }
 
     public ExtendoArm(HardwareMap hardwareMap){
-        leftServo = hardwareMap.get(ServoImplEx.class, "leftArm");
-        rightServo = hardwareMap.get(ServoImplEx.class, "rightArm");
+        leftServo = hardwareMap.get(ServoImplEx.class, "leftArmServo");
+        rightServo = hardwareMap.get(ServoImplEx.class, "rightArmServo");
 
         up();
     }

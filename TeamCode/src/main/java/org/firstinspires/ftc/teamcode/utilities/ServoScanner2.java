@@ -2,15 +2,11 @@ package org.firstinspires.ftc.teamcode.utilities;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 
-@TeleOp (name="ServoScanner")
-public class ServoScanner extends CommandOpMode {
+@TeleOp (name="ServoScanner 2")
+public class ServoScanner2 extends CommandOpMode {
     ServoModule mod1, mod2, mod3;
     @Override
     public void initialize() {
@@ -20,8 +16,8 @@ public class ServoScanner extends CommandOpMode {
 //        DOWN(0.61, 0.82), // 0.61 0.82
 //        SCORING(0.9, 0.333); // 0.9 0.333
 
-        mod1 = new ServoModule(hardwareMap, "rightArm", driver);
-//        mod2 = new ServoModule(hardwareMap, "leftArm", manipulator);
+//        mod1 = new ServoModule(hardwareMap, "rightArm", driver);
+        mod2 = new ServoModule(hardwareMap, "leftArm", manipulator);
 //        mod3 = new ServoModule(hardwareMap, "claw", driver);
     }
     @Override
@@ -56,7 +52,7 @@ public class ServoScanner extends CommandOpMode {
 
 //        mod1.mode(false);
 
-        pseudoPeriodic(" test", mod1);
+        pseudoPeriodic(" test", mod2);
 //        pseudoPeriodic("claw", mod3);
         telemetry.update();
     }
