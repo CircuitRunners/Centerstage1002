@@ -67,7 +67,7 @@ public class MainTeleOp extends CommandOpMode {
 //        altHeadRefSys = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
 
         // Subsystems
-//        lift = new Lift(hardwareMap);
+        lift = new Lift(hardwareMap);
 //        airplaneLauncher = new AirplaneLauncher(hardwareMap);
         drivebase = new Drivebase(hardwareMap);
         arm = new Arm(hardwareMap);
@@ -78,7 +78,7 @@ public class MainTeleOp extends CommandOpMode {
         manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
 
 //        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
-
+//
 //        new Trigger(() -> manipulator.getLeftY() > 0.4)
 //                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.HIGH)
 //                        .withTimeout(1900)
@@ -121,12 +121,12 @@ public class MainTeleOp extends CommandOpMode {
         }
 
 
-//        // Lift brakes when not doing anything
-//        lift.brake();
-//
-//        if (debounce(gamepad2.left_stick_y)) {
-//            lift.setLiftPower(gamepad2.left_stick_y);
-//        }
+        // Lift brakes when not doing anything
+        lift.brake();
+
+        if (debounce(gamepad2.left_stick_y)) {
+            lift.setLiftPower(gamepad2.left_stick_y);
+        }
 
         // Intake Assembly
         intake.setPower(gamepad1.left_trigger, gamepad1.right_trigger);

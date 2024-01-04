@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 public class Lift extends SubsystemBase {
     public enum LiftPositions {
         DOWN(0),
-        SHORT(500),
-        MID(1000),
-        HIGH(2000);
+        SHORT(200),
+        MID(450),
+        HIGH(770);
 
         public int position;
 
@@ -46,11 +46,11 @@ public class Lift extends SubsystemBase {
 
         //TODO MAKE SURE THIS WORKS
         // leftMotor not reversed?!
-        leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Negate the gravity when stopped
-        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // change to brake if bad
-        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // change to brake if bad
+//        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         voltageComp = 12.0 / voltageSensor.getVoltage();

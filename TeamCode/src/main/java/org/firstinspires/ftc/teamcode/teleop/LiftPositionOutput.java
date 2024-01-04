@@ -27,6 +27,8 @@ public class LiftPositionOutput extends LinearOpMode {
             double velocity = lift.getLiftVelocity();
             double acceleration = velocity / timer.seconds();
 
+//            lift.setLiftPower(0.5);
+
             timer.reset();
 
             telemetry.addData("Lift Position", position );

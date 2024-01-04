@@ -12,7 +12,7 @@ public class LiftPositionCommand extends CommandBase {
 
     private PIDFController liftController;
     public static PIDCoefficients coefficients =
-            new PIDCoefficients(0.003, 0.000, 0.0000);
+            new PIDCoefficients(0.0269, 0.003, 0.0014);
     // 0.0269, 0.003, 0.0014
 
     private double tolerance = 15;
