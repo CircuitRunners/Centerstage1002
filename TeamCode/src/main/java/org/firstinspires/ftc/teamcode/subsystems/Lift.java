@@ -58,7 +58,7 @@ public class Lift extends SubsystemBase {
         // Negate the gravity when stopped
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // change to brake if bad
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         voltageComp = 12.0 / voltageSensor.getVoltage();

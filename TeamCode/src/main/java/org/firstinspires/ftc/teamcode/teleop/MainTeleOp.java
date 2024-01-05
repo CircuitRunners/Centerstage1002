@@ -111,47 +111,55 @@ public class MainTeleOp extends CommandOpMode {
 
 
         // Lift brakes when not doing anything
-        lift.brake_power();
 
-        if (debounce(gamepad2.left_stick_y)) {
-            lift.setLiftPower(gamepad2.left_stick_y);
+
+        double lift_speed = .77;
+        double gravity_constant = 0.23;
+        if (gamepad2.dpad_up) {
+            lift.setLiftPower(-lift_speed + 0.23);
+        } else if (gamepad2.dpad_down) {
+            lift.setLiftPower(lift_speed-gravity_constant);
+        } else {
+            lift.brake_power();
         }
 
-        if (debounce(gamepad2.right_trigger)) {
-            lift.hangPower(gamepad2.right_trigger);
-        } else if (debounce(gamepad2.left_trigger)) {
-            lift.hangPower(-0.2);
+        double keepRobotUpPowerWinch = 0.2;
+        if (debounce(gamepad2.right_stick_y)) {
+            lift.hangPower(gamepad2.right_stick_y);
+        } else if (debounce(gamepad2.right_stick_x)) {
+            lift.hangPower(-keepRobotUpPowerWinch);
         } else {
             lift.hangPower(0);
         }
 
 
         // Intake Assembly
-        intake.setPower(gamepad1.left_trigger, gamepad1.right_trigger);
+        intake.setPower(gamepad1.right_trigger, gamepad1.left_trigger);
 
         // Airplane Launcher
 //        airplaneLauncher.processInput(gamepad2.cross, false);
 
         // Transfer/Claw
-        if (gamepad1.right_bumper) {
+        if (gamepad2.right_bumper) {
             transfer.close();
-        } else if (gamepad1.left_bumper) {
+        } else if (gamepad2.left_bumper) {
             transfer.open();
         }
 
         // Arm commands
-        if (gamepad2.right_bumper) { // outtake
+        if (debounce(gamepad2.right_trigger)) { // outtake
             arm.up();
-        } else if (gamepad2.left_bumper) { //intake
+        } else if (debounce(gamepad2.left_trigger)) { //intake
             arm.down();
         }
 
         // Front "Extendo" Arm up/down
-        if (gamepad2.triangle){
+        if (gamepad1.left_bumper){
             frontArm.up();
-        } else if(gamepad2.cross){
+        } else if(gamepad1.right_bumper){
             frontArm.down();
         }
+
         if (gamepad2.circle){
             lift.enableHang();
         } else if (gamepad2.square) {
