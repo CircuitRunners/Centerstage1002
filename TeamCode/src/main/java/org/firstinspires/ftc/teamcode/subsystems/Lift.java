@@ -43,6 +43,7 @@ public class Lift extends SubsystemBase {
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftLift");
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightLift");
         winchMotor = hardwareMap.get(DcMotorEx.class, "winch");
+        winchServo = hardwareMap.get(ServoImplEx.class, "hangServo");
 
         // Zero both the motors
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -57,6 +58,7 @@ public class Lift extends SubsystemBase {
         // Negate the gravity when stopped
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // change to brake if bad
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         voltageComp = 12.0 / voltageSensor.getVoltage();
@@ -107,7 +109,7 @@ public class Lift extends SubsystemBase {
     }
 
     public void hangPower (double power) {
-        setLiftPower(power);
+//        setLiftPower(power);
         double constantWinchMultiplier = 1.0;
         winchMotor.setPower(power * constantWinchMultiplier);
     }

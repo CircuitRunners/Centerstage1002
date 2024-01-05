@@ -117,6 +117,15 @@ public class MainTeleOp extends CommandOpMode {
             lift.setLiftPower(gamepad2.left_stick_y);
         }
 
+        if (debounce(gamepad2.right_trigger)) {
+            lift.hangPower(gamepad2.right_trigger);
+        } else if (debounce(gamepad2.left_trigger)) {
+            lift.hangPower(-0.2);
+        } else {
+            lift.hangPower(0);
+        }
+
+
         // Intake Assembly
         intake.setPower(gamepad1.left_trigger, gamepad1.right_trigger);
 
@@ -138,11 +147,17 @@ public class MainTeleOp extends CommandOpMode {
         }
 
         // Front "Extendo" Arm up/down
-        if (gamepad2.y){
+        if (gamepad2.triangle){
             frontArm.up();
-        } else if(gamepad2.a){
+        } else if(gamepad2.cross){
             frontArm.down();
         }
+        if (gamepad2.circle){
+            lift.enableHang();
+        } else if (gamepad2.square) {
+            lift.initialInitHang();
+        }
+
 
         // Ensure telemetry actually works
         telemetry.update();
