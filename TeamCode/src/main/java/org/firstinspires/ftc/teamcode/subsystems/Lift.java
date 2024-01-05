@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImpl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class Lift extends SubsystemBase {
@@ -25,8 +28,12 @@ public class Lift extends SubsystemBase {
         }
     }
 
+    public double winchServoInit = 0.5, winchServoEngage = 1.0;
+
     private DcMotorEx leftMotor;
     private DcMotorEx rightMotor;
+    private DcMotorEx winchMotor;
+    private ServoImplEx winchServo;
 
     private VoltageSensor voltageSensor;
     private double voltageComp = 1.0;
@@ -35,6 +42,7 @@ public class Lift extends SubsystemBase {
 
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftLift");
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightLift");
+        winchMotor = hardwareMap.get(DcMotorEx.class, "winch");
 
         // Zero both the motors
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -44,13 +52,11 @@ public class Lift extends SubsystemBase {
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        //TODO MAKE SURE THIS WORKS
-        // leftMotor not reversed?!
         rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Negate the gravity when stopped
-//        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // change to brake if bad
-//        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // change to brake if bad
+        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         voltageComp = 12.0 / voltageSensor.getVoltage();
@@ -67,7 +73,7 @@ public class Lift extends SubsystemBase {
         rightMotor.setPower(power);
     }
 
-    public void brake(){
+    public void brake_power(){
         setLiftPower(0);
     }
 
@@ -98,5 +104,19 @@ public class Lift extends SubsystemBase {
 
     public double getVoltageComp(){
         return voltageComp;
+    }
+
+    public void hangPower (double power) {
+        setLiftPower(power);
+        double constantWinchMultiplier = 1.0;
+        winchMotor.setPower(power * constantWinchMultiplier);
+    }
+    
+    public void enableHang () {
+        winchServo.setPosition(winchServoEngage);
+    }
+
+    public void initialInitHang () {
+        winchServo.setPosition(winchServoInit);
     }
 }

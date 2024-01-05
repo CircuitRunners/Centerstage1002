@@ -6,10 +6,7 @@ import static org.firstinspires.ftc.teamcode.utilities.Utilities.debounce;
 import android.annotation.SuppressLint;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.PerpetualCommand;
-import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -17,8 +14,6 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
-import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommand;
-import org.firstinspires.ftc.teamcode.commands.presets.RetractOuttakeCommand;
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
@@ -27,10 +22,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-
-//import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
-//import com.kauailabs.navx.ftc.AHRS;
-
 @TeleOp (name="MainTeleOp")
 public class MainTeleOp extends CommandOpMode {
     private DcMotorEx frontLeft, backLeft, frontRight, backRight, intakeMotor;
@@ -53,7 +44,7 @@ public class MainTeleOp extends CommandOpMode {
     private ManualLiftResetCommand manualLiftResetCommand;
 
     private boolean isUp = false, isDown = true, isTransport = false, isPressed = false;
-    private double upOffset, downOffset, transportOffset;
+    private double upOffset = 0.0, downOffset = 0.0, transportOffset = 0.0;
     private double overallOffset = 0.05;
 
     @Override
@@ -63,8 +54,6 @@ public class MainTeleOp extends CommandOpMode {
 
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx manipulator = new GamepadEx(gamepad2);
-
-//        altHeadRefSys = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
 
         // Subsystems
         lift = new Lift(hardwareMap);
@@ -122,7 +111,7 @@ public class MainTeleOp extends CommandOpMode {
 
 
         // Lift brakes when not doing anything
-        lift.brake();
+        lift.brake_power();
 
         if (debounce(gamepad2.left_stick_y)) {
             lift.setLiftPower(gamepad2.left_stick_y);
@@ -143,23 +132,19 @@ public class MainTeleOp extends CommandOpMode {
 
         // Arm commands
         if (gamepad2.right_bumper) { // outtake
-            arm.toPosition(Arm.ArmPositions.SCORING.getLeftPosition() + upOffset);
-
-            isDown = false;
-            isUp = true;
+            arm.up();
         } else if (gamepad2.left_bumper) { //intake
-            arm.toPosition(Arm.ArmPositions.DOWN.getLeftPosition() + downOffset);
-
-            isDown = true;
-            isUp = false;
+            arm.down();
         }
 
-        if(gamepad2.y){
+        // Front "Extendo" Arm up/down
+        if (gamepad2.y){
             frontArm.up();
         } else if(gamepad2.a){
             frontArm.down();
         }
 
+        // Ensure telemetry actually works
         telemetry.update();
     }
 }

@@ -14,12 +14,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Arm extends SubsystemBase {
     private ServoImplEx leftServo;
-    private ServoImplEx rightServo;
+//    private ServoImplEx rightServo;
 
     public enum ArmPositions {
         // (left, right)
-        DOWN(0, 0), // 0.61 0.82
-        SCORING(1, 1); // 0.9 0.333
+        DOWN(.73, 0), // 0.61 0.82
+        SCORING(.233, 1); // 0.9 0.333
 
         private final double position_right;
         private final double position_left;
@@ -40,14 +40,14 @@ public class Arm extends SubsystemBase {
 
     public Arm(HardwareMap hardwareMap){
         leftServo = hardwareMap.get(ServoImplEx.class, "leftArm");
-        rightServo = hardwareMap.get(ServoImplEx.class, "rightArm");
+//        rightServo = hardwareMap.get(ServoImplEx.class, "rightArm");z
 
         forceDown();
     }
 
     // Motion profile constraints
     // TODO EDIT THESE
-    private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0.2, 1.8);
+    private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0.6, 1.8);
 
 //    PROCESSORS
 
@@ -58,39 +58,39 @@ public class Arm extends SubsystemBase {
             new TrapezoidProfile.State(ArmPositions.DOWN.position_left, 0)
     );
 
-    private TrapezoidProfile rightArmProfile = new TrapezoidProfile(
-            constraints,
-            new TrapezoidProfile.State(ArmPositions.DOWN.position_right, 0),
-            new TrapezoidProfile.State(ArmPositions.DOWN.position_right, 0)
-    );
+//    private TrapezoidProfile rightArmProfile = new TrapezoidProfile(
+//            constraints,
+//            new TrapezoidProfile.State(ArmPositions.DOWN.position_right, 0),
+//            new TrapezoidProfile.State(ArmPositions.DOWN.position_right, 0)
+//    );
 
     private ElapsedTime timer = new ElapsedTime();
 
     private double prevTargetLeft = ArmPositions.DOWN.position_left;
-    private double prevTargetRight = ArmPositions.DOWN.position_right;
+//    private double prevTargetRight = ArmPositions.DOWN.position_right;
 
     @Override
     public void periodic(){
         if(!leftArmProfile.isFinished(timer.seconds())) {
             // Read the current target for the profile
             double leftPosition = leftArmProfile.calculate(timer.seconds()).position;
-            double rightPosition = rightArmProfile.calculate(timer.seconds()).position;
+//            double rightPosition = rightArmProfile.calculate(timer.seconds()).position;
 
             // Set servo positions according to the profile
             leftServo.setPosition(leftPosition);
-            rightServo.setPosition(rightPosition);
+//            rightServo.setPosition(rightPosition);
         }
     }
 
     // Set the servos to a numerical position
     public void setPosition(ArmPositions target) {
         setLeftPosition(target.position_left);
-        setRightPosition(target.position_right);
+//        setRightPosition(target.position_right);
     }
 
     public void setPosition (double forced) {
         leftServo.setPosition(forced);
-        rightServo.setPosition(forced);
+//        rightServo.setPosition(forced);
     }
 
     private void setLeftPosition (double target) {
@@ -108,34 +108,34 @@ public class Arm extends SubsystemBase {
         prevTargetLeft = target;
     }
 
-    private void setRightPosition (double target) {
-        // Create a new profile starting from the last position command
-        if(prevTargetRight != target){
-            rightArmProfile = new TrapezoidProfile(
-                    constraints,
-                    new TrapezoidProfile.State(target, 0),
-                    new TrapezoidProfile.State(rightServo.getPosition(), 0)
-            );
+//    private void setRightPosition (double target) {
+//        // Create a new profile starting from the last position command
+//        if(prevTargetRight != target){
+//            rightArmProfile = new TrapezoidProfile(
+//                    constraints,
+//                    new TrapezoidProfile.State(target, 0),
+//                    new TrapezoidProfile.State(rightServo.getPosition(), 0)
+//            );
+//
+//            //Reset the timer
+//            timer.reset();
+//        }
+//        prevTargetRight = target;
+//    }
+//    public double[] getServoPositions (HardwareMap hardwareMap) {
+//        AnalogInput leftAnalogInput = hardwareMap.get(AnalogInput.class, "leftArmAnalog");
+//        AnalogInput rightAnalogInput = hardwareMap.get(AnalogInput.class, "rightArmAnalog");
+//
+//        return new double[]{
+//            analogInputToPosition(leftAnalogInput),
+//            analogInputToPosition(rightAnalogInput),
+//        };
+//    }
 
-            //Reset the timer
-            timer.reset();
-        }
-        prevTargetRight = target;
-    }
-    public double[] getServoPositions (HardwareMap hardwareMap) {
-        AnalogInput leftAnalogInput = hardwareMap.get(AnalogInput.class, "leftArmAnalog");
-        AnalogInput rightAnalogInput = hardwareMap.get(AnalogInput.class, "rightArmAnalog");
-
-        return new double[]{
-            analogInputToPosition(leftAnalogInput),
-            analogInputToPosition(rightAnalogInput),
-        };
-    }
-
-    public double analogInputToPosition (AnalogInput analogInput) {
-        double position = analogInput.getVoltage() / 3.3 * 360;
-        return position;
-    }
+//    public double analogInputToPosition (AnalogInput analogInput) {
+//        double position = analogInput.getVoltage() / 3.3 * 360;
+//        return position;
+//    }
 
 //    SETTERS
 
@@ -151,7 +151,7 @@ public class Arm extends SubsystemBase {
     // Bypasses the profile
     public void forceDown(){
         leftServo.setPosition(ArmPositions.DOWN.position_left);
-        rightServo.setPosition(ArmPositions.DOWN.position_right);
+//        rightServo.setPosition(ArmPositions.DOWN.position_right);
     }
 
     public void toPosition(double level){
@@ -161,40 +161,40 @@ public class Arm extends SubsystemBase {
     // Disabling the servos to start tuning
     public void tuningModeOn() {
         leftServo.setPwmDisable();
-        rightServo.setPwmDisable();
+//        rightServo.setPwmDisable();
     }
 
     // Enables the servos to stop tuning
     public void tuningModeOff() {
         leftServo.setPwmEnable();
-        rightServo.setPwmEnable();
+//        rightServo.setPwmEnable();
     }
 
 //    GETTERS
     public void forceSet (ArmPositions position) {
         leftServo.setPosition(position.position_left);
-        rightServo.setPosition(position.position_right);
+//        rightServo.setPosition(position.position_right);
     }
 
     // Helper method to log the current positions of the servos to telemetry
-    public String getState() {
-        leftServo.setPwmEnable();
-        rightServo.setPwmEnable();
-        leftServo.setPosition(0.5);
-        rightServo.setPosition(0.5);
-
-        String theReturnStuff = String.format("L: %s\nR: %s", leftServo.getPosition(), rightServo.getPosition());
-
-        leftServo.setPwmDisable();
-        rightServo.setPwmDisable();
-        return theReturnStuff;
-    }
-
-    public double getLeftPosition(){
-        return leftServo.getPosition();
-    }
-
-    public double getRightPosition(){
-        return rightServo.getPosition();
-    }
+//    public String getState() {
+//        leftServo.setPwmEnable();
+//        rightServo.setPwmEnable();
+//        leftServo.setPosition(0.5);
+//        rightServo.setPosition(0.5);
+//
+//        String theReturnStuff = String.format("L: %s\nR: %s", leftServo.getPosition(), rightServo.getPosition());
+//
+//        leftServo.setPwmDisable();
+//        rightServo.setPwmDisable();
+//        return theReturnStuff;
+//    }
+//
+//    public double getLeftPosition(){
+//        return leftServo.getPosition();
+//    }
+//
+//    public double getRightPosition(){
+//        return rightServo.getPosition();
+//    }
 }

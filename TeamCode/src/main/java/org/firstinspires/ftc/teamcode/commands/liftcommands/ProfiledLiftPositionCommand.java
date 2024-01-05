@@ -111,7 +111,7 @@ public class ProfiledLiftPositionCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         if (holdAtEnd) lift.setLiftPower(0.2);
-        else lift.brake();
+        else lift.brake_power();
     }
 
 

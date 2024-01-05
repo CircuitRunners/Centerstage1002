@@ -25,7 +25,7 @@ public class ManualLiftResetCommand extends CommandBase {
         if(manipulator.getButton(GamepadKeys.Button.DPAD_DOWN)){
             lift.setLiftPower(-0.2);
         } else {
-            lift.brake();
+            lift.brake_power();
         }
     }
 
@@ -37,7 +37,7 @@ public class ManualLiftResetCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted){
-        lift.brake();
+        lift.brake_power();
         lift.resetLiftPosition();
     }
 }

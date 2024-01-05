@@ -44,14 +44,6 @@ public class ServoModule {
         gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                 (()->{ if (pos >= 0 + stepValue) pos -= stepValue; })
         );
-
-        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
-                (()->{ thisServo.setPwmEnable(); })
-        );
-
-        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
-                (()->{ thisServo.setPwmDisable(); })
-        );
     }
 
     public String getState () {

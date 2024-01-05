@@ -12,8 +12,8 @@ public class Transfer extends SubsystemBase {
     }
 
     public enum IntakePositions {
-        OPEN(0.343),
-        CLOSE(0.443);
+        OPEN(0.26),
+        CLOSE(0.36);
 
         public double position;
 

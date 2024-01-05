@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+
+import org.firstinspires.ftc.teamcode.utilities.ServoModule;
 
 public class AirplaneLauncher extends SubsystemBase {
 
@@ -20,9 +24,16 @@ public class AirplaneLauncher extends SubsystemBase {
 
     private ServoImplEx launcherServo;
 
+    private String servoHardwareMapName = "airplaneLauncher";
+    private HardwareMap hardwareMap;
+    private ServoModule testingModule;
+
     public AirplaneLauncher(HardwareMap hardwareMap){
+
         // Retrieve the servo from the hardware map
-        launcherServo = hardwareMap.get(ServoImplEx.class, "airplaneLauncher");
+        launcherServo = hardwareMap.get(ServoImplEx.class, servoHardwareMapName);
+
+        this.hardwareMap = hardwareMap;
 
         // Initialize to the SPRUNG position
         cock();
@@ -40,6 +51,7 @@ public class AirplaneLauncher extends SubsystemBase {
             cock();
         }
     }
+
     // Method to set the launcher to the LAUNCH position
     public void launch() {
         launcherServo.setPosition(LauncherPosition.LAUNCH.position);
@@ -56,11 +68,14 @@ public class AirplaneLauncher extends SubsystemBase {
         return launcherServo.getPosition();
     }
     // Method to disable the PWM signal to the servo
-    public void tuningModeOn() {
-        launcherServo.setPwmDisable();
+    public void tuningModeOn(GamepadEx gamepad) {
+        testingModule = new ServoModule(this.hardwareMap, servoHardwareMapName, gamepad);
+    }
+    public void tuningModeOn(GamepadEx gamepad, double initialPosition) {
+        testingModule = new ServoModule(this.hardwareMap, servoHardwareMapName, gamepad, initialPosition);
     }
     // Method to re-enable the PWM signal to the servo
     public void tuningModeOff() {
-        launcherServo.setPwmEnable();
+        testingModule = null;
     }
 }
