@@ -93,6 +93,7 @@ public class MainTeleOp extends CommandOpMode {
 //        manipulator.getGamepadButton(GamepadKeys.Button.Y) // Playstation Triangle
 //                .whenHeld(manualLiftResetCommand);
         frontArm = new ExtendoArm(hardwareMap);
+        transfer.open();
     }
 
 

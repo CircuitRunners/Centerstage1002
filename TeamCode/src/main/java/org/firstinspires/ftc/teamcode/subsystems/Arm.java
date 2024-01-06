@@ -19,7 +19,7 @@ public class Arm extends SubsystemBase {
     public enum ArmPositions {
         // (left, right)
         DOWN(.76, .76), // 0.61 0.82
-        SCORING(.233, .224); // 0.9 0.333
+        SCORING(.23, .23); // 0.9 0.333
 
         private final double position_right;
         private final double position_left;
@@ -47,7 +47,7 @@ public class Arm extends SubsystemBase {
 
     // Motion profile constraints
     // TODO EDIT THESE
-    private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(1.0, 1.8);
+    private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0.7, 1.0);
 
 //    PROCESSORS
 
