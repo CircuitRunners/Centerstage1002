@@ -14,16 +14,17 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
-import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
 import org.firstinspires.ftc.teamcode.subsystems.ExtendoArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.SingleArm;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
-import org.firstinspires.ftc.teamcode.subsystems.Lift;
-@TeleOp (name="MainTeleOp")
-public class MainTeleOp extends CommandOpMode {
+
+@TeleOp (name="MainTeleOp BE")
+public class BatteryEmergencyTeleOpMain extends CommandOpMode {
     private DcMotorEx frontLeft, backLeft, frontRight, backRight, intakeMotor;
     private DcMotorEx[] drivebaseMotors;
     private double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
@@ -31,18 +32,16 @@ public class MainTeleOp extends CommandOpMode {
     private Lift lift;
 //    private AirplaneLauncher airplaneLauncher;
     private Drivebase drivebase;
-    private Arm arm;
+    private SingleArm arm;
     private Transfer transfer;
     private Intake intake;
     private ExtendoArm frontArm;
 //    private AHRS altHeadRefSys;
 
+    private IMU imu;
+
     private ManualLiftCommand manualLiftCommand;
     private ManualLiftResetCommand manualLiftResetCommand;
-
-    private boolean isUp = false, isDown = true, isTransport = false, isPressed = false;
-    private double upOffset = 0.0, downOffset = 0.0, transportOffset = 0.0;
-    private double overallOffset = 0.05;
 
     @Override
     public void initialize(){
@@ -56,7 +55,7 @@ public class MainTeleOp extends CommandOpMode {
         lift = new Lift(hardwareMap);
 //        airplaneLauncher = new AirplaneLauncher(hardwareMap);
         drivebase = new Drivebase(hardwareMap);
-        arm = new Arm(hardwareMap);
+        arm = new SingleArm(hardwareMap);
         transfer = new Transfer(hardwareMap);
         intake = new Intake(hardwareMap);
 
@@ -91,7 +90,6 @@ public class MainTeleOp extends CommandOpMode {
 //                .whenHeld(manualLiftResetCommand);
         frontArm = new ExtendoArm(hardwareMap);
         transfer.open();
-        lift.initialInitHang();
     }
 
 
@@ -112,12 +110,12 @@ public class MainTeleOp extends CommandOpMode {
         // Lift brakes when not doing anything
 
 
-        double lift_speed = 0.7;
+        double lift_speed = 1;
         double gravity_constant = 0.23;
         if (gamepad2.dpad_up) {
             lift.setLiftPower(-lift_speed);
         } else if (gamepad2.dpad_down) {
-            lift.setLiftPower(1-gravity_constant);
+            lift.setLiftPower(lift_speed-gravity_constant);
         } else {
             lift.brake_power();
         }

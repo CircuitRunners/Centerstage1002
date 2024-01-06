@@ -28,7 +28,7 @@ public class Lift extends SubsystemBase {
         }
     }
 
-    public double winchServoInit = 0.5, winchServoEngage = 1.0;
+    public double winchServoInit = 0.5, winchServoEngage = 0.66;
 
     private DcMotorEx leftMotor;
     private DcMotorEx rightMotor;

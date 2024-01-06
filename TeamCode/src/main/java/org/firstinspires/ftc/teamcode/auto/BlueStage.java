@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
 // Complete! :) [who needs I&R anyways?]
-@Autonomous (name="Parking Auto (Blue, Stage)")
+@Autonomous (name="Parking Auto (RED****, Stage)")
 public class BlueStage extends CommandOpMode {
 
     private double powerFullMultiplier = DynamicConstants.multiplier;
@@ -50,18 +50,11 @@ public class BlueStage extends CommandOpMode {
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence leftPark = drive.trajectorySequenceBuilder(right)
+                .back(half_tile)
                 .strafeLeft(powerFullMultiplier*(tile * 2 - square_edge))
                 .build();
 
-        // CHANGE THIS RIGHT VALUE THIS IS BAD
-        TrajectorySequence backOff = drive.trajectorySequenceBuilder(right)
-                .back(half_tile)
-                .build();
 
-        TrajectorySequence rightPark = drive.trajectorySequenceBuilder(left)
-                .forward(powerFullMultiplier*(square_edge + 2 * tile))
-                .strafeLeft(powerFullMultiplier*(tile * 4 - square_edge))
-                .build();
 
 //        detector.startStream();
         while(opModeInInit()){
@@ -102,18 +95,18 @@ public class BlueStage extends CommandOpMode {
 
         schedule(
                 new SequentialCommandGroup(
-                        new TrajectorySequenceCommand(drive, rightPark),
-                        new ParallelCommandGroup(
-                                new TrajectorySequenceCommand(drive, backOff),
-                                new InstantCommand(() -> {
-                                    intake.setPower(-0.6);
-                                })
-                        ),
-
-                        new WaitCommand(5000),
-                        new InstantCommand(() -> {
-                            intake.setPower(0);
-                        })
+                        new TrajectorySequenceCommand(drive, leftPark)
+//                        new ParallelCommandGroup(
+//                                new TrajectorySequenceCommand(drive, backOff),
+////                                new InstantCommand(() -> {
+////                                    intake.setPower(-0.6);
+////                                })
+//                        ),
+//
+//                        new WaitCommand(5000),
+//                        new InstantCommand(() -> {
+//                            intake.setPower(0);
+//                        })
                 )
         );
     };

@@ -57,7 +57,7 @@ public class Intake extends SubsystemBase {
 
     public Intake(HardwareMap hardwareMap) {
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
-        intakeMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+//        intakeMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         runtime = new ElapsedTime();
     }
@@ -72,33 +72,10 @@ public class Intake extends SubsystemBase {
         powerRight = squash(powerRight);
         powerLeft = squash(powerLeft);
 
-        // deb from one is ~ 0.85
-        // This means HARD right press
-        if (powerRight > CLOSE_TO_ONE) {
-            if (powerLeft > 0.5)
-                setPower(IntakePowers.NORMAL);
-            else {
-                setPower(IntakePowers.FAST);
-            }
-        }
-        else if (powerLeft > CLOSE_TO_ONE) {
-            if (powerRight > 0.5)
-                setPower(OuttakePowers.NORMAL);
-            else {
-                setPower(OuttakePowers.FAST);
-            }
-        } else if (powerRight > CLOSE_TO_ZERO) {
-            setPower(IntakePowers.NORMAL);
-        } else if (powerLeft > CLOSE_TO_ZERO) {
-            setPower(OuttakePowers.NORMAL);
-        } else if (
-                (powerRight > DEBOUNCE_THRESHOLD)
-        ) {
-            setPower(IntakePowers.SLOW);
-        } else if (
-                (powerLeft > DEBOUNCE_THRESHOLD)
-        ) {
-            setPower(OuttakePowers.SLOW);
+        if (powerRight > powerLeft) {
+            setPower(1);
+        } else if (powerLeft > powerRight) {
+            setPower(-1);
         }
     }
 

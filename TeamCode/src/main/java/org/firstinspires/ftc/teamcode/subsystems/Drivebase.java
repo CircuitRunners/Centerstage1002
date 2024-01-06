@@ -40,11 +40,10 @@ public class Drivebase extends SubsystemBase {
         allDrivebaseMotors = new DcMotorEx[]{frontLeft, backLeft, frontRight, backRight};
 
         // We love the IMU..!
-        imu = hardwareMap.get(IMU.class, "imu");
 
         // Begin doing things
         setMotorBehavior(allDrivebaseMotors);
-        initializeIMU(parameters); // Initialize IMU with the given parameters
+        initializeIMU(parameters, hardwareMap); // Initialize IMU with the given parameters
     }
 
     private void setMotorBehavior (DcMotorEx[] motors) {
@@ -58,7 +57,8 @@ public class Drivebase extends SubsystemBase {
         }
     }
 
-    public void initializeIMU (Parameters parameters) {
+    public void initializeIMU (Parameters parameters, HardwareMap hardwareMap) {
+        imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(parameters);
     }
 
@@ -112,12 +112,12 @@ public class Drivebase extends SubsystemBase {
         double rx = transformRotationInput(right_stick_x); // rx && turn left right angular
 
         // Calculate the robot's heading from the IMU
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        Vector2d botVector = new Vector2d(x, y).rotated(-botHeading);
-
-        // Apply the calculated heading to the input vector for field centric
-        x = botVector.getX(); // strafe r/l transform values
-        y = botVector.getY(); // strafe f/b transform values
+//        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+//        Vector2d botVector = new Vector2d(x, y).rotated(-botHeading);
+//
+//        // Apply the calculated heading to the input vector for field centric
+//        x = botVector.getX(); // strafe r/l transform values
+//        y = botVector.getY(); // strafe f/b transform values
         // note rx is not here since rotation is always field centric!
 
         // Calculate the motor powers
@@ -153,5 +153,10 @@ public class Drivebase extends SubsystemBase {
     public void resetHeading() {
         // This is the imu inbuilt version, uh you will need to change for new one
         imu.resetYaw();
+    }
+
+    public void resetIMU(HardwareMap hardwareMap) {
+        imu = null;
+        initializeIMU(parameters, hardwareMap);
     }
 }
