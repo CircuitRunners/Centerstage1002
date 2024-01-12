@@ -6,13 +6,13 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.commands.liftcommands.LiftPositionCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.subsystems.Transfer;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 //Brings everything to rest position
 public class RetractOuttakeCommand extends ParallelCommandGroup {
 
-    public RetractOuttakeCommand(Lift lift, Arm arm, Transfer claw){
+    public RetractOuttakeCommand(Lift lift, Arm arm, Claw claw){
         addCommands(
             new SequentialCommandGroup(
                     new InstantCommand(arm::down),

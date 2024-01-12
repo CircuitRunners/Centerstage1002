@@ -7,11 +7,10 @@ import org.firstinspires.ftc.teamcode.commands.liftcommands.LiftPositionCommand
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.arcrobotics.ftclib.command.WaitCommand
-import org.firstinspires.ftc.teamcode.subsystems.Arm.ArmPositions
 import org.firstinspires.ftc.teamcode.subsystems.Lift.LiftPositions
-import org.firstinspires.ftc.teamcode.subsystems.Transfer
+import org.firstinspires.ftc.teamcode.subsystems.Claw
 
-class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Transfer, preset: Presets) : ParallelCommandGroup() {
+class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Claw, preset: Presets) : ParallelCommandGroup() {
 
     enum class Presets {
         SHORT,

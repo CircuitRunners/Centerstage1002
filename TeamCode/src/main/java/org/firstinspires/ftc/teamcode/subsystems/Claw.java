@@ -4,10 +4,10 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-public class Transfer extends SubsystemBase {
+public class Claw extends SubsystemBase {
     private ServoImplEx gripServo;
 
-    public Transfer (HardwareMap hardwareMap) {
+    public Claw(HardwareMap hardwareMap) {
         gripServo = hardwareMap.get(ServoImplEx.class, "claw");
     }
 

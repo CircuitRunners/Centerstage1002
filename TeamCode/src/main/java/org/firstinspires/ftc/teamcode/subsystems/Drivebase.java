@@ -2,35 +2,26 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.IMU;
+import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static com.qualcomm.robotcore.hardware.IMU.Parameters;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 public class Drivebase extends SubsystemBase {
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     private DcMotorEx[] allDrivebaseMotors;
-    private IMU imu;
-    private static Parameters parameters = new Parameters(
-            new RevHubOrientationOnRobot(
-                    RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
-                    RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
-            )
-    );;
+    private AHRS imu;
 
-    // Default constructor
-    public Drivebase(HardwareMap hardwareMap) {
-        this(hardwareMap, parameters); // Call the constructor with default parameters
-    }
+    private double imuPrevPosition = 0.0;
 
     // Constructor with IMU parameters
-    public Drivebase(HardwareMap hardwareMap, Parameters parameters) {
+    public Drivebase(HardwareMap hardwareMap) {
         // Drivetrain motors setup
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
@@ -43,7 +34,7 @@ public class Drivebase extends SubsystemBase {
 
         // Begin doing things
         setMotorBehavior(allDrivebaseMotors);
-        initializeIMU(parameters, hardwareMap); // Initialize IMU with the given parameters
+        initializeIMU(hardwareMap); // Initialize IMU with the given parameters
     }
 
     private void setMotorBehavior (DcMotorEx[] motors) {
@@ -57,9 +48,13 @@ public class Drivebase extends SubsystemBase {
         }
     }
 
-    public void initializeIMU (Parameters parameters, HardwareMap hardwareMap) {
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(parameters);
+    public void initializeIMU (HardwareMap hardwareMap) {
+        imu = AHRS.getInstance(
+            hardwareMap.get(
+                    NavxMicroNavigationSensor.class,
+                    "navX2"
+            ), AHRS.DeviceDataType.kProcessedData
+        );
     }
 
     private double preprocessInput(double variable) {
@@ -112,12 +107,12 @@ public class Drivebase extends SubsystemBase {
         double rx = transformRotationInput(right_stick_x); // rx && turn left right angular
 
         // Calculate the robot's heading from the IMU
-//        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-//        Vector2d botVector = new Vector2d(x, y).rotated(-botHeading);
-//
+        double botHeading = AngleUnit.RADIANS.fromDegrees(imu.getYaw());
+        Vector2d botVector = new Vector2d(x, y).rotated(-botHeading);
+
 //        // Apply the calculated heading to the input vector for field centric
-//        x = botVector.getX(); // strafe r/l transform values
-//        y = botVector.getY(); // strafe f/b transform values
+        x = botVector.getX(); // strafe r/l transform values
+        y = botVector.getY(); // strafe f/b transform values
         // note rx is not here since rotation is always field centric!
 
         // Calculate the motor powers
@@ -152,11 +147,11 @@ public class Drivebase extends SubsystemBase {
 
     public void resetHeading() {
         // This is the imu inbuilt version, uh you will need to change for new one
-        imu.resetYaw();
+        imuPrevPosition = imu.getYaw();
     }
 
-    public void resetIMU(HardwareMap hardwareMap) {
+    public void forceResetIMU(HardwareMap hardwareMap) {
         imu = null;
-        initializeIMU(parameters, hardwareMap);
+        initializeIMU(hardwareMap);
     }
 }

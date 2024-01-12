@@ -7,19 +7,18 @@ import android.annotation.SuppressLint;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
-import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
 import org.firstinspires.ftc.teamcode.subsystems.ExtendoArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Transfer;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 @TeleOp (name="MainTeleOp")
@@ -32,11 +31,9 @@ public class MainTeleOp extends CommandOpMode {
 //    private AirplaneLauncher airplaneLauncher;
     private Drivebase drivebase;
     private Arm arm;
-    private Transfer transfer;
+    private Claw transfer;
     private Intake intake;
     private ExtendoArm frontArm;
-//    private AHRS altHeadRefSys;
-
     private ManualLiftCommand manualLiftCommand;
     private ManualLiftResetCommand manualLiftResetCommand;
 
@@ -44,10 +41,14 @@ public class MainTeleOp extends CommandOpMode {
     private double upOffset = 0.0, downOffset = 0.0, transportOffset = 0.0;
     private double overallOffset = 0.05;
 
+    private AHRS navx_device;
+
     @Override
     public void initialize(){
         // Use a bulk cache to loop faster using old values instead of blocking a thread kinda
         schedule(new BulkCacheCommand(hardwareMap));
+
+        navx_device = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navX2"), AHRS.DeviceDataType.kProcessedData);
 
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx manipulator = new GamepadEx(gamepad2);
@@ -57,7 +58,7 @@ public class MainTeleOp extends CommandOpMode {
 //        airplaneLauncher = new AirplaneLauncher(hardwareMap);
         drivebase = new Drivebase(hardwareMap);
         arm = new Arm(hardwareMap);
-        transfer = new Transfer(hardwareMap);
+        transfer = new Claw(hardwareMap);
         intake = new Intake(hardwareMap);
 
         manualLiftCommand = new ManualLiftCommand(lift, manipulator);
@@ -108,9 +109,7 @@ public class MainTeleOp extends CommandOpMode {
             gamepad1.rumble(50);
         }
 
-
         // Lift brakes when not doing anything
-
 
         double lift_speed = 0.7;
         double gravity_constant = 0.23;
@@ -164,7 +163,6 @@ public class MainTeleOp extends CommandOpMode {
         } else if (gamepad2.square) {
             lift.initialInitHang();
         }
-
 
         // Ensure telemetry actually works
         telemetry.update();
