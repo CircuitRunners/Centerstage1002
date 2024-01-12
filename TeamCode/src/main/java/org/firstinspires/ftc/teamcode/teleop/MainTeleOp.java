@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.kauailabs.navx.ftc.AHRS;
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+
 @TeleOp (name="MainTeleOp")
 public class MainTeleOp extends CommandOpMode {
     private DcMotorEx frontLeft, backLeft, frontRight, backRight, intakeMotor;
@@ -47,6 +49,7 @@ public class MainTeleOp extends CommandOpMode {
     public void initialize(){
         // Use a bulk cache to loop faster using old values instead of blocking a thread kinda
         schedule(new BulkCacheCommand(hardwareMap));
+        PhotonCore.start(hardwareMap);
 
         navx_device = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navX2"), AHRS.DeviceDataType.kProcessedData);
 

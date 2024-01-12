@@ -1,9 +1,11 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
-
     maven {
         url = 'https://maven.brott.dev/'
+    }
+    maven {
+        url = 'https://jitpack.io'
     }
 }
 
@@ -23,5 +25,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.14'
+    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v3.0.0-ALPHA'
 }
 

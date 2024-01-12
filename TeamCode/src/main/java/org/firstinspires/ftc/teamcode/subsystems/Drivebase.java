@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
-import static com.qualcomm.robotcore.hardware.IMU.Parameters;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -18,7 +17,7 @@ public class Drivebase extends SubsystemBase {
     private DcMotorEx[] allDrivebaseMotors;
     private AHRS imu;
 
-    private double imuPrevPosition = 0.0;
+    private double imuPrevPositionRad = 0.0;
 
     // Constructor with IMU parameters
     public Drivebase(HardwareMap hardwareMap) {
@@ -107,7 +106,9 @@ public class Drivebase extends SubsystemBase {
         double rx = transformRotationInput(right_stick_x); // rx && turn left right angular
 
         // Calculate the robot's heading from the IMU
-        double botHeading = AngleUnit.RADIANS.fromDegrees(imu.getYaw());
+        double botHeading = getCorrectedYaw();
+
+        // botHeading is in Radians
         Vector2d botVector = new Vector2d(x, y).rotated(-botHeading);
 
 //        // Apply the calculated heading to the input vector for field centric
@@ -145,9 +146,15 @@ public class Drivebase extends SubsystemBase {
         backRight.setPower(backRightPower);
     }
 
+    private double getCorrectedYaw () {
+        double imuDeg = imu.getYaw();
+        double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
+        double correctedRadReset = imuRad-imuPrevPositionRad;
+        return correctedRadReset;
+    }
+
     public void resetHeading() {
-        // This is the imu inbuilt version, uh you will need to change for new one
-        imuPrevPosition = imu.getYaw();
+        imuPrevPositionRad = AngleUnit.RADIANS.fromDegrees(imu.getYaw());
     }
 
     public void forceResetIMU(HardwareMap hardwareMap) {
