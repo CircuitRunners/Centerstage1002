@@ -150,7 +150,7 @@ public class Drivebase extends SubsystemBase {
         double imuDeg = imu.getYaw();
         double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
         double correctedRadReset = imuRad-imuPrevPositionRad;
-        return correctedRadReset;
+        return (-1.0) * correctedRadReset;
     }
 
     public void resetHeading() {

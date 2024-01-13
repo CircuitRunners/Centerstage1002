@@ -8,36 +8,40 @@ import android.annotation.SuppressLint;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.kauailabs.navx.ftc.AHRS;
-import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
 import org.firstinspires.ftc.teamcode.subsystems.ExtendoArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 
-@TeleOp (name="MainTeleOp")
-public class MainTeleOp extends CommandOpMode {
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
+
+
+@TeleOp (name="ImuTester")
+public class ImuTester extends CommandOpMode {
     private DcMotorEx frontLeft, backLeft, frontRight, backRight, intakeMotor;
     private DcMotorEx[] drivebaseMotors;
     private double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
 
-    private Lift lift;
-//    private AirplaneLauncher airplaneLauncher;
+    private IMU imu;
+    private static IMU.Parameters parameters = new IMU.Parameters(
+            new RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                    RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
+            )
+    );;
+
     private Drivebase drivebase;
-    private Arm arm;
-    private Claw transfer;
-    private Intake intake;
-    private ExtendoArm frontArm;
-    private ManualLiftCommand manualLiftCommand;
-    private ManualLiftResetCommand manualLiftResetCommand;
 
     private boolean isUp = false, isDown = true, isTransport = false, isPressed = false;
     private double upOffset = 0.0, downOffset = 0.0, transportOffset = 0.0;
@@ -48,6 +52,10 @@ public class MainTeleOp extends CommandOpMode {
     @Override
     public void initialize(){
         // Use a bulk cache to loop faster using old values instead of blocking a thread kinda
+
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(parameters);
+
         schedule(new BulkCacheCommand(hardwareMap));
 //        PhotonCore.start(hardwareMap);
 
@@ -56,16 +64,7 @@ public class MainTeleOp extends CommandOpMode {
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx manipulator = new GamepadEx(gamepad2);
 
-        // Subsystems
-        lift = new Lift(hardwareMap);
-//        airplaneLauncher = new AirplaneLauncher(hardwareMap);
         drivebase = new Drivebase(hardwareMap);
-        arm = new Arm(hardwareMap);
-        transfer = new Claw(hardwareMap);
-        intake = new Intake(hardwareMap);
-
-        manualLiftCommand = new ManualLiftCommand(lift, manipulator);
-        manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
 
 //        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 //
@@ -93,9 +92,6 @@ public class MainTeleOp extends CommandOpMode {
 //
 //        manipulator.getGamepadButton(GamepadKeys.Button.Y) // Playstation Triangle
 //                .whenHeld(manualLiftResetCommand);
-        frontArm = new ExtendoArm(hardwareMap);
-        transfer.open();
-        lift.initialInitHang();
     }
 
 
@@ -114,60 +110,63 @@ public class MainTeleOp extends CommandOpMode {
 
         // Lift brakes when not doing anything
 
-        double lift_speed = 0.7;
-        double gravity_constant = 0.23;
-        if (gamepad2.dpad_up) {
-            lift.setLiftPower(-lift_speed);
-        } else if (gamepad2.dpad_down) {
-            lift.setLiftPower(1-gravity_constant);
-        } else {
-            lift.brake_power();
-        }
-
-        double keepRobotUpPowerWinch = 0.2;
-        if (debounce(gamepad2.right_stick_y)) {
-            lift.hangPower(gamepad2.right_stick_y);
-        } else if (debounce(gamepad2.right_stick_x)) {
-            lift.hangPower(-keepRobotUpPowerWinch);
-        } else {
-            lift.hangPower(0);
-        }
-
-
-        // Intake Assembly
-        intake.setPower(gamepad1.right_trigger, gamepad1.left_trigger);
-
-        // Airplane Launcher
-//        airplaneLauncher.processInput(gamepad2.cross, false);
-
-        // Transfer/Claw
-        if (gamepad2.right_bumper) {
-            transfer.close();
-        } else if (gamepad2.left_bumper) {
-            transfer.open();
-        }
-
-        // Arm commands
-        if (debounce(gamepad2.right_trigger)) { // outtake
-            arm.up();
-        } else if (debounce(gamepad2.left_trigger)) { //intake
-            arm.down();
-        }
-
-        // Front "Extendo" Arm up/down
-        if (gamepad1.left_bumper){
-            frontArm.up();
-        } else if(gamepad1.right_bumper){
-            frontArm.down();
-        }
-
-        if (gamepad2.circle){
-            lift.enableHang();
-        } else if (gamepad2.square) {
-            lift.initialInitHang();
-        }
+//        double lift_speed = 0.7;
+//        double gravity_constant = 0.23;
+//        if (gamepad2.dpad_up) {
+//            lift.setLiftPower(-lift_speed);
+//        } else if (gamepad2.dpad_down) {
+//            lift.setLiftPower(1-gravity_constant);
+//        } else {
+//            lift.brake_power();
+//        }
+//
+//        double keepRobotUpPowerWinch = 0.2;
+//        if (debounce(gamepad2.right_stick_y)) {
+//            lift.hangPower(gamepad2.right_stick_y);
+//        } else if (debounce(gamepad2.right_stick_x)) {
+//            lift.hangPower(-keepRobotUpPowerWinch);
+//        } else {
+//            lift.hangPower(0);
+//        }
+//
+//
+//        // Intake Assembly
+//        intake.setPower(gamepad1.right_trigger, gamepad1.left_trigger);
+//
+//        // Airplane Launcher
+////        airplaneLauncher.processInput(gamepad2.cross, false);
+//
+//        // Transfer/Claw
+//        if (gamepad2.right_bumper) {
+//            transfer.close();
+//        } else if (gamepad2.left_bumper) {
+//            transfer.open();
+//        }
+//
+//        // Arm commands
+//        if (debounce(gamepad2.right_trigger)) { // outtake
+//            arm.up();
+//        } else if (debounce(gamepad2.left_trigger)) { //intake
+//            arm.down();
+//        }
+//
+//        // Front "Extendo" Arm up/down
+//        if (gamepad1.left_bumper){
+//            frontArm.up();
+//        } else if(gamepad1.right_bumper){
+//            frontArm.down();
+//        }
+//
+//        if (gamepad2.circle){
+//            lift.enableHang();
+//        } else if (gamepad2.square) {
+//            lift.initialInitHang();
+//        }
 
         // Ensure telemetry actually works
+        telemetry.addData("IMU Yaw", navx_device.getYaw());
+        telemetry.addData("IMU Yaw 2", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+
         telemetry.update();
     }
 }
