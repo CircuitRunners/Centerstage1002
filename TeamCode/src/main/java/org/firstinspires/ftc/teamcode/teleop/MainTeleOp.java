@@ -6,7 +6,10 @@ import static org.firstinspires.ftc.teamcode.utilities.Utilities.debounce;
 import android.annotation.SuppressLint;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.PerpetualCommand;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.kauailabs.navx.ftc.AHRS;
 import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
@@ -15,6 +18,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
+import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommand;
+import org.firstinspires.ftc.teamcode.commands.presets.RetractOuttakeCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
 import org.firstinspires.ftc.teamcode.subsystems.ExtendoArm;
@@ -32,7 +37,7 @@ public class MainTeleOp extends CommandOpMode {
     private Lift lift;
 //    private AirplaneLauncher airplaneLauncher;
     private Drivebase drivebase;
-    private Arm arm;
+//    private Arm arm;
     private Claw transfer;
     private Intake intake;
     private ExtendoArm frontArm;
@@ -60,13 +65,13 @@ public class MainTeleOp extends CommandOpMode {
         lift = new Lift(hardwareMap);
 //        airplaneLauncher = new AirplaneLauncher(hardwareMap);
         drivebase = new Drivebase(hardwareMap);
-        arm = new Arm(hardwareMap);
+//        arm = new Arm(hardwareMap);
         transfer = new Claw(hardwareMap);
         intake = new Intake(hardwareMap);
 
-        manualLiftCommand = new ManualLiftCommand(lift, manipulator);
-        manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
-
+//        manualLiftCommand = new ManualLiftCommand(lift, manipulator);
+//        manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
+//
 //        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 //
 //        new Trigger(() -> manipulator.getLeftY() > 0.4)
@@ -93,6 +98,7 @@ public class MainTeleOp extends CommandOpMode {
 //
 //        manipulator.getGamepadButton(GamepadKeys.Button.Y) // Playstation Triangle
 //                .whenHeld(manualLiftResetCommand);
+
         frontArm = new ExtendoArm(hardwareMap);
         transfer.open();
         lift.initialInitHang();
@@ -116,10 +122,11 @@ public class MainTeleOp extends CommandOpMode {
 
         double lift_speed = 0.7;
         double gravity_constant = 0.23;
-        if (gamepad2.dpad_up) {
-            lift.setLiftPower(-lift_speed);
-        } else if (gamepad2.dpad_down) {
-            lift.setLiftPower(1-gravity_constant);
+
+        if (gamepad2.dpad_up && !lift.atUpperLimit()) {
+            lift.setLiftPower(lift_speed);
+        } else if (gamepad2.dpad_down && !lift.atLowerLimit()) {
+            lift.setLiftPower(gravity_constant-1);
         } else {
             lift.brake_power();
         }
@@ -147,12 +154,12 @@ public class MainTeleOp extends CommandOpMode {
             transfer.open();
         }
 
-        // Arm commands
-        if (debounce(gamepad2.right_trigger)) { // outtake
-            arm.up();
-        } else if (debounce(gamepad2.left_trigger)) { //intake
-            arm.down();
-        }
+//        // Arm commands
+//        if (debounce(gamepad2.right_trigger)) { // outtake
+//            arm.up();
+//        } else if (debounce(gamepad2.left_trigger)) { //intake
+//            arm.down();
+//        }
 
         // Front "Extendo" Arm up/down
         if (gamepad1.left_bumper){

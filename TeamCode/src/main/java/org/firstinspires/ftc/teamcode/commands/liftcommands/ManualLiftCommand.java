@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.commands.liftcommands;
 
+import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.circle;
+import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.square;
+
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -15,9 +18,10 @@ public class ManualLiftCommand extends CommandBase {
     private final double down = -0.7;
 
     private final double slowUp = 0.65;
-    private final double slowDown = -0.41;// guessed from -0.01
+    private final double slowDown = -0.48;
 
-    public ManualLiftCommand(Lift lift, GamepadEx manipulator){
+    public ManualLiftCommand(Lift lift, GamepadEx manipulator) {
+
 
         addRequirements(lift);
 
@@ -26,7 +30,7 @@ public class ManualLiftCommand extends CommandBase {
 
     }
 
-    public boolean isManualActive(){
+    public boolean isManualActive() {
         return manipulator.getButton(GamepadKeys.Button.DPAD_UP) ||
                 manipulator.getButton(GamepadKeys.Button.DPAD_DOWN);
     }
@@ -35,31 +39,39 @@ public class ManualLiftCommand extends CommandBase {
     public void execute() {
         //Two dpad buttons cant be pressed at the same time so we don't have to worry about that.
 
-        boolean slow = manipulator.getButton(GamepadKeys.Button.X);
-
+        boolean slow = manipulator.getButton(square);
 
         //Check if the up button is pressed
-        if(manipulator.getButton(GamepadKeys.Button.DPAD_UP) && !lift.atUpperLimit()){
+        if (manipulator.getButton(GamepadKeys.Button.DPAD_UP) && !lift.atUpperLimit()) {
             lift.setLiftPower((slow) ? slowUp : up);
         }
 
         //Then check if the down is pressed
         else if (manipulator.getButton(GamepadKeys.Button.DPAD_DOWN) && !lift.atLowerLimit()) {
-            lift.setLiftPower((slow) ? slowDown : down);
-        }
 
-        else {
-            lift.setLiftPower(0);
+            if (lift.getLiftVelocity() < -750 && lift.getLiftPosition() < 300) {
+                lift.setLiftPower(0);
+            } else {
+                lift.setLiftPower((slow) ? slowDown : down);
+            }
+
         }
 
         //Otherwise, do nothing
-//        else {
-//            if(lift.getLiftPosition() < 3) lift.setLiftPower(1);
-//            else if(lift.getLiftPosition() < 283) lift.setLiftPower(1); //0.19 * lift.getVoltageComp()
-//            else if(lift.getLiftPosition() < 580) lift.setLiftPower(1); //0.20 * lift.getVoltageComp()
-//            else lift.setLiftPower(1);
-//        }
+        else {
+            if (lift.getLiftPosition() < 3) lift.setLiftPower(0);
+                // Slide 1 Counter
+            else if (lift.getLiftPosition() < 850)
+                lift.setLiftPower(0.09*lift.getVoltageComp()); //0.19 *
+                // Slide 2 counter
+            else if (lift.getLiftPosition() < 1380)
+                lift.setLiftPower(0.10*lift.getVoltageComp()); //0.20 * lift.getVoltageComp()
+                // Slide 3 counter
+            else if (lift.getLiftPosition() < 1640)
+                lift.setLiftPower(0.11*lift.getVoltageComp()); //0.20 * lift.getVoltageComp()
+                // Other Counter
+            else lift.setLiftPower(0.13*lift.getVoltageComp());
+        }
     }
-
-
 }
+

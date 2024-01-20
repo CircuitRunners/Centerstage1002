@@ -34,6 +34,7 @@ class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Claw, preset: Presets) : 
 
                 },
                 SequentialCommandGroup(
+                    // Change this ms to change when the arm comes up
                     WaitCommand(650),
                     InstantCommand({
                         arm.up()

@@ -13,9 +13,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 public class Lift extends SubsystemBase {
     public enum LiftPositions {
         DOWN(0),
-        SHORT(200),
-        MID(450),
-        HIGH(770);
+        SHORT(360),
+        MID(1160),
+        HIGH(2060);
 
         public int position;
 
@@ -53,11 +53,12 @@ public class Lift extends SubsystemBase {
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Negate the gravity when stopped
-        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // change to brake if bad
-        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //TODO gravity PID coefficients?
+        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT); // change to brake if bad
+        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 //        winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -80,7 +81,6 @@ public class Lift extends SubsystemBase {
     }
 
     public double getLiftPosition(){
-        // THIS IS NEGATED BECAUSE THE VALUES ARE ALL NEGATIVE
         return leftMotor.getCurrentPosition();
     }
 
@@ -89,11 +89,11 @@ public class Lift extends SubsystemBase {
     }
 
     public boolean atUpperLimit(){
-        return getLiftPosition() > 2550;
+        return getLiftPosition() > 2750;
     }
 
     public boolean atLowerLimit(){
-        return getLiftPosition() < 3;
+        return getLiftPosition() < 5;
     }
 
     public void resetLiftPosition(){
