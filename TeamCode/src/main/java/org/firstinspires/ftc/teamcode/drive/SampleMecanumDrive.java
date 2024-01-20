@@ -55,10 +55,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.05, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.05    , 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 2);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6 , 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.3522; // 60.25, 60.1, 60.25, 60.2, 59.75
+    public static double LATERAL_MULTIPLIER = 1.76470588;//1.609;//1.3522; // 60.25, 60.1, 60.25, 60.2, 59.75
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -74,7 +74,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private IMU imu;
+//    private IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
     private List<Integer> lastEncPositions = new ArrayList<>();
