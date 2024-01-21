@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.rr05.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.rr05.trajectorysequence.TrajectorySequence;
 
 public class TrajectorySequenceCommand extends CommandBase {
 

@@ -12,9 +12,9 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.rr05.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.rr05.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.rr05.trajectorysequence.TrajectorySequence;
 
 import java.util.Arrays;
 

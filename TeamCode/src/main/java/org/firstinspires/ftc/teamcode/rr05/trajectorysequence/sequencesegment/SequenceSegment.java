@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment;
+package org.firstinspires.ftc.teamcode.rr05.trajectorysequence.sequencesegment;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SequenceSegment {
@@ -20,7 +19,7 @@ public abstract class SequenceSegment {
         this.duration = duration;
         this.startPose = startPose;
         this.endPose = endPose;
-        this.markers = new ArrayList<>(markers);
+        this.markers = markers;
     }
 
     public double getDuration() {

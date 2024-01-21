@@ -59,7 +59,9 @@ dependencies {
     implementation 'org.ftclib.ftclib:vision:2.1.0'
 
     // Auto and Roadrunner
-    implementation 'com.acmerobotics.roadrunner:core:0.5.6'
+//    implementation 'com.acmerobotics.roadrunner:core:0.5.6' // (Update)
+    implementation 'com.acmerobotics.roadrunner:core:1.0.0-beta3'
+    implementation 'com.acmerobotics.roadrunner:actions:1.0.0-beta3'
 
     // Quality of life and performance
     implementation 'org.team11260:fast-load:0.1.2'

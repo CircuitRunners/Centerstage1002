@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.firstinspires.ftc.teamcode.rr05.drive;
 
 import androidx.annotation.NonNull;
 
@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.util.Encoder;
+import org.firstinspires.ftc.teamcode.rr05.util.Encoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,13 +27,15 @@ import java.util.List;
  */
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
-    public static double TICKS_PER_REV = 0;
-    public static double WHEEL_RADIUS = 2; // in
+    public static double TICKS_PER_REV = 8192;
+    public static double WHEEL_RADIUS = 0.688976378; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 10; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 4; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 14.2529; // physical is about 8.333; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET = -4.2; // in; offset of the lateral wheel
 
+    public static double X_MULTIPLIER = 89.3125/89.02132953240118;//90.37843188278661, 90 //
+    public static double Y_MULTIPLIER = 0.9940050941018955;//
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
     private List<Integer> lastEncPositions, lastEncVels;
@@ -48,11 +50,15 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "winch"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightLift"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backRight"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+//        frontEncoder.setDirection(Encoder.Direction.REVERSE);
+//        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        leftEncoder.setDirection(Encoder.Direction.REVERSE);
+
     }
 
     public static double encoderTicksToInches(double ticks) {
@@ -71,10 +77,16 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions.add(rightPos);
         lastEncPositions.add(frontPos);
 
+//        return Arrays.asList(
+//                encoderTicksToInches(leftEncoder.getCurrentPosition()) * X_MULTIPLIER,
+//                encoderTicksToInches(rightEncoder.getCurrentPosition()) * X_MULTIPLIER,
+//                encoderTicksToInches(frontEncoder.getCurrentPosition()) * Y_MULTIPLIER
+//        );
+
         return Arrays.asList(
-                encoderTicksToInches(leftPos),
-                encoderTicksToInches(rightPos),
-                encoderTicksToInches(frontPos)
+                encoderTicksToInches(leftPos) * X_MULTIPLIER,
+                encoderTicksToInches(rightPos) * X_MULTIPLIER,
+                encoderTicksToInches(frontPos) * Y_MULTIPLIER
         );
     }
 
@@ -90,10 +102,15 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncVels.add(rightVel);
         lastEncVels.add(frontVel);
 
+//        return Arrays.asList(
+//                encoderTicksToInches(leftEncoder.getRawVelocity()) * X_MULTIPLIER,
+//                encoderTicksToInches(rightEncoder.getRawVelocity()) * X_MULTIPLIER,
+//                encoderTicksToInches(frontEncoder.getRawVelocity()) * Y_MULTIPLIER
+//        );
         return Arrays.asList(
-                encoderTicksToInches(leftVel),
-                encoderTicksToInches(rightVel),
-                encoderTicksToInches(frontVel)
+                encoderTicksToInches(leftVel) * X_MULTIPLIER,
+                encoderTicksToInches(rightVel) * X_MULTIPLIER,
+                encoderTicksToInches(frontVel) * Y_MULTIPLIER
         );
     }
 }

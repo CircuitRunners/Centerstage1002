@@ -13,9 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.vision.BeaconDetector;
+import org.firstinspires.ftc.teamcode.rr05.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.rr05.trajectorysequence.TrajectorySequence;
 
 
 @Autonomous (name="Parking Auto (Red, Audience)")

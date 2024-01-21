@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.auto.DynamicConstants;
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.rr05.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.rr05.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.BeaconDetector;
 
 

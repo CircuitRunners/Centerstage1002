@@ -2,21 +2,16 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import static java.lang.Math.toRadians;
 
-import android.icu.util.ULocale;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.rr05.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.rr05.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
 // Complete!
