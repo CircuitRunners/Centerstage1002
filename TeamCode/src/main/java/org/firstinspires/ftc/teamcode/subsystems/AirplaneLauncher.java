@@ -12,8 +12,8 @@ public class AirplaneLauncher extends SubsystemBase {
 
     // Declarations
     public enum LauncherPosition {
-        SPRUNG(0.72), // Replace with the actual servo value for the SPRUNG position
-        LAUNCH(0.18); // Replace with the actual servo value for the LAUNCH position
+        SPRUNG(0.156), // Replace with the actual servo value for the SPRUNG position
+        LAUNCH(0.03); // Replace with the actual servo value for the LAUNCH position
 
         public final double position;
 

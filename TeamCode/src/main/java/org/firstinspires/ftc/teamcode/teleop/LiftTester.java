@@ -7,7 +7,9 @@ import android.annotation.SuppressLint;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -18,6 +20,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
+import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommand;
+import org.firstinspires.ftc.teamcode.commands.presets.RetractOuttakeCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
@@ -49,8 +53,8 @@ public class LiftTester extends CommandOpMode {
         manualLiftCommand = new ManualLiftCommand(lift, manipulator);
         manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
 
-        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
-//
+//        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
+////
 //        new Trigger(() -> manipulator.getLeftY() > 0.4)
 //                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.HIGH)
 //                        .withTimeout(1900)

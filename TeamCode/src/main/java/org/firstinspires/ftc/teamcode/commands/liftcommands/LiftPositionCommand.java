@@ -12,7 +12,7 @@ public class LiftPositionCommand extends CommandBase {
 
     private PIDFController liftController;
     public static PIDCoefficients coefficients =
-            new PIDCoefficients(0.0269, 0.003, 0.0014);
+            new PIDCoefficients(0.02, 0.000, 0.000);
     // 0.0269, 0.003, 0.0014
 
     private double tolerance = 15;
@@ -36,13 +36,13 @@ public class LiftPositionCommand extends CommandBase {
         //Add a feedforward term to counteract gravity
         liftController = new PIDFController(coefficients, 0.0, 0.0, 0.00, (x, v) -> {
             double kG = 0;
-//            if (liftPosition < 283) kG = 0.18;
-//            else if (liftPosition < 580) kG = 0.196;
-//            else kG = 0.222;
+            if (liftPosition < 850) kG = 0.09;
+            else if (liftPosition < 1380) kG = 0.11;
+            else kG = 0.13;
 
             return kG * lift.getVoltageComp();
         });
-        liftController.setOutputBounds(-0.85, 0.98); // gravity CA
+        liftController.setOutputBounds(-0.7, 1.0); // gravity CA
     }
     @Override
     public void initialize(){
@@ -73,9 +73,8 @@ public class LiftPositionCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted){
-//        if (holdAtEnd) lift.setLiftPower(0.2);
-//        else lift.stop();
-        lift.brake_power();
+        if (holdAtEnd) lift.setLiftPower(0.09);
+        else lift.brake_power();
     }
 
 }

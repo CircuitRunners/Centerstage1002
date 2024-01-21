@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 
+import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.triangle;
 import static org.firstinspires.ftc.teamcode.utilities.Utilities.debounce;
 
 import android.annotation.SuppressLint;
@@ -11,7 +12,6 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.kauailabs.navx.ftc.AHRS;
-import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
 import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommand;
 import org.firstinspires.ftc.teamcode.commands.presets.RetractOuttakeCommand;
+import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
 import org.firstinspires.ftc.teamcode.subsystems.ExtendoArm;
@@ -35,10 +36,10 @@ public class MainTeleOp extends CommandOpMode {
     private double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
 
     private Lift lift;
-//    private AirplaneLauncher airplaneLauncher;
+    private AirplaneLauncher airplaneLauncher;
     private Drivebase drivebase;
-//    private Arm arm;
-    private Claw transfer;
+    private Arm arm;
+    private Claw claw;
     private Intake intake;
     private ExtendoArm frontArm;
     private ManualLiftCommand manualLiftCommand;
@@ -63,44 +64,44 @@ public class MainTeleOp extends CommandOpMode {
 
         // Subsystems
         lift = new Lift(hardwareMap);
-//        airplaneLauncher = new AirplaneLauncher(hardwareMap);
+        airplaneLauncher = new AirplaneLauncher(hardwareMap);
         drivebase = new Drivebase(hardwareMap);
-//        arm = new Arm(hardwareMap);
-        transfer = new Claw(hardwareMap);
+        arm = new Arm(hardwareMap);
+        claw = new Claw(hardwareMap);
         intake = new Intake(hardwareMap);
 
-//        manualLiftCommand = new ManualLiftCommand(lift, manipulator);
-//        manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
-//
-//        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
-//
-//        new Trigger(() -> manipulator.getLeftY() > 0.4)
-//                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.HIGH)
-//                        .withTimeout(1900)
-//                        .interruptOn(() -> manualLiftCommand.isManualActive()));
-//
-//        new Trigger(() -> manipulator.getLeftY() < -0.6)
-//                .whenActive(new RetractOuttakeCommand(lift, arm, transfer)
-//                        .withTimeout(1900)
-//                        .interruptOn(() -> manualLiftCommand.isManualActive()));
-//
-//        //Mid preset
-//        new Trigger(() -> manipulator.getRightY() > -0.4)
-//                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.MID)
-//                        .withTimeout(1900)
-//                        .interruptOn(() -> manualLiftCommand.isManualActive()));
-//
-//        //Short preset
-//        new Trigger(() -> manipulator.getRightY() < 0.4)
-//                .whenActive(new MoveToScoringCommand(lift, arm, transfer, MoveToScoringCommand.Presets.SHORT)
-//                        .withTimeout(1900)
-//                        .interruptOn(() -> manualLiftCommand.isManualActive()));
-//
-//        manipulator.getGamepadButton(GamepadKeys.Button.Y) // Playstation Triangle
-//                .whenHeld(manualLiftResetCommand);
+        manualLiftCommand = new ManualLiftCommand(lift, manipulator);
+        manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
+
+        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
+
+        new Trigger(() -> manipulator.getLeftY() > 0.4)
+                .whenActive(new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.HIGH)
+                        .withTimeout(1900)
+                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+
+        new Trigger(() -> manipulator.getLeftY() < -0.6)
+                .whenActive(new RetractOuttakeCommand(lift, arm, claw)
+                        .withTimeout(1900)
+                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+
+        //Mid preset
+        new Trigger(() -> manipulator.getRightY() > -0.4)
+                .whenActive(new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID)
+                        .withTimeout(1900)
+                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+
+        //Short preset
+        new Trigger(() -> manipulator.getRightY() < 0.4)
+                .whenActive(new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT)
+                        .withTimeout(1900)
+                        .interruptOn(() -> manualLiftCommand.isManualActive()));
+
+        manipulator.getGamepadButton(triangle) // Playstation Triangle
+                .whenHeld(manualLiftResetCommand);
 
         frontArm = new ExtendoArm(hardwareMap);
-        transfer.open();
+        claw.open();
         lift.initialInitHang();
     }
 
@@ -118,48 +119,35 @@ public class MainTeleOp extends CommandOpMode {
             gamepad1.rumble(50);
         }
 
-        // Lift brakes when not doing anything
-
-        double lift_speed = 0.7;
-        double gravity_constant = 0.23;
-
-        if (gamepad2.dpad_up && !lift.atUpperLimit()) {
-            lift.setLiftPower(lift_speed);
-        } else if (gamepad2.dpad_down && !lift.atLowerLimit()) {
-            lift.setLiftPower(gravity_constant-1);
-        } else {
-            lift.brake_power();
-        }
-
-        double keepRobotUpPowerWinch = 0.2;
-        if (debounce(gamepad2.right_stick_y)) {
-            lift.hangPower(gamepad2.right_stick_y);
-        } else if (debounce(gamepad2.right_stick_x)) {
-            lift.hangPower(-keepRobotUpPowerWinch);
-        } else {
-            lift.hangPower(0);
-        }
+//        double keepRobotUpPowerWinch = 0.2;
+//        if (debounce(gamepad2.right_stick_y)) {
+//            lift.hangPower(gamepad2.right_stick_y);
+//        } else if (debounce(gamepad2.right_stick_x)) {
+//            lift.hangPower(-keepRobotUpPowerWinch);
+//        } else {
+//            lift.hangPower(0);
+//        }
 
 
         // Intake Assembly
         intake.setPower(gamepad1.right_trigger, gamepad1.left_trigger);
 
         // Airplane Launcher
-//        airplaneLauncher.processInput(gamepad2.cross, false);
+        airplaneLauncher.processInput(gamepad2.cross, false);
 
         // Transfer/Claw
         if (gamepad2.right_bumper) {
-            transfer.close();
+            claw.close();
         } else if (gamepad2.left_bumper) {
-            transfer.open();
+            claw.open();
         }
 
-//        // Arm commands
-//        if (debounce(gamepad2.right_trigger)) { // outtake
-//            arm.up();
-//        } else if (debounce(gamepad2.left_trigger)) { //intake
-//            arm.down();
-//        }
+        // Arm commands
+        if (debounce(gamepad2.right_trigger)) { // outtake
+            arm.up();
+        } else if (debounce(gamepad2.left_trigger)) { //intake
+            arm.down();
+        }
 
         // Front "Extendo" Arm up/down
         if (gamepad1.left_bumper){

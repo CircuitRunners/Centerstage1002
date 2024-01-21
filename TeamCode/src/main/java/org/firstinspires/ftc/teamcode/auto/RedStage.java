@@ -47,6 +47,7 @@ public class RedStage extends CommandOpMode {
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         drive = new SampleMecanumDrive(hardwareMap);
+
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence rightPark = drive.trajectorySequenceBuilder(right)

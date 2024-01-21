@@ -21,6 +21,13 @@ class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Claw, preset: Presets) : 
     init {
         addCommands(
             ParallelCommandGroup(
+                SequentialCommandGroup(
+                    // Change this ms to change when the arm comes up
+                    WaitCommand(20),
+                    InstantCommand({
+                        arm.up()
+                    }),
+                ),
                 InstantCommand({
                     claw.close()
                 }),
@@ -32,14 +39,7 @@ class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Claw, preset: Presets) : 
                     Presets.HIGH ->
                         LiftPositionCommand(lift, LiftPositions.HIGH.position, true)
 
-                },
-                SequentialCommandGroup(
-                    // Change this ms to change when the arm comes up
-                    WaitCommand(650),
-                    InstantCommand({
-                        arm.up()
-                    }),
-                )
+                }
             )
         )
         addRequirements(lift)

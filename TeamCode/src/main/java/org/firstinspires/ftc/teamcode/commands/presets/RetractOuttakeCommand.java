@@ -17,7 +17,7 @@ public class RetractOuttakeCommand extends ParallelCommandGroup {
             new SequentialCommandGroup(
                     new InstantCommand(arm::down),
                     new LiftPositionCommand(lift, Lift.LiftPositions.DOWN.position, false),
-                    new InstantCommand(arm::down)
+                    new InstantCommand(claw::open)
             ),
             new InstantCommand(claw::open)
         );

@@ -17,8 +17,8 @@ public class ManualLiftCommand extends CommandBase {
     private final double up = 1.0;
     private final double down = -0.7;
 
-    private final double slowUp = 0.65;
-    private final double slowDown = -0.48;
+    private final double slowUp = 0.57;
+    private final double slowDown = -0.36;
 
     public ManualLiftCommand(Lift lift, GamepadEx manipulator) {
 
@@ -49,7 +49,7 @@ public class ManualLiftCommand extends CommandBase {
         //Then check if the down is pressed
         else if (manipulator.getButton(GamepadKeys.Button.DPAD_DOWN) && !lift.atLowerLimit()) {
 
-            if (lift.getLiftVelocity() < -750 && lift.getLiftPosition() < 300) {
+            if (lift.getLiftVelocity() < -500 && lift.getLiftPosition() < 350) {
                 lift.setLiftPower(0);
             } else {
                 lift.setLiftPower((slow) ? slowDown : down);
