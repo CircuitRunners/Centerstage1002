@@ -2,10 +2,13 @@ repositories {
     mavenCentral()
     google() // Needed for androidx
     maven {
+        url = 'https://jitpack.io'
+    }
+    maven {
         url = 'https://maven.brott.dev/'
     }
     maven {
-        url = 'https://jitpack.io'
+        url = 'https://www.matthewo.tech/maven/'
     }
 }
 
