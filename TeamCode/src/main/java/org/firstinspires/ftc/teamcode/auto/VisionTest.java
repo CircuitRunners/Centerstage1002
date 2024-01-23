@@ -11,16 +11,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
-import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
-import org.firstinspires.ftc.teamcode.rr05.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
 // Complete! :) [who needs I&R anyways?]
 @Autonomous(name="Vision Test")
 public class VisionTest extends CommandOpMode {
-
-    private double powerFullMultiplier = DynamicConstants.multiplier;
-    private SampleMecanumDrive drive;
 
     private TeamPropDetector detector;
     private int locationID = 1; // set to center by default
@@ -53,10 +48,6 @@ public class VisionTest extends CommandOpMode {
 
         detector.stopStream();
 
-
-
-        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.parkFromBlueBack));
-        schedule(new TrajectorySequenceCommand(drive, TrajectorySequences.blueBackYellowPixel));
     };
 
 }

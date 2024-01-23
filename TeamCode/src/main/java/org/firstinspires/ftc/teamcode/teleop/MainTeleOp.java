@@ -107,6 +107,9 @@ public class MainTeleOp extends CommandOpMode {
         frontArm = new ExtendoArm(hardwareMap);
         claw.open();
         lift.initialInitHang();
+
+        telemetry.addLine("Ready for start!");
+        telemetry.update();
     }
 
 
