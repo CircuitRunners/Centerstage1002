@@ -2,11 +2,12 @@ package org.firstinspires.ftc.teamcode.testers;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.utilities.ServoModule;
 
-
+@Disabled
 @TeleOp (name="LExtendo Scanner")
 public class LExtendoScanner extends CommandOpMode {
     ServoModule mod1;

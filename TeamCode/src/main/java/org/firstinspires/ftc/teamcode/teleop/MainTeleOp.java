@@ -15,7 +15,9 @@ import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
 import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommand;
@@ -43,6 +45,7 @@ public class MainTeleOp extends CommandOpMode {
     private Intake intake;
     private ExtendoArm frontArm;
     private ManualLiftCommand manualLiftCommand;
+    private DistanceSensor distanceSensor;
     private ManualLiftResetCommand manualLiftResetCommand;
 
     private boolean isUp = false, isDown = true, isTransport = false, isPressed = false;
@@ -63,6 +66,7 @@ public class MainTeleOp extends CommandOpMode {
         GamepadEx manipulator = new GamepadEx(gamepad2);
 
         // Subsystems
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         lift = new Lift(hardwareMap);
         airplaneLauncher = new AirplaneLauncher(hardwareMap);
         drivebase = new Drivebase(hardwareMap);
@@ -119,15 +123,18 @@ public class MainTeleOp extends CommandOpMode {
             gamepad1.rumble(50);
         }
 
-//        double keepRobotUpPowerWinch = 0.2;
-//        if (debounce(gamepad2.right_stick_y)) {
-//            lift.hangPower(gamepad2.right_stick_y);
-//        } else if (debounce(gamepad2.right_stick_x)) {
-//            lift.hangPower(-keepRobotUpPowerWinch);
-//        } else {
-//            lift.hangPower(0);
-//        }
+        double keepRobotUpPowerWinch = 0.2;
+        if (debounce(gamepad2.right_stick_y)) {
+            lift.hangPower(gamepad2.right_stick_y);
+        } else if (debounce(gamepad2.right_stick_x)) {
+            lift.hangPower(-keepRobotUpPowerWinch);
+        } else {
+            lift.hangPower(0);
+        }
 
+        if (distanceSensor.getDistance(DistanceUnit.CM) < 4) {
+            telemetry.addData("Pixel Detected", distanceSensor);
+        }
 
         // Intake Assembly
         intake.setPower(gamepad1.right_trigger, gamepad1.left_trigger);

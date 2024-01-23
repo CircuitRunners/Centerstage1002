@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.utilities.ServoModule;
 
-
+@Disabled
 @TeleOp (name="Winch Scanner")
 public class WinchScanner extends CommandOpMode {
     ServoModule mod1;

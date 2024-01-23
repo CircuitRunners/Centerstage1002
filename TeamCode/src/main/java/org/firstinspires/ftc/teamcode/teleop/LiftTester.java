@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -26,7 +27,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 
-
+@Disabled
 @TeleOp (name="Lift Tester")
 public class LiftTester extends CommandOpMode {
 //    private Drivebase drivebase;
