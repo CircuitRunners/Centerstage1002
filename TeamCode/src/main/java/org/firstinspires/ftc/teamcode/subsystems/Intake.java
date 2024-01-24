@@ -22,9 +22,9 @@ public class Intake extends SubsystemBase {
     }
 
     public enum IntakePowers implements PowerSetting {
-        FAST(1), // really fast but enough to grip
-        NORMAL(1), // normal
-        SLOW(0.35); // slow
+        FAST(-1), // really fast but enough to grip
+        NORMAL(-1), // normal
+        SLOW(-0.35); // slow
 
         public final double speed;
 

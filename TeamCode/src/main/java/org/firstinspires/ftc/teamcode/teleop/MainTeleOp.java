@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 
+import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.circle;
 import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.triangle;
 import static org.firstinspires.ftc.teamcode.utilities.Utilities.debounce;
 
@@ -18,6 +19,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
 import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommand;
@@ -45,6 +47,7 @@ public class MainTeleOp extends CommandOpMode {
     private Intake intake;
     private ExtendoArm frontArm;
     private ManualLiftCommand manualLiftCommand;
+    private IntakeCommand intakeCommand;
     private DistanceSensor distanceSensor;
     private ManualLiftResetCommand manualLiftResetCommand;
 
@@ -66,7 +69,6 @@ public class MainTeleOp extends CommandOpMode {
         GamepadEx manipulator = new GamepadEx(gamepad2);
 
         // Subsystems
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         lift = new Lift(hardwareMap);
         airplaneLauncher = new AirplaneLauncher(hardwareMap);
         drivebase = new Drivebase(hardwareMap);
@@ -76,6 +78,7 @@ public class MainTeleOp extends CommandOpMode {
 
         manualLiftCommand = new ManualLiftCommand(lift, manipulator);
         manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
+        intakeCommand = new IntakeCommand(hardwareMap, claw, intake);
 
         lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 
@@ -103,6 +106,9 @@ public class MainTeleOp extends CommandOpMode {
 
         manipulator.getGamepadButton(triangle) // Playstation Triangle
                 .whenHeld(manualLiftResetCommand);
+
+        driver.getGamepadButton(circle)
+                .whenActive(intakeCommand);
 
         frontArm = new ExtendoArm(hardwareMap);
         claw.open();
@@ -135,12 +141,19 @@ public class MainTeleOp extends CommandOpMode {
             lift.hangPower(0);
         }
 
-        if (distanceSensor.getDistance(DistanceUnit.CM) < 4) {
-            telemetry.addData("Pixel Detected", distanceSensor);
-        }
-
         // Intake Assembly
-        intake.setPower(gamepad1.right_trigger, gamepad1.left_trigger);
+
+        if (debounce(gamepad1.left_trigger) || debounce(gamepad1.right_trigger)) {
+            if (intakeCommand.isScheduled()) {
+                telemetry.addLine("ICSX2");
+                intakeCommand.cancel();
+            }
+            intake.setPower(gamepad1.right_trigger, gamepad1.left_trigger);
+        } else if (intakeCommand.isScheduled()){
+            telemetry.addLine("Intake Command Scheduled");
+        } else {
+            intake.setPower(0);
+        }
 
         // Airplane Launcher
         airplaneLauncher.processInput(gamepad2.cross, false);
