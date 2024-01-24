@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.halfPI;
+import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.rotationConstant;
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -8,7 +11,6 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -55,7 +57,7 @@ public class RedStage extends CommandOpMode {
         extendoArm = new ExtendoArm(hardwareMap);
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        Pose2d startPos = new Pose2d(16.00, -62.5, Math.toRadians(270.00));
+        Pose2d startPos = Pose2dMapped(16.00, -62.5, Math.toRadians(270.00));
         drive = new MecanumDrive(hardwareMap, startPos);
 
         arm = new Arm(hardwareMap);
@@ -64,24 +66,44 @@ public class RedStage extends CommandOpMode {
 
         detector.startStream();
 
+//        purpleTrajectory = drive.actionBuilder(drive.pose)
+//                .strafeTo(new Vector2d(22.50, -34.99))
+//                .strafeTo(new Vector2d(22.40, -41.38))
+//                .endTrajectory()
+//                .turn(Math.toRadians(-90))
+//                .splineToConstantHeading(new Vector2d(45.20, -36.70), Math.toRadians(180.00))
+//                .endTrajectory()
+//                .stopAndAdd(
+//                    new SequentialAction(
+//                        new InstantAction(()->{
+//                            while (!moveToScoringCommand.isFinished()) {
+//                                moveToScoringCommand.execute();
+//                            }
+//                        })
+//                    )
+//                )//,new InstantAction(claw::open)))
+////                .waitSeconds(1.4)
+//                .strafeTo(new Vector2d(51.68, -36.03))
+//                .build();
+
         purpleTrajectory = drive.actionBuilder(drive.pose)
-                .strafeTo(new Vector2d(22.50, -34.99))
-                .strafeTo(new Vector2d(22.40, -41.38))
+                .strafeTo(Vector2dMapped(22.50, -34.99))
+                .strafeTo(Vector2dMapped(22.40, -41.38))
                 .endTrajectory()
                 .turn(Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(45.20, -36.70), Math.toRadians(180.00))
+                .splineToConstantHeading(Vector2dMapped(45.20, -36.70), Math.toRadians(180.00))
                 .endTrajectory()
                 .stopAndAdd(
-                    new SequentialAction(
-                        new InstantAction(()->{
-                            while (!moveToScoringCommand.isFinished()) {
-                                moveToScoringCommand.execute();
-                            }
-                        })
-                    )
+                        new SequentialAction(
+                                new InstantAction(()->{
+                                    while (!moveToScoringCommand.isFinished()) {
+                                        moveToScoringCommand.execute();
+                                    }
+                                })
+                        )
                 )//,new InstantAction(claw::open)))
 //                .waitSeconds(1.4)
-                .strafeTo(new Vector2d(51.68, -36.03))
+                .strafeTo(Vector2dMapped(51.68, -36.03))
                 .build();
 
         moveToScoringCommand.initialize();
@@ -132,14 +154,29 @@ public class RedStage extends CommandOpMode {
                     new InstantAction(
                             extendoArm::up
                     ),
-                    new InstantAction(
-                            claw::open
-                    ),
                     new SequentialAction(
                             purpleTrajectory
                     )
             )
         );
+    }
+
+    private double HeadingMapped (double heading) {
+        double mapper = rotationConstant;
+        return heading + mapper; 
+    }
+
+    // Wrapper class for bogus mogus
+    public Vector2d Vector2dMapped(double x, double y) {
+        com.acmerobotics.roadrunner.geometry.Vector2d conversionVector = new com.acmerobotics.roadrunner.geometry.Vector2d(x,y);
+        conversionVector = conversionVector.rotated(rotationConstant);
+        Vector2d returnVector = new Vector2d(conversionVector.getX(), conversionVector.getY());
+        return returnVector;
+    }
+    public Pose2d Pose2dMapped(double x, double y, double heading) {
+        com.acmerobotics.roadrunner.geometry.Vector2d conversionVector = new com.acmerobotics.roadrunner.geometry.Vector2d(x,y);
+        conversionVector = conversionVector.rotated(rotationConstant);
+        return new Pose2d(conversionVector.getX(), conversionVector.getY(), HeadingMapped(heading));
     }
 
     public double xToY (double xVal) {

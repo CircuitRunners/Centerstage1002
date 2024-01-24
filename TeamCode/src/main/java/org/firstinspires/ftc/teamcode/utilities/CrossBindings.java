@@ -14,5 +14,6 @@ public class CrossBindings {
     public static final GamepadKeys.Button share = GamepadKeys.Button.BACK;
     public static final GamepadKeys.Button options = GamepadKeys.Button.START;
 
-
+    public static double halfPI = Math.PI/2.0;
+    public static double rotationConstant = Math.toRadians(-90);
 }

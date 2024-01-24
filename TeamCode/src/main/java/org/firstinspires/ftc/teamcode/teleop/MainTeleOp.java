@@ -132,6 +132,8 @@ public class MainTeleOp extends CommandOpMode {
             gamepad1.rumble(50);
         }
 
+        telemetry.addLine(String.valueOf(navx_device.getFusedHeading()));
+
         double keepRobotUpPowerWinch = 0.2;
         if (debounce(gamepad2.right_stick_y)) {
             lift.hangPower(gamepad2.right_stick_y);
