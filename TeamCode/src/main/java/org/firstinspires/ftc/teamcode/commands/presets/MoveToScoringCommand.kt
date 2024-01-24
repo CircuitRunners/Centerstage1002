@@ -34,9 +34,9 @@ class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Claw, preset: Presets) : 
                 }),
                 when (preset) {
                     Presets.SHORT ->
-                        ProfiledLiftCommand(lift, LiftPositions.SHORT.position, true)
+                        LiftPositionCommand(lift, LiftPositions.SHORT.position, true)
                     Presets.MID ->
-                        ProfiledLiftCommand(lift, LiftPositions.MID.position, true)
+                        LiftPositionCommand(lift, LiftPositions.MID.position, true)
                     Presets.HIGH ->
                         LiftPositionCommand(lift, LiftPositions.HIGH.position, true)
 

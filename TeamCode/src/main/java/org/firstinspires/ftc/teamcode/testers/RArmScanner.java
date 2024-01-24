@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.utilities.ServoModule;
 
-@Disabled
+//@Disabled
 @TeleOp (name="RArm Scanner")
 public class RArmScanner extends CommandOpMode {
     ServoModule mod1;

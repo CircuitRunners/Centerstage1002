@@ -28,10 +28,10 @@ import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
 // Complete!
 //@Photon
-@Autonomous (name="Parking Auto (BLUE****, Stage)")
-public class RedStage extends CommandOpMode {
+@Autonomous (name="Parking Auto (IHateLife, Stage)")
+public class IHateLife extends CommandOpMode {
 
-//    private double powerFullMultiplier = DynamicConstants.multiplier;
+    //    private double powerFullMultiplier = DynamicConstants.multiplier;
     private MecanumDrive drive;
 
 //    private TeamPropDetector detector;
@@ -57,37 +57,16 @@ public class RedStage extends CommandOpMode {
         extendoArm = new ExtendoArm(hardwareMap);
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        Pose2d startPos = new Pose2d(11.0, -62.5, Math.toRadians(270.00));
+        Pose2d startPos = new Pose2d(61.5, 9, Math.toRadians(0));
         drive = new MecanumDrive(hardwareMap, startPos);
 
         arm = new Arm(hardwareMap);
         lift = new Lift(hardwareMap);
         moveToScoringCommand = new MoveToScoringCommand(lift,arm,claw, MoveToScoringCommand.Presets.SHORT);
 
-//        detector.startStream();
-
         purpleTrajectory = drive.actionBuilder(drive.pose)
-                .strafeTo(new Vector2d(22.50, -34.99))
-                .strafeTo(new Vector2d(22.40, -41.38))
-                .endTrajectory()
-                .turn(Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(45.20, -36.70), Math.toRadians(180.00))
-                .endTrajectory()
-                .stopAndAdd(
-                        new SequentialAction(
-                                new InstantAction(()->{
-                                    while (!moveToScoringCommand.isFinished()) {
-                                        moveToScoringCommand.execute();
-                                    }
-                                })
-                        )
-                )//,new InstantAction(claw::open)))
-//                .waitSeconds(1.4)
-                .strafeTo(new Vector2d(51.68, -36.03))
+                .splineToConstantHeading(new Vector2d(32.5, 9), Math.toRadians(0))
                 .build();
-
-        moveToScoringCommand.initialize();
-
 
 
 //                .splineToConstantHeading(new Vector2d(33, 12), Math.toRadians(0))
@@ -117,63 +96,11 @@ public class RedStage extends CommandOpMode {
             sleep(50);
         }
 
-//        detector.stopStream();
-
-
-//        switch (locationID) {
-//            case 0: {
-//                break;
-//            }
-//            case 1: {
-//                break;
-//            }
-//            case 2: {
-//                break;
-//            }
-//        }
         Actions.runBlocking(
-            new ParallelAction(
-                    new InstantAction(
-                            extendoArm::up
-                    ),
-                    new SequentialAction(
-                            purpleTrajectory
-                    )
-            )
+                purpleTrajectory
         );
+
     }
 
-    private double HeadingMapped (double heading) {
-        double mapper = rotationConstant;
-        return heading + mapper;
-    }
-
-    // Wrapper class for bogus mogus
-    public Vector2d Vector2dMapped(double x, double y) {
-        com.acmerobotics.roadrunner.geometry.Vector2d conversionVector = new com.acmerobotics.roadrunner.geometry.Vector2d(x,y);
-        conversionVector = conversionVector.rotated(rotationConstant);
-        Vector2d returnVector = new Vector2d(conversionVector.getX(), conversionVector.getY());
-        return returnVector;
-    }
-    public Pose2d Pose2dMapped(double x, double y, double heading) {
-        com.acmerobotics.roadrunner.geometry.Vector2d conversionVector = new com.acmerobotics.roadrunner.geometry.Vector2d(x,y);
-        conversionVector = conversionVector.rotated(rotationConstant);
-        return new Pose2d(conversionVector.getX(), conversionVector.getY(), HeadingMapped(heading));
-    }
-
-    public double xToY (double xVal) {
-        if (Math.signum(xVal) == -1) {
-            return Math.abs(xVal);
-        } else {
-            return -Math.abs(xVal);
-        }
-    }
-    public double yToX (double yVal) {
-        if (Math.signum(yVal) == -1) {
-            return -Math.abs(yVal);
-        } else {
-            return Math.abs(yVal);
-        }
-    }
 }
 

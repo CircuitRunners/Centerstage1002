@@ -60,8 +60,8 @@ public class ProfiledLiftCommand extends CommandBase {
                 new MotionState(lift.getLiftPosition(), lift.getLiftVelocity()),
                 new MotionState(targetPosition, 0),
                 // These values are placeholders; adjust maxVel, maxAccel, and maxJerk as needed
-                1500, // maxVel 700
-                1500, // maxAccel 820
+                2500, // maxVel 700
+                3000, // maxAccel 820
                 0    // maxJerk
         );
 
