@@ -22,8 +22,8 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 537.6; // 699.1 geared up
-    public static final double MAX_RPM = 312.5; //312.5*0.76923*1.875*2*pi/60
+    public static final double TICKS_PER_REV = 537.7; // 699.1 geared up
+    public static final double MAX_RPM = 312; //312.5*0.76923*1.875*2*pi/60
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -45,9 +45,9 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 1.875; // in
-    public static double GEAR_RATIO = 0.76923; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 14.08 ; // around 13.2 measured, 14.08 empirical
+    public static double WHEEL_RADIUS = 1.889; // in
+    public static double GEAR_RATIO = 0.76923077; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 16.69; // around 13.2 measured, 14.08 empirical
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -55,9 +55,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.0145;//0.0145; // 1/MAX_VEL = 0.01587301587, initial tuning!
-    public static double kA = 0.0045;//0.0035; // prev 0.00258
-    public static double kStatic = 0.01; //can be 0! // prev 0.0832
+    public static double kV = 0.0151;//0.0145;//0.0145; // 1/MAX_VEL = 0.01587301587, initial tuning!
+    public static double kA = 0.00515;//0.0035; // prev 0.00258
+    public static double kStatic = 0.00; //can be 0! // prev 0.0832
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -89,7 +89,7 @@ public class DriveConstants {
      */
     public static double MAX_VEL = 37.7594893; //58; // is about 92% of the tuner: tuner gave 63 as the actual result for 100%
     public static double MAX_ACCEL = 37.7594893; //32; // was 38 but changed a bit lower to get closer to recommended 30 m/s^2
-    public static double MAX_ANG_VEL = Math.toRadians(263.659636); //  = MAX/VEL (meters/s) / track width (inches converted to meters)
+    public static double MAX_ANG_VEL = Math.toRadians(269.36284154868963); //  = MAX/VEL (meters/s) / track width (inches converted to meters)
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 
 

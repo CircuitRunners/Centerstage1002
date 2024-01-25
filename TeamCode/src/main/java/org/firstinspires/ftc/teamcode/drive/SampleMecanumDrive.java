@@ -55,10 +55,12 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 2);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6 , 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0.5);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3 , 0, 0.5);
 
-    public static double LATERAL_MULTIPLIER = 1.76470588;//1.609;//1.3522; // 60.25, 60.1, 60.25, 60.2, 59.75
+    public static double LATERAL_MULTIPLIER = 1.179361179361179;//1.609;//1.3522; // 60.25, 60.1, 60.25, 60.2, 59.75
+    // 60/66.2
+    // 60/50.875
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -100,10 +102,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 //                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
 //        imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
-        rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        leftFront = hardwareMap.get(DcMotorEx.class, "backRight");
+        leftRear = hardwareMap.get(DcMotorEx.class, "frontRight");
+        rightRear = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        rightFront = hardwareMap.get(DcMotorEx.class, "backLeft");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 

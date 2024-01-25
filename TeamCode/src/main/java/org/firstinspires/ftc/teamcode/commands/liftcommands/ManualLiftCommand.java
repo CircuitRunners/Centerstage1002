@@ -59,7 +59,9 @@ public class ManualLiftCommand extends CommandBase {
 
         //Otherwise, do nothing
         else {
-            if (lift.getLiftPosition() < 3) lift.setLiftPower(0);
+            if (lift.getLiftPosition() < 10) lift.setLiftPower(0);
+                // Counter motor being on close to the bottom
+            else if (lift.getLiftPosition() < 40) lift.setLiftPower(-.05);
                 // Slide 1 Counter
             else if (lift.getLiftPosition() < 850)
                 lift.setLiftPower(0.09*lift.getVoltageComp()); //0.19 *
