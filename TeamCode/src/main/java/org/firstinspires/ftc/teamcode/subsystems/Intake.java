@@ -120,6 +120,10 @@ public class Intake extends SubsystemBase {
         setPower(power);
     }
 
+    public int getCurrentPosition () {
+        return intakeMotor.getCurrentPosition();
+    }
+
     @Override
     public void periodic() {
         if (isRunning && runtime.seconds() > runDuration) {
