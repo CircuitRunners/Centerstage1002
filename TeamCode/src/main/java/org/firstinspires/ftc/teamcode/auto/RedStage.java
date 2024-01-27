@@ -147,8 +147,8 @@ public class RedStage extends CommandOpMode {
                         .lineTo(Vector2dMapped(32.30, -45.89))
                         .build();
                 THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-                        .splineToLinearHeading(Pose2dMapped(48.31, -36, Math.toRadians(0.00)), MathtoRadians(0.00))
-                        .lineTo(Vector2dMapped(52.22, -36))
+                        .splineToLinearHeading(Pose2dMapped(48.31, -37, Math.toRadians(0.00)), MathtoRadians(0.00))
+                        .lineTo(Vector2dMapped(52.22, -37))
                         .build();
                 break;
             }
@@ -207,7 +207,10 @@ public class RedStage extends CommandOpMode {
                                 new TrajectorySequenceCommand(drive, THREE_PIXEL_ON_BACKDROP),
                                 new SequentialCommandGroup(
                                     new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                                        new InstantCommand(claw::open)
+                                        new InstantCommand(claw::open),
+                                        new InstantCommand(()->lift.setLiftPower(-0.2)),
+                                        new WaitCommand(300),
+                                        new InstantCommand(()->lift.brake_power())
                                 )
                         ),
                         new ParallelCommandGroup(
