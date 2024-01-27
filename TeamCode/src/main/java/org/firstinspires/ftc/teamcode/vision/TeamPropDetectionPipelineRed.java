@@ -53,9 +53,9 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
 
         List<Mat> matsToRelease = new ArrayList<>();
 
-        leftZone = input.submat(new Rect(0, 0, width / 3, height));
-        middleZone = input.submat(new Rect(width / 3, 0, width / 3, height));
-        rightZone = input.submat(new Rect(2 * width / 3, 0, width / 3, height));
+        leftZone = input.submat(new Rect(0, 0, width / 4, height));
+        middleZone = input.submat(new Rect(width / 4, 0, width / 2, height));
+        rightZone = input.submat(new Rect(3 * width / 4, 0, width / 4, height));
 
         // Add submats to the list of Mats to be released
         matsToRelease.add(leftZone);

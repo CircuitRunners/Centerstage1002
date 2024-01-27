@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -146,8 +147,8 @@ public class RedStage extends CommandOpMode {
                         .lineTo(Vector2dMapped(32.30, -45.89))
                         .build();
                 THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-                        .splineToLinearHeading(Pose2dMapped(48.31, -36.47, Math.toRadians(0.00)), MathtoRadians(0.00))
-                        .lineTo(Vector2dMapped(52.22, -36.47))
+                        .splineToLinearHeading(Pose2dMapped(48.31, -36, Math.toRadians(0.00)), MathtoRadians(0.00))
+                        .lineTo(Vector2dMapped(52.22, -36))
                         .build();
                 break;
             }
@@ -202,18 +203,23 @@ public class RedStage extends CommandOpMode {
 //                )
                 new SequentialCommandGroup(
                         new TrajectorySequenceCommand(drive, ONE_GLOBAL),
-                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-//                        new TrajectorySequenceCommand(drive, TWO_DEFAULT_RIGHT_COMBINED_PURPLE_LOCATION),
-//                        new WaitCommand(500),
-                        new InstantCommand(claw::open),
-                        new TrajectorySequenceCommand(drive, THREE_PIXEL_ON_BACKDROP),
-                        new RetractOuttakeCommand(lift,arm,claw),
-//                        new WaitCommand(1000),
-                        new InstantCommand(()->lift.setLiftPower(-0.2)),
-                        new WaitCommand(700),
-                        new InstantCommand(()->lift.brake_power()),
-                        new InstantCommand(extendo::up),
-                        new TrajectorySequenceCommand(drive,FOUR_TO_LIGHTSPEED_BRIDGE_POSITION),
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, THREE_PIXEL_ON_BACKDROP),
+                                new SequentialCommandGroup(
+                                    new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open)
+                                )
+                        ),
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive,FOUR_TO_LIGHTSPEED_BRIDGE_POSITION),
+                                new SequentialCommandGroup(
+                                    new RetractOuttakeCommand(lift,arm,claw),
+            //                        new WaitCommand(1000),
+                                    new InstantCommand(()->lift.setLiftPower(-0.2)),
+                                    new WaitCommand(700),
+                                    new InstantCommand(()->lift.brake_power())
+                                        )
+                        ),
                         new ParallelCommandGroup(
                                 new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
                                 new InstantCommand(extendo::mid),
@@ -224,9 +230,13 @@ public class RedStage extends CommandOpMode {
                                 )
                         ),
                         new TrajectorySequenceCommand(drive, SIX_LIGHTSPEED_BRIDGE_BACK),
+                        new ParallelCommandGroup(
+                                new SequentialCommandGroup(
                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
-                        new InstantCommand(claw::open),
-                        new TrajectorySequenceCommand(drive, SEVEN_PIXEL_ON_BACKBOARD),
+                                new InstantCommand(claw::open)
+                                        ),
+                                new TrajectorySequenceCommand(drive, SEVEN_PIXEL_ON_BACKBOARD)
+                                    ),
                         new RetractOuttakeCommand(lift,arm,claw),
                         new TrajectorySequenceCommand(drive, EIGHT_PARK_END)
                 )
