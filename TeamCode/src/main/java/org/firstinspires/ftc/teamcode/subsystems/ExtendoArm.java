@@ -18,7 +18,8 @@ public class ExtendoArm extends SubsystemBase {
 
     public enum ArmPositions {
         DOWN(0.712, 0.31),
-        TRANSPORT(0.0,0.5),
+        TRANSPORT(0.63,0.39),
+        TRANSPORT_ALPHA(0.649,0.359),
         UP(0.4,0.64);
 
         private final double position_right;
@@ -67,5 +68,11 @@ public class ExtendoArm extends SubsystemBase {
 
     public void up(){
         setPosition(ArmPositions.UP);
+    }
+    public void mid(){
+        setPosition(ArmPositions.TRANSPORT);
+    }
+    public void alpha () {
+        setPosition(ArmPositions.TRANSPORT_ALPHA);
     }
 }

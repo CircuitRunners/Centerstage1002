@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
@@ -14,12 +13,13 @@ import org.firstinspires.ftc.teamcode.subsystems.ExtendoArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 @Photon
-public class IntakeCommandEx extends CommandBase {
+public class IntakeStackCommand extends CommandBase {
     private ElapsedTime runtime;
     private ElapsedTime intakeTimer, waitTimer; // Timer for the intake process
     private Intake intake;
     private DistanceSensor distanceSensor;
     private Claw claw;
+    private ExtendoArm extendo;
     private int pixelsDetectedState = 0;
     private Intake.IntakePowers power;
     private static final double DETECTION_THRESHOLD = 4.0; // Threshold for the distance sensor
@@ -30,9 +30,10 @@ public class IntakeCommandEx extends CommandBase {
     private static final double FINISH_LOWSPEED_THRESHOLD = 400;
     private static final double OUTTAKE_TIME_ROBOT = 1350;
 
-    public IntakeCommandEx(HardwareMap hardwareMap, Claw claw, Intake intake, Intake.IntakePowers power) {
+    public IntakeStackCommand(HardwareMap hardwareMap, Claw claw, Intake intake, Intake.IntakePowers power, ExtendoArm extendo) {
         this.intake = intake;
         this.claw = claw;
+        this.extendo = extendo;
         this.distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         this.runtime = new ElapsedTime();
         this.intakeTimer = new ElapsedTime();
@@ -53,6 +54,11 @@ public class IntakeCommandEx extends CommandBase {
 
     @Override
     public void execute() {
+        Drive drive;
+        if (runtime.milliseconds() > 3000) {
+            extendo.setPosition(ExtendoArm.ArmPositions.DOWN);
+        } else if (runtime.milliseconds() > 5000)
+            pixelsDetectedState = 3;
         switch (pixelsDetectedState) {
             case 0: // Pixel not detected
                 intake.setPower(power);

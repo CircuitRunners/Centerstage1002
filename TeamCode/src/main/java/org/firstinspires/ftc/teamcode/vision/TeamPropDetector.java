@@ -3,20 +3,29 @@ package org.firstinspires.ftc.teamcode.vision;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.teamcode.utilities.PropLocation;
+import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.util.ArrayList;
 
 public class TeamPropDetector {
 
     private OpenCvCamera camera;
     private TeamPropDetectionPipeline teamPropPipeline;
 
-    public TeamPropDetector(HardwareMap hardwareMap, boolean useWebcamOne) {
-        this.teamPropPipeline = new TeamPropDetectionPipeline();
+    public TeamPropDetector(HardwareMap hardwareMap, boolean useWebcamOne, Team team) {
+        switch (team) {
+            case RED: {
+                this.teamPropPipeline = new TeamPropDetectionPipeline();
+                break;
+            }
+            case BLUE: {
+                this.teamPropPipeline = new TeamPropDetectionPipeline();
+                break;
+            }
+        }
+
 
         // Obtain the GUI element for showing the camera stream
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -34,7 +43,7 @@ public class TeamPropDetector {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -51,8 +60,8 @@ public class TeamPropDetector {
         });
     }
 
-    public int update() {
-        int zoneDetected = teamPropPipeline.getTeamPropZone();
+    public PropLocation update() {
+        PropLocation zoneDetected = teamPropPipeline.getTeamPropZone();
 
         return zoneDetected;
     }

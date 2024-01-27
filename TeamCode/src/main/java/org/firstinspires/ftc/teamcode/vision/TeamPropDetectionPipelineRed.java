@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
+import org.firstinspires.ftc.teamcode.utilities.PropLocation;
 import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -40,7 +41,7 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         Arrays.fill(areaInZone, 0); // Reset the areaInZone array
     }
 
-    int teamPropZone = 1; // The middle as default
+    PropLocation teamPropZone = PropLocation.RIGHT; // The middle as default
 
     // Notice if you have any Mats or things needing to be released as memory,
     // Have it declared as an instance variable (and re-used), not a local variable
@@ -75,14 +76,27 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         // Reset the area
         Arrays.fill(areaInZone, 0);
 
-        teamPropZone = mostLikelyZone;
+        switch (mostLikelyZone) {
+            case 0: {
+                teamPropZone = PropLocation.LEFT;
+                break;
+            }
+            case 1: {
+                teamPropZone = PropLocation.MIDDLE;
+                break;
+            }
+            case 2: {
+                teamPropZone = PropLocation.RIGHT;
+                break;
+            }
+        }
 
         releaseMats(matsToRelease);
 
         return input; // wont show nothin
     }
 
-    public int getTeamPropZone()
+    public PropLocation getTeamPropZone()
     {
         return teamPropZone;
     }

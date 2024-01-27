@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 public class Lift extends SubsystemBase {
     public enum LiftPositions {
         DOWN(0),
-        SHORT(360),
+        SHORT(500),
         MID(1160),
         HIGH(2060);
 

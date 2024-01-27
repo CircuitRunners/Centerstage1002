@@ -105,7 +105,7 @@ public class MainTeleOp extends CommandOpMode {
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
-        manipulator.getGamepadButton(triangle) // Playstation Triangle
+        manipulator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT) // Playstation Triangle
                 .whenHeld(manualLiftResetCommand);
 
         driver.getGamepadButton(circle)
@@ -135,13 +135,18 @@ public class MainTeleOp extends CommandOpMode {
 
         telemetry.addLine(String.valueOf(navx_device.getFusedHeading()));
 
-        double keepRobotUpPowerWinch = 0.2;
-        if (debounce(gamepad2.right_stick_y)) {
-            lift.hangPower(gamepad2.right_stick_y);
-        } else if (debounce(gamepad2.right_stick_x)) {
-            lift.hangPower(-keepRobotUpPowerWinch);
+        if (gamepad2.triangle) {
+
+            lift.hangPower(1);
+        } else if (gamepad2.cross) {
+            lift.hangPower(-0.5);
+            lift.setLiftPower(0.7);
         } else {
             lift.hangPower(0);
+        }
+
+        if (gamepad2.dpad_right) {
+            lift.hangPower(0.2);
         }
 
         // Intake Assembly
@@ -159,7 +164,7 @@ public class MainTeleOp extends CommandOpMode {
         }
 
         // Airplane Launcher
-        airplaneLauncher.processInput(gamepad2.cross, false);
+        airplaneLauncher.processInput(gamepad1.dpad_down, false);
 
         // Transfer/Claw
         if (gamepad2.right_bumper) {

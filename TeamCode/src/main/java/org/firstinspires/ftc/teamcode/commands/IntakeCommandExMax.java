@@ -22,10 +22,11 @@ public class IntakeCommandExMax extends CommandBase {
     private int pixelsDetectedState = 0;
     private Intake.IntakePowers power;
     private static final double DETECTION_THRESHOLD = 4.0; // Threshold for the distance sensor
-    private static final double REQUIRED_TIME_MS = 1150; // Required time in milliseconds
+    private static final double REQUIRED_TIME_MS = 900; // Required time in milliseconds
     private static final double FINISH_LOWSPEED_THRESHOLD = 400;
-    private static final int STALL_THRESHOLD = 10; // Encoder counts threshold for stall detection
-    private static final int STALL_RECOVERY_TIME = 200; // Time in milliseconds to reverse motor for unjamming
+    private static final int STALL_THRESHOLD = 100; // Encoder counts threshold for stall detection
+    private static final int STALL_RECOVERY_TIME = 150; // Time in milliseconds to reverse motor for unjamming
+    private static final double OUTTAKE_TIME_ROBOT = 1500;
     private int lastEncoderPosition;
 
     public IntakeCommandExMax(HardwareMap hardwareMap, Claw claw, Intake intake, Intake.IntakePowers power) {
@@ -89,6 +90,8 @@ public class IntakeCommandExMax extends CommandBase {
                 claw.close();
                 if (waitTimer.milliseconds() < FINISH_LOWSPEED_THRESHOLD) {
                     intake.setPower(Intake.IntakePowers.SLOW);
+                } else if (waitTimer.milliseconds() < OUTTAKE_TIME_ROBOT) {
+                    intake.setPower(Intake.OuttakePowers.NORMAL);
                 } else {
                     intake.setPower(0);
                     pixelsDetectedState = 3;
