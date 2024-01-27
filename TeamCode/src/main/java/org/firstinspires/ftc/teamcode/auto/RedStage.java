@@ -128,7 +128,7 @@ public class RedStage extends CommandOpMode {
         switch (locationID) {
             case LEFT: {
                 ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-                        .lineToLinearHeading(Pose2dMapped(14.4, -40.64, Math.toRadians(155.00)))
+                        .lineToLinearHeading(Pose2dMapped(14.4, -42.64, Math.toRadians(155.00)))
                         .lineTo(Vector2dMapped(8.75, -39))
                         .lineToLinearHeading(Pose2dMapped(32.30, -45.89, Math.toRadians(0)))
                         .build();
