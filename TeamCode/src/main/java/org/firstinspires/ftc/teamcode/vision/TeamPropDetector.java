@@ -15,17 +15,17 @@ public class TeamPropDetector {
     private TeamPropDetectionPipeline teamPropPipeline;
 
     public TeamPropDetector(HardwareMap hardwareMap, boolean useWebcamOne, Team team) {
+        this.teamPropPipeline = new TeamPropDetectionPipeline();
         switch (team) {
             case RED: {
-                this.teamPropPipeline = new TeamPropDetectionPipeline();
+                teamPropPipeline.setTeam(Team.RED);
                 break;
             }
             case BLUE: {
-                this.teamPropPipeline = new TeamPropDetectionPipeline();
+                teamPropPipeline.setTeam(Team.BLUE);
                 break;
             }
         }
-
 
         // Obtain the GUI element for showing the camera stream
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());

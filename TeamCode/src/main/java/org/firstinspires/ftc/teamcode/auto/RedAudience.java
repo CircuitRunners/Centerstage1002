@@ -40,7 +40,7 @@ public class RedAudience extends CommandOpMode {
     // Default Values
     private PropLocation locationID = DEFAULT_PROP_LOCATION; // set to center by default
 
-    private Pose2d startPose = Pose2dMapped(-39.50, -61.50, Math.toRadians(90.00));
+    private Pose2d startPose = Pose2dMapped(-39.75, -63, Math.toRadians(90.00));
 
     // Subsystems initialization
     private Lift lift;
@@ -87,6 +87,7 @@ public class RedAudience extends CommandOpMode {
         // Cleanup for other code
         detector.stopStream();
 
+
         switch (locationID) {
             case LEFT: {
                 ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
@@ -94,8 +95,7 @@ public class RedAudience extends CommandOpMode {
                         .lineTo(Vector2dMapped(-36.20, -38.09))
                         .lineToLinearHeading(Pose2dMapped(-34.32, -9.56, Math.toRadians(0.00)))
                         .build();
-                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-                        .lineToLinearHeading(Pose2dMapped(37.01, -10.50, Math.toRadians(0.00)))
+                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(Pose2dMapped(40.64, -11.30, Math.toRadians(0)))
                         .lineTo(Vector2dMapped(52.22, -28.47))
                         .build();
                 break;
@@ -108,8 +108,7 @@ public class RedAudience extends CommandOpMode {
                         .lineToLinearHeading(Pose2dMapped(-34.32, -9.56, Math.toRadians(0.00)))
                         .build();
 
-                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-                        .lineToLinearHeading(Pose2dMapped(37.01, -10.50, Math.toRadians(0.00)))
+                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(Pose2dMapped(40.64, -11.30, Math.toRadians(0)))
                         .lineTo(Vector2dMapped(52.22, -36))
                         .build();
                 break;
@@ -123,23 +122,19 @@ public class RedAudience extends CommandOpMode {
 
 
 
-                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-                        .splineToLinearHeading(Pose2dMapped(48.31, -44.47, Math.toRadians(0.00)), MathtoRadians(0.00))
+                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(Pose2dMapped(40.64, -11.30, Math.toRadians(0)))
                         .lineTo(Vector2dMapped(52.22, -44.47))
                         .build();
                 break;
             }
         }
 
-        // go across the field and intake
-        TrajectorySequence FOUR_TO_LIGHTSPEED_BRIDGE_POSITION_AND_INTAKE = drive.trajectorySequenceBuilder(THREE_PIXEL_ON_BACKDROP.end())
-                .lineTo(Vector2dMapped(46.97, -12.38))
-                .lineTo(Vector2dMapped(-58.29, -11.71))
+        TrajectorySequence FOUR_TO_LIGHTSPEED_BRIDGE_POSITION = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
+                .lineTo(Vector2dMapped(-55.5, -12.98))
                 .build();
-
         // pickup from stack (move in)
-        TrajectorySequence FIVE_INTAKE_PIXELS_STACK = drive.trajectorySequenceBuilder(FOUR_TO_LIGHTSPEED_BRIDGE_POSITION_AND_INTAKE.end())
-                .lineTo(Vector2dMapped(-61.2, -14.98))
+        TrajectorySequence FIVE_INTAKE_PIXELS_STACK = drive.trajectorySequenceBuilder(FOUR_TO_LIGHTSPEED_BRIDGE_POSITION.end())
+                .lineTo(Vector2dMapped(-60.22, -12.98))
                 .build();
 
         TrajectorySequence BACK_TO_PIXEL_BACKBOARD = drive.trajectorySequenceBuilder(FIVE_INTAKE_PIXELS_STACK.end())
@@ -158,43 +153,69 @@ public class RedAudience extends CommandOpMode {
         schedule(
                 new SequentialCommandGroup(
                         new TrajectorySequenceCommand(drive, ONE_GLOBAL),
+                        new TrajectorySequenceCommand(drive, FOUR_TO_LIGHTSPEED_BRIDGE_POSITION),
+                        new InstantCommand(claw::open),
+                        new ParallelCommandGroup(
+                            new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
+                            new InstantCommand(extendo::mid),
+                            new TrajectorySequenceCommand(drive, FIVE_INTAKE_PIXELS_STACK),
+                            new SequentialCommandGroup(
+                                    new WaitCommand(500),
+                                    new InstantCommand(extendo::alpha)
+                            )
+                        ),
+                        new TrajectorySequenceCommand(drive,  BACK_TO_PIXEL_BACKBOARD),
+                        new ParallelCommandGroup(
+                            new SequentialCommandGroup(
+                                new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
+                                new InstantCommand(claw::open),
+                                new InstantCommand(()->lift.setLiftPower(-0.2)),
+                                new WaitCommand(300),
+                                new InstantCommand(()->lift.brake_power())
+                            )
+                        ),
                         new TrajectorySequenceCommand(drive, THREE_PIXEL_ON_BACKDROP),
-                        new SequentialCommandGroup(
-                            new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                            new InstantCommand(claw::open)
-                        ),
-                        new ParallelCommandGroup(
-                                new TrajectorySequenceCommand(drive,FOUR_TO_LIGHTSPEED_BRIDGE_POSITION_AND_INTAKE),
-                                new SequentialCommandGroup(
-                                    new RetractOuttakeCommand(lift,arm,claw),
-                                    new InstantCommand(()->lift.setLiftPower(-0.2)),
-                                    new WaitCommand(700),
-                                    new InstantCommand(()->lift.brake_power())
-                                )
-                        ),
-                        new ParallelCommandGroup(
-                                new ParallelRaceGroup(
-                                        new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
-                                        new WaitCommand(5000)
-                                ),
-                                new InstantCommand(extendo::mid),
-                                new TrajectorySequenceCommand(drive, FIVE_INTAKE_PIXELS_STACK),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(500),
-                                        new InstantCommand(extendo::alpha)
-                                )
-                        ),
-                        new TrajectorySequenceCommand(drive, BACK_TO_PIXEL_BACKBOARD),
-                        new ParallelCommandGroup(
-                                new SequentialCommandGroup(
-                                    new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
-                                    new InstantCommand(claw::open)
-                                ),
-                                new TrajectorySequenceCommand(drive, INSERT_BACKBOARD)
-                        ),
                         new RetractOuttakeCommand(lift,arm,claw),
-                        new TrajectorySequenceCommand(drive, STRAFE_PARK)
-                )
+                       new TrajectorySequenceCommand(drive, STRAFE_PARK)
+
+
+
+////                        new SequentialCommandGroup(
+////                            new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+////                            new InstantCommand(claw::open)
+////                        ),
+////                        new ParallelCommandGroup(
+////                                new TrajectorySequenceCommand(drive,FOUR_TO_LIGHTSPEED_BRIDGE_POSITION_AND_INTAKE),
+////                                new SequentialCommandGroup(
+////                                    new RetractOuttakeCommand(lift,arm,claw),
+////                                    new InstantCommand(()->lift.setLiftPower(-0.2)),
+////                                    new WaitCommand(700),
+////                                    new InstantCommand(()->lift.brake_power())
+////                                )
+////                        ),
+////                        new ParallelCommandGroup(
+////                                new ParallelRaceGroup(
+////                                        new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
+////                                        new WaitCommand(5000)
+////                                ),
+////                                new InstantCommand(extendo::mid),
+////                                new TrajectorySequenceCommand(drive, FIVE_INTAKE_PIXELS_STACK),
+////                                new SequentialCommandGroup(
+////                                        new WaitCommand(500),
+////                                        new InstantCommand(extendo::alpha)
+////                                )
+////                        ),
+////                        new TrajectorySequenceCommand(drive, BACK_TO_PIXEL_BACKBOARD),
+////                        new ParallelCommandGroup(
+////                                new SequentialCommandGroup(
+////                                    new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
+////                                    new InstantCommand(claw::open)
+////                                ),
+////                                new TrajectorySequenceCommand(drive, INSERT_BACKBOARD)
+////                        ),
+////                        new RetractOuttakeCommand(lift,arm,claw),
+////                        new TrajectorySequenceCommand(drive, STRAFE_PARK)
+               )
         );
     };
 

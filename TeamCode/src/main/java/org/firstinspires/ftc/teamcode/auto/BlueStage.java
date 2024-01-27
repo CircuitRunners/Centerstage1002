@@ -47,7 +47,7 @@ public class BlueStage extends CommandOpMode {
     private PropLocation locationID = PropLocation.MIDDLE; // set to center by default
 
     //    private Pose2d startPose = Pose2dMapped(9.00, -61.50, Math.toRadians(90.00));
-    private Pose2d startPose = Pose2dMapped(10.50, 62.5, Math.toRadians(270.00));
+    private Pose2d startPose = Pose2dMapped(13.80, 63, Math.toRadians(270.00));
     private Lift lift;
     private Arm arm;
     private Claw claw;
@@ -137,7 +137,7 @@ public class BlueStage extends CommandOpMode {
                         .build();
                 THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
                         .splineToLinearHeading(Pose2dMapped(48.31, 44.47, Math.toRadians(360.00)), MathtoRadians(0.00))
-                        .lineTo(Vector2dMapped(52.22, 44.47))
+                        .lineTo(Vector2dMapped(52.72, 44.47))
                         .build();
                 break;
             }
@@ -148,19 +148,19 @@ public class BlueStage extends CommandOpMode {
                         .build();
                 THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
                         .splineToLinearHeading(Pose2dMapped(48.31, 37, Math.toRadians(360.00)), MathtoRadians(0.00))
-                        .lineTo(Vector2dMapped(52.22, 37))
+                        .lineTo(Vector2dMapped(52.72, 37))
                         .build();
                 break;
             }
             case RIGHT: {
                 ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-                        .lineToLinearHeading(Pose2dMapped(14.4, 42.64, Math.toRadians(205.00)))
+                        .lineToLinearHeading(Pose2dMapped(18.4, 42.64, Math.toRadians(205.00)))
                         .lineTo(Vector2dMapped(8.75, 39))
-                        .lineToLinearHeading(Pose2dMapped(32.30, 45.89, Math.toRadians(360)))
+                        .lineToLinearHeading(Pose2dMapped(38.4, 45.89, Math.toRadians(362.5)))
                         .build();
                 THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-                        .splineToLinearHeading(Pose2dMapped(48.31, 28.47, Math.toRadians(360.00)), MathtoRadians(0.00))
-                        .lineTo(Vector2dMapped(52.22, 28.47))
+                        .splineToLinearHeading(Pose2dMapped(48.31, 28.47, Math.toRadians(362.50)), MathtoRadians(0.00))
+                        .lineTo(Vector2dMapped(52.72, 28.47))
                         .build();
                 break;
             }
@@ -174,12 +174,12 @@ public class BlueStage extends CommandOpMode {
         // Stack
         TrajectorySequence FOUR_TO_LIGHTSPEED_BRIDGE_POSITION = drive.trajectorySequenceBuilder(THREE_PIXEL_ON_BACKDROP.end())
                 .lineTo(Vector2dMapped(33.24, 12.25))
-                .lineTo(Vector2dMapped(-52.22, 14.98))
+                .lineTo(Vector2dMapped(-52.22, 12.98))
                 .build();
 
         // Back 2 The Backboard
         TrajectorySequence FIVE_INTAKE_PIXELS_STACK = drive.trajectorySequenceBuilder(FOUR_TO_LIGHTSPEED_BRIDGE_POSITION.end())
-                .lineTo(Vector2dMapped(-54.29, 14.98))
+                .lineTo(Vector2dMapped(-54.29, 12.98))
                 .build();
 
         TrajectorySequence SIX_LIGHTSPEED_BRIDGE_BACK = drive.trajectorySequenceBuilder(FIVE_INTAKE_PIXELS_STACK.end())

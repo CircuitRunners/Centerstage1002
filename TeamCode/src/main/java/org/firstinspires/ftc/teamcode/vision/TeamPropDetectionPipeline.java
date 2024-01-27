@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.vision;
 
+import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.DEFAULT_PROP_LOCATION;
+
 import org.firstinspires.ftc.teamcode.utilities.PropLocation;
 import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.opencv.core.Core;
@@ -41,10 +43,15 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         Arrays.fill(areaInZone, 0); // Reset the areaInZone array
     }
 
-    PropLocation teamPropZone = PropLocation.RIGHT; // The middle as default
+    PropLocation teamPropZone = DEFAULT_PROP_LOCATION; // The middle as default
 
     // Notice if you have any Mats or things needing to be released as memory,
     // Have it declared as an instance variable (and re-used), not a local variable
+    private Team globalTeam = Team.RED;
+
+    public void setTeam (Team team) {
+
+    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -62,9 +69,21 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         matsToRelease.add(middleZone);
         matsToRelease.add(rightZone);
 
-        detectRedObject(leftZone, 0);
-        detectRedObject(middleZone, 1);
-        detectRedObject(rightZone, 2);
+
+        switch (globalTeam) {
+            case RED: {
+                detectRedObject(leftZone, 0);
+                detectRedObject(middleZone, 1);
+                detectRedObject(rightZone, 2);
+            }
+            case BLUE: {
+                detectBlueObject(leftZone, 0);
+                detectBlueObject(middleZone, 1);
+                detectBlueObject(rightZone, 2);
+            }
+        }
+
+
 
         int mostLikelyZone = 0;
         for (int i = 1; i < ZONE_COUNT; i++) {
