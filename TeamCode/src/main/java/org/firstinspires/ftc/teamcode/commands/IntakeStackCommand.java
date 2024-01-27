@@ -54,11 +54,9 @@ public class IntakeStackCommand extends CommandBase {
 
     @Override
     public void execute() {
-        Drive drive;
         if (runtime.milliseconds() > 3000) {
             extendo.setPosition(ExtendoArm.ArmPositions.DOWN);
-        } else if (runtime.milliseconds() > 5000)
-            pixelsDetectedState = 3;
+        }
         switch (pixelsDetectedState) {
             case 0: // Pixel not detected
                 intake.setPower(power);

@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 public class TrajectorySequences {
 
-    private double powerFullMultiplier = DynamicConstants.multiplier;
     private static SampleMecanumDrive drive;
 
 //    private BeaconDetector beaconDetector;
