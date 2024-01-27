@@ -35,10 +35,12 @@ import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
 // Complete! :) [who needs I&R anyways?]
-@Autonomous (name="Parking Triage Neo")
+@Autonomous (name="RED BACKSTAGE")
 public class RedStage extends CommandOpMode {
     private SampleMecanumDrive drive;
     private TrajectorySequence ONE_GLOBAL;
+
+    private TrajectorySequence THREE_PIXEL_ON_BACKDROP;
 
     private TeamPropDetector detector;
     private PropLocation locationID = PropLocation.MIDDLE; // set to center by default
@@ -102,11 +104,11 @@ public class RedStage extends CommandOpMode {
 
         TrajectorySequence toStacks = drive.trajectorySequenceBuilder(depositBackboardAndWithdraw.end())
                 .splineToConstantHeading(Vector2dMapped(11.71, -36.74), Math.toRadians(90.00))
-                .lineTo(Vector2dMapped(-58, -36.34))
+                .lineTo(Vector2dMapped(-58, -40.34))
 
                 .build();
         TrajectorySequence backupFromStacksForPixelIntake = drive.trajectorySequenceBuilder(toStacks.end())
-                .lineTo(Vector2dMapped(-54.5, -36.34))
+                .lineTo(Vector2dMapped(-54.5, -40.34))
                 .build();
 
         TrajectorySequence backToRightSide = drive.trajectorySequenceBuilder(backupFromStacksForPixelIntake.end())
@@ -132,13 +134,21 @@ public class RedStage extends CommandOpMode {
                         .lineTo(Vector2dMapped(8.75, -39))
                         .lineToLinearHeading(Pose2dMapped(32.30, -45.89, Math.toRadians(0)))
                         .build();
+                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
+                        .splineToLinearHeading(Pose2dMapped(48.31, -28.47, Math.toRadians(0.00)), MathtoRadians(0.00))
+                        .lineTo(Vector2dMapped(52.22, -28.47))
+                        .build();
                 break;
             }
             case MIDDLE: {
                 ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
                         .lineTo(Vector2dMapped(12.3800001, -34.24))
                         .lineTo(Vector2dMapped(32.30, -45.89))
-                        .build();;
+                        .build();
+                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
+                        .splineToLinearHeading(Pose2dMapped(48.31, -36.47, Math.toRadians(0.00)), MathtoRadians(0.00))
+                        .lineTo(Vector2dMapped(52.22, -36.47))
+                        .build();
                 break;
             }
             case RIGHT: {
@@ -146,15 +156,19 @@ public class RedStage extends CommandOpMode {
                         .lineTo(Vector2dMapped(21.53, -39.57))
                         .lineTo(Vector2dMapped(21.53, -42.57))
                         .lineTo(Vector2dMapped(32.30, -45.89))
-                        .build();;
+                        .build();
+                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
+                        .splineToLinearHeading(Pose2dMapped(48.31, -44.47, Math.toRadians(0.00)), MathtoRadians(0.00))
+                        .lineTo(Vector2dMapped(52.22, -44.47))
+                        .build();
                 break;
             }
         }
 
-        TrajectorySequence THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-                .splineToLinearHeading(Pose2dMapped(48.31, -36.47, Math.toRadians(0.00)), MathtoRadians(0.00))
-                .lineTo(Vector2dMapped(52.22, -36.47))
-                .build();
+//        TrajectorySequence THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
+//                .splineToLinearHeading(Pose2dMapped(48.31, -36.47, Math.toRadians(0.00)), MathtoRadians(0.00))
+//                .lineTo(Vector2dMapped(52.22, -36.47))
+//                .build();
 
         // Stack
         TrajectorySequence FOUR_TO_LIGHTSPEED_BRIDGE_POSITION = drive.trajectorySequenceBuilder(THREE_PIXEL_ON_BACKDROP.end())
