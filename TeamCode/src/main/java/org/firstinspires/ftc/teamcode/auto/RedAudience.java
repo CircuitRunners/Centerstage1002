@@ -1,13 +1,16 @@
-package org.firstinspires.ftc.teamcode.auto.old.cs;
+package org.firstinspires.ftc.teamcode.auto;
 
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.auto.DynamicConstants;
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -15,14 +18,14 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.vision.BeaconDetector;
 
 
-@Autonomous (name="Christian's Amazing Autonomous Sequential Command Op Mode")
-public class ChristianAuto extends CommandOpMode {
+@Autonomous (name="Parking Auto (Red, Audience)")
+public class RedAudience extends CommandOpMode {
 
     private double powerFullMultiplier = DynamicConstants.multiplier;
     private SampleMecanumDrive drive;
 
-    private BeaconDetector beaconDetector;
-    private BeaconDetector.BeaconTags beaconId = BeaconDetector.BeaconTags.LEFT;
+//    private BeaconDetector beaconDetector;
+//    private BeaconDetector.BeaconTags beaconId = BeaconDetector.BeaconTags.LEFT;
 
     private Pose2d startPose = new Pose2d(0, 0, toRadians(0.0));
     private static double tile = 24;
@@ -33,19 +36,29 @@ public class ChristianAuto extends CommandOpMode {
     private static Pose2d right= new Pose2d(12, -61.5, Math.toRadians(90));
     private static Pose2d left= new Pose2d(-36, -61.5, Math.toRadians(90));
 
+    private DcMotorEx intake;
     @Override
     public void initialize(){
         schedule(new BulkCacheCommand(hardwareMap));
 
+
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence rightPark = drive.trajectorySequenceBuilder(right)
-            .strafeRight(powerFullMultiplier*(tile * 2 - square_edge))
-            .build();
+                .strafeRight(powerFullMultiplier*(tile * 2 - square_edge))
+                .build();
+
+        // CHANGE THIS RIGHT VALUE THIS IS BAD
+        TrajectorySequence backOff = drive.trajectorySequenceBuilder(right)
+                .back(half_tile)
+                .build();
+
         TrajectorySequence leftPark = drive.trajectorySequenceBuilder(left)
-                .splineToConstantHeading(new Vector2d(-24, -12), Math.toRadians(0))
-                .strafeRight(tile * 3.5 - square_edge)
+                .forward(1.5*(square_edge + 2 * tile))
+                .turn(Math.toRadians(-90))
+                .forward(   1.5*(tile * 4 - square_edge))
                 .build();
 
         while(opModeInInit()){
@@ -70,8 +83,24 @@ public class ChristianAuto extends CommandOpMode {
 //                break;
 //        }
 
-        schedule(new TrajectorySequenceCommand(drive, leftPark));
-    }
+        schedule(
+                new SequentialCommandGroup(
+                        new TrajectorySequenceCommand(drive, leftPark),
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, backOff),
+                                new InstantCommand(() -> {
+                                    intake.setPower(-0.6);
+                                })
+                        ),
+
+                        new WaitCommand(5000),
+                        new InstantCommand(() -> {
+                            intake.setPower(0);
+                        })
+                )
+        );
+
+    };
 
 
 
