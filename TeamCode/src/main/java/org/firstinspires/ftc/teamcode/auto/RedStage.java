@@ -173,12 +173,12 @@ public class RedStage extends CommandOpMode {
         // Stack
         TrajectorySequence FOUR_TO_LIGHTSPEED_BRIDGE_POSITION = drive.trajectorySequenceBuilder(THREE_PIXEL_ON_BACKDROP.end())
                 .lineTo(Vector2dMapped(33.24, -12.25))
-                .lineTo(Vector2dMapped(-52.22, -11.98))
+                .lineTo(Vector2dMapped(-52.22, -14.98))
                 .build();
 
         // Back 2 The Backboard
         TrajectorySequence FIVE_INTAKE_PIXELS_STACK = drive.trajectorySequenceBuilder(FOUR_TO_LIGHTSPEED_BRIDGE_POSITION.end())
-                .lineTo(Vector2dMapped(-54.29, -11.98))
+                .lineTo(Vector2dMapped(-54.29, -14.98))
                 .build();
 
         TrajectorySequence SIX_LIGHTSPEED_BRIDGE_BACK = drive.trajectorySequenceBuilder(FIVE_INTAKE_PIXELS_STACK.end())
