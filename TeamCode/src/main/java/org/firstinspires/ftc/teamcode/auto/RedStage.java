@@ -144,6 +144,7 @@ public class RedStage extends CommandOpMode {
             case RIGHT: {
                 ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
                         .lineTo(Vector2dMapped(21.53, -39.57))
+                        .lineTo(Vector2dMapped(21.53, -42.57))
                         .lineTo(Vector2dMapped(32.30, -45.89))
                         .build();;
                 break;

@@ -61,32 +61,36 @@ public class RedStageBackup extends CommandOpMode {
                 .lineTo(Vector2dMapped(8, -33.00))
                 .build();
 
-        TrajectorySequence purplePixelBackboard = drive.trajectorySequenceBuilder(startPose)
-                .lineTo(Vector2dMapped(19.5, -40))
-                .splineToConstantHeading(Vector2dMapped(20, -44), Math.toRadians(90.00))
-                .splineToConstantHeading(Vector2dMapped(33, -51), Math.toRadians(90.00))
-                .waitSeconds(0.1)
-                .splineToLinearHeading(Pose2dMapped(44.51, -36.70,Math.toRadians(0)), Math.toRadians(0.00))
+        TrajectorySequence forward = drive.trajectorySequenceBuilder(startPose)
+                .lineTo(Vector2dMapped(10.5, -32))
                 .build();
 
-        TrajectorySequence depositBackboardAndWithdraw = drive.trajectorySequenceBuilder(purplePixelBackboard.end())
-                .lineTo(Vector2dMapped(51, -39))
-                .waitSeconds(1)
-                .lineTo(Vector2dMapped(45.51, -39))
-                .build();
-
-        TrajectorySequence toStacks = drive.trajectorySequenceBuilder(depositBackboardAndWithdraw.end())
-                .splineToConstantHeading(Vector2dMapped(11.71, -36.74), Math.toRadians(90.00))
-                .lineTo(Vector2dMapped(-58, -36.34))
-
-                .build();
-        TrajectorySequence backupFromStacksForPixelIntake = drive.trajectorySequenceBuilder(toStacks.end())
-                .lineTo(Vector2dMapped(-54.5, -36.34))
-                .build();
-
-        TrajectorySequence backToRightSide = drive.trajectorySequenceBuilder(backupFromStacksForPixelIntake.end())
-                .lineTo(Vector2dMapped(52.22, -36.07))
-                .build();
+//        TrajectorySequence purplePixelBackboard = drive.trajectorySequenceBuilder(startPose)
+//                .lineTo(Vector2dMapped(19.5, -40))
+//                .splineToConstantHeading(Vector2dMapped(20, -44), Math.toRadians(90.00))
+//                .splineToConstantHeading(Vector2dMapped(33, -51), Math.toRadians(90.00))
+//                .waitSeconds(0.1)
+//                .splineToLinearHeading(Pose2dMapped(44.51, -36.70,Math.toRadians(0)), Math.toRadians(0.00))
+//                .build();
+//
+//        TrajectorySequence depositBackboardAndWithdraw = drive.trajectorySequenceBuilder(purplePixelBackboard.end())
+//                .lineTo(Vector2dMapped(51, -39))
+//                .waitSeconds(1)
+//                .lineTo(Vector2dMapped(45.51, -39))
+//                .build();
+//
+//        TrajectorySequence toStacks = drive.trajectorySequenceBuilder(depositBackboardAndWithdraw.end())
+//                .splineToConstantHeading(Vector2dMapped(11.71, -36.74), Math.toRadians(90.00))
+//                .lineTo(Vector2dMapped(-58, -36.34))
+//
+//                .build();
+//        TrajectorySequence backupFromStacksForPixelIntake = drive.trajectorySequenceBuilder(toStacks.end())
+//                .lineTo(Vector2dMapped(-54.5, -36.34))
+//                .build();
+//
+//        TrajectorySequence backToRightSide = drive.trajectorySequenceBuilder(backupFromStacksForPixelIntake.end())
+//                .lineTo(Vector2dMapped(52.22, -36.07))
+//                .build();
 
 
 //        detector.startStream();
@@ -105,24 +109,25 @@ public class RedStageBackup extends CommandOpMode {
 //                        new TrajectorySequenceCommand(drive,testTopTrajectory)
 //                )
                 new SequentialCommandGroup(
-                        new TrajectorySequenceCommand(drive, purplePixelBackboard),
-                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                        new WaitCommand(500),
-                        new InstantCommand(claw::open),
-                        new TrajectorySequenceCommand(drive, depositBackboardAndWithdraw),
-                        new RetractOuttakeCommand(lift,arm,claw),
-                        new WaitCommand(1000),
-                        new InstantCommand(()->lift.setLiftPower(-0.1)),
-                        new WaitCommand(1000),
-                        new InstantCommand(()->lift.brake_power()),
-                        new InstantCommand(extendo::up),
-                        new TrajectorySequenceCommand(drive,toStacks),
-                        new ParallelCommandGroup(
-                                new IntakeCommandEx(hardwareMap,claw,intake, Intake.IntakePowers.SLOW),
-                                new InstantCommand(extendo::down),
-                                new TrajectorySequenceCommand(drive, backupFromStacksForPixelIntake)
-                        ),
-                        new TrajectorySequenceCommand(drive, backToRightSide)
+                        new TrajectorySequenceCommand(drive, forward)
+//                        new TrajectorySequenceCommand(drive, purplePixelBackboard),
+//                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+//                        new WaitCommand(500),
+//                        new InstantCommand(claw::open),
+//                        new TrajectorySequenceCommand(drive, depositBackboardAndWithdraw),
+//                        new RetractOuttakeCommand(lift,arm,claw),
+//                        new WaitCommand(1000),
+//                        new InstantCommand(()->lift.setLiftPower(-0.1)),
+//                        new WaitCommand(1000),
+//                        new InstantCommand(()->lift.brake_power()),
+//                        new InstantCommand(extendo::up),
+//                        new TrajectorySequenceCommand(drive,toStacks),
+//                        new ParallelCommandGroup(
+//                                new IntakeCommandEx(hardwareMap,claw,intake, Intake.IntakePowers.SLOW),
+//                                new InstantCommand(extendo::down),
+//                                new TrajectorySequenceCommand(drive, backupFromStacksForPixelIntake)
+//                        ),
+//                        new TrajectorySequenceCommand(drive, backToRightSide)
                 )
         );
     };
