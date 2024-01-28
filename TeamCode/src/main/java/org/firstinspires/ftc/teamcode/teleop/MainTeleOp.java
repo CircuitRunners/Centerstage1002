@@ -138,9 +138,10 @@ public class MainTeleOp extends CommandOpMode {
         if (gamepad2.triangle) {
 
             lift.hangPower(1);
+            lift.setLiftPower(-.4);
         } else if (gamepad2.cross) {
             lift.hangPower(-0.5);
-            lift.setLiftPower(0.7);
+            lift.setLiftPower(0.6);
         } else {
             lift.hangPower(0);
         }

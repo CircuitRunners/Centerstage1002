@@ -24,4 +24,6 @@ public class CrossBindings {
     public static final double TOP_CUTOFF_PIXELS_PROPORTION = 0.3;
     public static final double BOTTOM_CUTOFF_PIXELS_PROPORTION = 0.05;
     public static final int MIN_AREA = 300;
+
+    public static final PropLocation DEFAULT_PROP_LOCATION = PropLocation.RIGHT;
 }
