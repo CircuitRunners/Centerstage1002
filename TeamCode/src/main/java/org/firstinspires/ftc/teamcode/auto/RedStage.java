@@ -179,7 +179,7 @@ public class RedStage extends CommandOpMode {
 
         // Back 2 The Backboard
         TrajectorySequence FIVE_INTAKE_PIXELS_STACK = drive.trajectorySequenceBuilder(FOUR_TO_LIGHTSPEED_BRIDGE_POSITION.end())
-                .lineTo(Vector2dMapped(-54.29, -12.98))
+                .lineTo(Vector2dMapped(-56.29, -12.98))
                 .build();
 
         TrajectorySequence SIX_LIGHTSPEED_BRIDGE_BACK = drive.trajectorySequenceBuilder(FIVE_INTAKE_PIXELS_STACK.end())
@@ -224,19 +224,28 @@ public class RedStage extends CommandOpMode {
                                         )
                         ),
                         new ParallelCommandGroup(
-                                new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
+                                new ParallelRaceGroup(
+                                        new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
+                                        new WaitCommand(6000)
+                                ),
+
                                 new InstantCommand(extendo::mid),
                                 new TrajectorySequenceCommand(drive, FIVE_INTAKE_PIXELS_STACK),
                                 new SequentialCommandGroup(
                                         new WaitCommand(500),
                                         new InstantCommand(extendo::alpha)
+
                                 )
                         ),
+                        new InstantCommand(extendo :: up),
                         new TrajectorySequenceCommand(drive, SIX_LIGHTSPEED_BRIDGE_BACK),
                         new ParallelCommandGroup(
                                 new SequentialCommandGroup(
                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
-                                new InstantCommand(claw::open)
+                                new InstantCommand(claw::open),
+                        new InstantCommand(()->lift.setLiftPower(-0.2)),
+                        new WaitCommand(700),
+                        new InstantCommand(()->lift.brake_power())
                                         ),
                                 new TrajectorySequenceCommand(drive, SEVEN_PIXEL_ON_BACKBOARD)
                                     ),
