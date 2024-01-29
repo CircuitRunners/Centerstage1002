@@ -49,9 +49,6 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
     // Have it declared as an instance variable (and re-used), not a local variable
     private Team globalTeam = Team.RED;
 
-    public void setTeam (Team team) {
-
-    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -217,3 +214,85 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
         mats.clear();
     }
 }
+
+/*
+package org.firstinspires.ftc.teamcode.vision;
+
+import org.firstinspires.ftc.teamcode.utilities.PropLocation;
+import org.firstinspires.ftc.teamcode.utilities.Team;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvPipeline;
+
+class TeamPropDetectionPipeline extends OpenCvPipeline {
+    private static final int ZONE_COUNT = 3;
+    private static final Scalar RED_LOWER_BOUND = new Scalar(0, 120, 70);
+    private static final Scalar RED_UPPER_BOUND = new Scalar(10, 255, 255);
+    private static final Scalar BLUE_LOWER_BOUND = new Scalar(100, 150, 0);
+    private static final Scalar BLUE_UPPER_BOUND = new Scalar(140, 255, 255);
+    private static final Size MORPH_KERNEL_SIZE = new Size(5, 5);
+
+    private Mat leftZone, middleZone, rightZone;
+    private Team globalTeam = Team.RED;
+
+    @Override
+    public Mat processFrame(Mat input) {
+        int width = input.cols();
+        int height = input.rows();
+
+        leftZone = input.submat(new Rect(0, 0, width / 3, height));
+        middleZone = input.submat(new Rect(width / 3, 0, width / 3, height));
+        rightZone = input.submat(new Rect(2 * width / 3, 0, width / 3, height));
+
+        PropLocation teamPropZone = detectObject(leftZone, middleZone, rightZone, globalTeam);
+
+        leftZone.release();
+        middleZone.release();
+        rightZone.release();
+
+        return input; // won't show anything
+    }
+
+    private PropLocation detectObject(Mat left, Mat middle, Mat right, Team team) {
+        Scalar lowerBound, upperBound;
+        if (team == Team.RED) {
+            lowerBound = RED_LOWER_BOUND;
+            upperBound = RED_UPPER_BOUND;
+        } else {
+            lowerBound = BLUE_LOWER_BOUND;
+            upperBound = BLUE_UPPER_BOUND;
+        }
+
+        double leftArea = findAreaOfColor(left, lowerBound, upperBound);
+        double middleArea = findAreaOfColor(middle, lowerBound, upperBound);
+        double rightArea = findAreaOfColor(right, lowerBound, upperBound);
+
+        if (leftArea > middleArea && leftArea > rightArea) {
+            return PropLocation.LEFT;
+        } else if (middleArea > leftArea && middleArea > rightArea) {
+            return PropLocation.MIDDLE;
+        } else {
+            return PropLocation.RIGHT;
+        }
+    }
+
+    private double findAreaOfColor(Mat zone, Scalar lowerBound, Scalar upperBound) {
+        Mat mask = new Mat();
+        Imgproc.cvtColor(zone, mask, Imgproc.COLOR_RGB2HSV);
+        Core.inRange(mask, lowerBound, upperBound, mask);
+
+        // Apply morphological operations to reduce noise
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, MORPH_KERNEL_SIZE);
+        Imgproc.morphologyEx(mask, mask, Imgproc.MORPH_OPEN, kernel);
+
+        double area = Core.sumElems(mask).val[0]; // Sum of non-zero elements in mask
+        mask.release();
+        return area;
+    }
+}
+
+ */
