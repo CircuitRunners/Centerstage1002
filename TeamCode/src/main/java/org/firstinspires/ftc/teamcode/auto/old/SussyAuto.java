@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.old;
 import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.DEFAULT_PROP_LOCATION;
 import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.rotationConstant;
 
