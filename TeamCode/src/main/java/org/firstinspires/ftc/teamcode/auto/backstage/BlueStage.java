@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.backstage;
 
 import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.rotationConstant;
 import static java.lang.Math.toRadians;
