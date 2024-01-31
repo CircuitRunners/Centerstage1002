@@ -49,6 +49,10 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
     // Have it declared as an instance variable (and re-used), not a local variable
     private Team globalTeam = Team.RED;
 
+    public void setTeam (Team team) {
+        globalTeam = team;
+    }
+
 
     @Override
     public Mat processFrame(Mat input) {
