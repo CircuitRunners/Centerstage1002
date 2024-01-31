@@ -38,12 +38,20 @@ public class MeepMeepTesting {
                         );*/
                        .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(front_blue)
-                                       .lineToLinearHeading(new Pose2d(-36.74, 33.91, Math.toRadians(270.00)))
-                                       .lineTo(new Vector2d(-36.74, 36.66))
-                                       .lineTo(new Vector2d(-58.54, 36.66))
-                                       .lineTo(new Vector2d(-57.60, 25.57))
-                                       .lineToLinearHeading(new Pose2d(-34.32, 9.56, Math.toRadians(0.00)))
+                                       .lineToLinearHeading(new Pose2d(-39.75, 33.91, Math.toRadians(270)))
+                                       .lineTo(new Vector2d(-39.75, 36.66))
+                                       .lineToLinearHeading(new Pose2d(-57, 36, Math.toRadians(180)))
+//                                       .lineTo(new Vector2d(48.63, 36))
+//                                       .lineTo(new Vector2d(-57, 36))
+//                                       .lineTo(new Vector2d(48.63, 36))
+//                                       .lineTo(new Vector2d(48.63, 59.5))
                                        .build()
+
+
+
+
+
+
 
 
 

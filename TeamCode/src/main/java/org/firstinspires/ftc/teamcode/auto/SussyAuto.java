@@ -33,6 +33,10 @@ public class SussyAuto extends CommandOpMode{
 
     private TrajectorySequence THREE_PIXEL_ON_BACKDROP;
     private TrajectorySequence PURPLE_GLOBAL;
+    private TrajectorySequence TO_STACK;
+    private TrajectorySequence TO_BACKDROP;
+    private TrajectorySequence TO_STACK_FROM_BACKDROP;
+
 
     // Default Values
     private PropLocation locationID = DEFAULT_PROP_LOCATION; // set to center by default
@@ -84,7 +88,20 @@ public class SussyAuto extends CommandOpMode{
         switch(locationID){
             case LEFT: {
                 PURPLE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
+                        .lineToLinearHeading(Pose2dMapped(-39.75, 33.91, Math.toRadians(270)))
+                        .lineTo(Vector2dMapped(-39.75, 36.66))
+                        .build();
 
+                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
+                        .lineToLinearHeading(Pose2dMapped(-57, 36, Math.toRadians(360)))
+                        .build();
+
+                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
+                        .lineTo(Vector2dMapped(48.63, 36))
+
+                        .build();
+                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
+                        .lineToLinearHeading(Pose2dMapped(-57, 36, Math.toRadians(360)))
                         .build();
             }
             case MIDDLE: {
@@ -92,11 +109,55 @@ public class SussyAuto extends CommandOpMode{
                         .lineToLinearHeading(Pose2dMapped(-39.75, 33.91, Math.toRadians(270)))
                         .lineTo(Vector2dMapped(-39.75, 36.66))
                         .build();
+
+                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
+                        .lineToLinearHeading(Pose2dMapped(-57, 36, Math.toRadians(360)))
+                        .build();
+
+                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
+                        .lineTo(Vector2dMapped(48.63, 36))
+                        .build();
+                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
+                        .lineToLinearHeading(Pose2dMapped(-57, 36, Math.toRadians(360)))
+                        .build();
+
             }
             case RIGHT: {
                 PURPLE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
+                        .lineToLinearHeading(Pose2dMapped(-39.75, 33.91, Math.toRadians(270)))
+                        .lineTo(Vector2dMapped(-39.75, 36.66))
+                        .build();
+
+                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
+                        .lineToLinearHeading(Pose2dMapped(-57, 36, Math.toRadians(360)))
+                        .build();
+
+                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
+                        .lineTo(Vector2dMapped(48.63, 36))
+
+                        .build();
+                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
+                        .lineToLinearHeading(Pose2dMapped(-57, 36, Math.toRadians(360)))
                         .build();
             }
+
+//            TrajectorySequence STRAFE_PARK = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
+//                    .lineTo(Vector2dMapped(48.63, 59.5))
+//                    .build();
+
+
+            schedule(
+                    new SequentialCommandGroup(
+                            new TrajectorySequenceCommand(drive, PURPLE_GLOBAL),
+                            new TrajectorySequenceCommand(drive, TO_STACK),
+                            new TrajectorySequenceCommand(drive, TO_BACKDROP),
+                            new TrajectorySequenceCommand(drive, TO_STACK_FROM_BACKDROP),
+                            new TrajectorySequenceCommand(drive, TO_BACKDROP)
+                            //new TrajectorySequenceCommand(drive, STRAFE_PARK)
+
+                    )
+
+            );
 
     }
 
