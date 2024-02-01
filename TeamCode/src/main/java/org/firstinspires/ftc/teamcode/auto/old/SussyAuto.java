@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.utilities.PropLocation;
 import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
-@Autonomous (name = "Sussy Blue Audience")
+@Autonomous (name = "Sussylue Audience")
 public class SussyAuto extends CommandOpMode{
 
     private TrajectorySequence THREE_PIXEL_ON_BACKDROP;
@@ -89,7 +89,23 @@ public class SussyAuto extends CommandOpMode{
         switch(locationID){
             case LEFT: {
                 PURPLE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-                        .lineToLinearHeading(Pose2dMapped(-39.75, 33.91, Math.toRadians(270)))
+                        .splineTo(Vector2dMapped(-35.84, 36.00), Math.toRadians(0.00))
+                        .build();
+                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
+                        .lineTo(Vector2dMapped(-57.00, 36.00))
+                        .build();
+                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
+                        .lineTo(Vector2dMapped(-35.53, 58))
+                        .lineTo(Vector2dMapped(47.00, 58))
+                        .lineTo(Vector2dMapped(47.00, 43.89))
+                        .build();
+                RETREAT_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
+                        .lineTo(Vector2dMapped(40, 58))
+                        .build();
+                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(RETREAT_FROM_BACKDROP.end())
+                        .lineTo(Vector2dMapped(47.00, 58))
+                        .lineTo(Vector2dMapped(-35.53, 58))
+                        .lineTo(Vector2dMapped(-57.00, 36.00))
                         .build();
             }
             case MIDDLE: {
@@ -119,7 +135,23 @@ public class SussyAuto extends CommandOpMode{
             }
             case RIGHT: {
                 PURPLE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-                        .lineToLinearHeading(Pose2dMapped(-39.75, 33.91, Math.toRadians(270)))
+                        .splineTo(Vector2dMapped(-37.65, 36.00), Math.toRadians(180.00))
+                        .build();
+                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
+                        .lineTo(Vector2dMapped(-57.00, 36.00))
+                        .build();
+                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
+                        .lineTo(Vector2dMapped(-35.53, 58))
+                        .lineTo(Vector2dMapped(47.00, 58))
+                        .lineTo(Vector2dMapped(47.00, 43.89))
+                        .build();
+                RETREAT_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
+                        .lineTo(Vector2dMapped(40, 58))
+                        .build();
+                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(RETREAT_FROM_BACKDROP.end())
+                        .lineTo(Vector2dMapped(47.00, 58))
+                        .lineTo(Vector2dMapped(-35.53, 58))
+                        .lineTo(Vector2dMapped(-57.00, 36.00))
                         .build();
             }
 
@@ -159,7 +191,21 @@ public class SussyAuto extends CommandOpMode{
                             new TrajectorySequenceCommand(drive, RETREAT_FROM_BACKDROP),
                             new RetractOuttakeCommand(lift, arm, claw),
 
-                            new TrajectorySequenceCommand(drive, TO_STACK_FROM_BACKDROP),
+
+                            new ParallelCommandGroup(
+                                    new ParallelRaceGroup(
+                                            new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST, extendo),
+                                            new WaitCommand(6000)
+                                    ),
+                                    new InstantCommand(extendo::mid),
+                                    new TrajectorySequenceCommand(drive, TO_STACK_FROM_BACKDROP),
+                                    new SequentialCommandGroup(
+                                            new WaitCommand(500),
+                                            new InstantCommand(extendo::mid)
+                                    )
+
+                            ),
+
                             new TrajectorySequenceCommand(drive, TO_BACKDROP),
 
                             new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),

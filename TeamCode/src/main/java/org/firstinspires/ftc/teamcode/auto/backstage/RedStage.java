@@ -139,7 +139,7 @@ public class RedStage extends CommandOpMode {
                         .splineToLinearHeading(Pose2dMapped(52.31, -28.87, Math.toRadians(2.5)), MathtoRadians(2.5))
                         .lineTo(Vector2dMapped(52.72, -28.87))
                         .build();
-                break;
+              break;
             }
             case MIDDLE: {
                 ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
