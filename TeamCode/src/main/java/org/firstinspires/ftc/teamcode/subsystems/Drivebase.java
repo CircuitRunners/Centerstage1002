@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.kauailabs.navx.ftc.AHRS;
@@ -11,11 +12,13 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class Drivebase extends SubsystemBase {
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     private DcMotorEx[] allDrivebaseMotors;
     private AHRS imu;
+    private SampleMecanumDrive drive;
 
     private double imuPrevPositionRad = 0.0;
 
@@ -34,6 +37,9 @@ public class Drivebase extends SubsystemBase {
         // Begin doing things
         setMotorBehavior(allDrivebaseMotors);
         initializeIMU(hardwareMap); // Initialize IMU with the given parameters
+
+        //TODO remove
+        initializeLocalizer(hardwareMap);
     }
 
     private void setMotorBehavior (DcMotorEx[] motors) {
@@ -55,6 +61,8 @@ public class Drivebase extends SubsystemBase {
             ), AHRS.DeviceDataType.kProcessedData
         );
     }
+
+
 
     private double preprocessInput(double variable) {
         // Input pre process here
@@ -152,6 +160,15 @@ public class Drivebase extends SubsystemBase {
         double imuRad = imuDeg;
         double correctedRadReset = imuRad-imuPrevPositionRad;
         return (-1.0) * correctedRadReset * (14.0/180.0);
+    }
+
+    public void initializeLocalizer (HardwareMap hardwareMap) {
+        drive = new SampleMecanumDrive(hardwareMap);
+    }
+
+    public double getCorrectedYawLocalization () {
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        return poseEstimate.getHeading();
     }
 
     public void resetHeading() {
