@@ -4,9 +4,15 @@ import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.rotationCon
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
+import org.slf4j.Marker;
 
 public class MappedTrajectorySequenceBuilder {
     private final TrajectorySequenceBuilder builder;
@@ -80,5 +86,87 @@ public class MappedTrajectorySequenceBuilder {
     public Vector2d Vector2dMapped(double x, double y) {
         Vector2d conversionVector = new Vector2d(x,y);
         return Vector2dMapped(conversionVector);
+    }
+
+    // uyssless
+
+    public MappedTrajectorySequenceBuilder turn(double radians) {
+        builder.turn(radians);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder waitSeconds(double seconds) {
+        builder.waitSeconds(seconds);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder addTemporalMarker(double seconds, MarkerCallback callback) {
+        builder.addTemporalMarker(seconds, callback);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder UNSTABLE_addTemporalMarkerOffset(double offset, MarkerCallback callback) {
+        builder.UNSTABLE_addTemporalMarkerOffset(offset, callback);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder UNSTABLE_addDisplacementMarkerOffset(double offset, MarkerCallback callback) {
+        builder.UNSTABLE_addDisplacementMarkerOffset(offset, callback);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder setTangent(double tangent) {
+        builder.setTangent(tangent);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder setReversed(boolean reversed) {
+        builder.setReversed(reversed);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder setConstraints(TrajectoryVelocityConstraint velConstraint, TrajectoryAccelerationConstraint accelConstraint) {
+        builder.setConstraints(velConstraint, accelConstraint);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder resetConstraints() {
+        builder.resetConstraints();
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder setVelConstraint(TrajectoryVelocityConstraint velConstraint) {
+        builder.setVelConstraint(velConstraint);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder resetVelConstraint() {
+        builder.resetVelConstraint();
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder setAccelConstraint(TrajectoryAccelerationConstraint accelConstraint) {
+        builder.setAccelConstraint(accelConstraint);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder resetAccelConstraint() {
+        builder.resetAccelConstraint();
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder setTurnConstraint(double maxAngVel, double maxAngAccel) {
+        builder.setTurnConstraint(maxAngVel, maxAngAccel);
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder resetTurnConstraint() {
+        builder.resetTurnConstraint();
+        return this;
+    }
+
+    public MappedTrajectorySequenceBuilder addTrajectory(Trajectory trajectory) {
+        builder.addTrajectory(trajectory);
+        return this;
     }
 }
