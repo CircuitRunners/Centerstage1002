@@ -47,7 +47,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.889; // in
     public static double GEAR_RATIO = 0.76923077; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 18.33; // around 13.2 measured, 14.08 empirical
+    public static double TRACK_WIDTH = 15.61; // around 13.2 measured, 14.08 empirical
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -55,8 +55,8 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.0151;//0.0145;//0.0145; // 1/MAX_VEL = 0.01587301587, initial tuning!
-    public static double kA = 0.00515;//0.0035; // prev 0.00258
+    public static double kV = 0.0151; //0.0145;//0.0145; // 1/MAX_VEL = 0.01587301587, initial tuning!
+    public static double kA = 0.00515; //0.0035; // prev 0.00258
     public static double kStatic = 0.00; //can be 0! // prev 0.0832
 
     /*
@@ -89,7 +89,7 @@ public class DriveConstants {
      */
     public static double MAX_VEL = 37.7594893; //58; // is about 92% of the tuner: tuner gave 63 as the actual result for 100%
     public static double MAX_ACCEL = 37.7594893; //32; // was 38 but changed a bit lower to get closer to recommended 30 m/s^2
-    public static double MAX_ANG_VEL = Math.toRadians(269.36284154868963); //  = MAX/VEL (meters/s) / track width (inches converted to meters)
+    public static double MAX_ANG_VEL = Math.toRadians(210); //  = MAX/VEL (meters/s) / track width (inches converted to meters)
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 
 

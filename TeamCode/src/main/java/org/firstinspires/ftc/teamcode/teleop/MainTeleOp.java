@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.utilities.Utilities.debounce;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -56,7 +57,7 @@ public class MainTeleOp extends CommandOpMode {
     private double upOffset = 0.0, downOffset = 0.0, transportOffset = 0.0;
     private double overallOffset = 0.05;
 
-    private AHRS navx_device;
+    public AHRS navx_device;
 
     @Override
     public void initialize(){
@@ -125,6 +126,8 @@ public class MainTeleOp extends CommandOpMode {
     public void run() {
         super.run();
 
+        telemetry.addData("YAW", drivebase.getCorrectedYaw());
+
         drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
         // Reset heading with MATH
@@ -133,7 +136,7 @@ public class MainTeleOp extends CommandOpMode {
             gamepad1.rumble(50);
         }
 
-        telemetry.addLine(String.valueOf(navx_device.getFusedHeading()));
+        telemetry.addLine(String.valueOf(navx_device.getYaw()));
 
         if (gamepad2.triangle) {
 

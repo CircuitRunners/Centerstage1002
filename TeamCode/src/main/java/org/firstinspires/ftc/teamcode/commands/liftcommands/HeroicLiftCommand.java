@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands.liftcommands;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
@@ -9,16 +10,20 @@ import com.acmerobotics.roadrunner.profile.MotionState;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 @Config
-public class ProfiledLiftCommand extends CommandBase {
+public class HeroicLiftCommand extends CommandBase {
+    FtcDashboard dashboard;
 
     private PIDFController liftController;
     private MotionProfile profile;
     private ElapsedTime timer = new ElapsedTime();
 
-    private PIDCoefficients coefficients = new PIDCoefficients(0.02, 0.000, 0.000); // Adjust PID coefficients as needed
+    public double kP = 0.02, kI = 0.000, kD = 0.000;
+
+    private PIDCoefficients coefficients = new PIDCoefficients(kP, kI, kD); // Adjust PID coefficients as needed
 
     // Feedforward Coefficients
     private double kV = 0.0, kA = 0.0, kStatic = 0.00;
@@ -33,7 +38,7 @@ public class ProfiledLiftCommand extends CommandBase {
 
     final double MOTION_PROFILE_MAX_VELOCITY = 2500,
             MOTION_PROFILE_MAX_ACCEL = 3250,
-            MOTION_PROFILE_MAX_JERK = 0;
+            MOTION_PROFILE_MAX_JERK = 5000; //todo TUNE THIS
 
     final double GRAVITY_FEEDFORWARD_COMPENSATION_FIRST_STAGE = 0.09,
             GRAVITY_FEEDFORWARD_COMPENSATION_SECOND_STAGE = 0.11,
@@ -41,17 +46,19 @@ public class ProfiledLiftCommand extends CommandBase {
     final double LIFT_FIRST_STAGE_POSITION_TICKS = 850,
             LIFT_SECOND_STAGE_POSITION_TICKS = 1380;
 
+    Telemetry telem;
+
     boolean holdAtEnd;
     final Lift lift;
     final double targetPosition;
 
     double setPointPos;
 
-    public ProfiledLiftCommand(Lift lift, int targetPosition, boolean holdAtEnd){
+    public HeroicLiftCommand(Lift lift, int targetPosition, boolean holdAtEnd){
         this(lift, targetPosition, holdAtEnd, false);
     }
 
-    public ProfiledLiftCommand(Lift lift, int targetPosition, boolean holdAtEnd, boolean strict){
+    public HeroicLiftCommand(Lift lift, int targetPosition, boolean holdAtEnd, boolean strict){
         addRequirements(lift);
 
         if (strict) this.LIFT_POSITION_TOLERANCE = LIFT_POSITION_TOLERANCE_STRICT;
@@ -86,12 +93,14 @@ public class ProfiledLiftCommand extends CommandBase {
 
     @Override
     public void initialize(){
+        dashboard = FtcDashboard.getInstance();
+        telem = dashboard.getTelemetry();
         liftController.reset();
 
         // Generate the motion profile
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                new MotionState(lift.getLiftPosition(), lift.getLiftVelocity()),
-                new MotionState(targetPosition, 0),
+                new MotionState(lift.getLiftPosition(), lift.getLiftVelocity(), 0, 0),
+                new MotionState(targetPosition, 0, 0, 0),
                 MOTION_PROFILE_MAX_VELOCITY,
                 MOTION_PROFILE_MAX_ACCEL,
                 MOTION_PROFILE_MAX_JERK
@@ -121,6 +130,12 @@ public class ProfiledLiftCommand extends CommandBase {
 
         // Additional SetPoint variables can be set here if needed
         setPointPos = state.getX();
+
+
+// Example of sending telemetry data
+        telem.addData("Lift Position", liftPosition);
+        telem.addData("Lift Velocity", liftVelocity);
+        telem.update();
     }
 
     @Override

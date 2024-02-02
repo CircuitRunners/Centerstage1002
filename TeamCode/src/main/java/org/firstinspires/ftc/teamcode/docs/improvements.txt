@@ -1,0 +1,7 @@
+Lift:
+    Static Friction Compensation
+    Velocity Feedforward
+    Acceleration Feedforward
+    Cascade Control
+    S-curve Motion Profiling
+    State Estimation

@@ -55,9 +55,6 @@ public class BlueStage extends CommandOpMode {
 
     private Intake intake;
 
-    public BlueStage() {
-    }
-
     @Override
     public void initialize(){
         detector = new TeamPropDetector(hardwareMap, true, Team.BLUE);

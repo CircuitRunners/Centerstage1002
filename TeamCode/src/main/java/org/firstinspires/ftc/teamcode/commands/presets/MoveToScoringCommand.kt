@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.commands.liftcommands.LiftPositionCommand
 import com.arcrobotics.ftclib.command.InstantCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.arcrobotics.ftclib.command.WaitCommand
+import org.firstinspires.ftc.teamcode.commands.liftcommands.HeroicLiftCommand
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ProfiledLiftCommand
 import org.firstinspires.ftc.teamcode.subsystems.Lift.LiftPositions
 import org.firstinspires.ftc.teamcode.subsystems.Claw

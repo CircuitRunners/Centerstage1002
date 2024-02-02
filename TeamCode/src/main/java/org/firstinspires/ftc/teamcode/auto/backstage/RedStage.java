@@ -55,9 +55,6 @@ public class RedStage extends CommandOpMode {
 
     private Intake intake;
 
-    public RedStage() {
-    }
-
     @Override
     public void initialize(){
         detector = new TeamPropDetector(hardwareMap, true, Team.RED);
