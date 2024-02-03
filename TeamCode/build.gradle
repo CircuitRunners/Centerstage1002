@@ -39,7 +39,6 @@ repositories {
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
-
     // Normal libraries
 
     // IMU implementation
@@ -50,15 +49,12 @@ dependencies {
     implementation 'org.ftclib.ftclib:vision:2.1.0'
 
     // Auto and Roadrunner
-    implementation 'com.acmerobotics.roadrunner:core:0.5.6'
+    implementation 'com.acmerobotics.roadrunner:ftc:0.1.12'
 
     // Quality of life and performance
     implementation 'org.team11260:fast-load:0.1.2'
     implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:main-SNAPSHOT'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.14'
-
-    implementation 'org.apache.commons:commons-math3:3.6.1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
 }
 
 buildscript {

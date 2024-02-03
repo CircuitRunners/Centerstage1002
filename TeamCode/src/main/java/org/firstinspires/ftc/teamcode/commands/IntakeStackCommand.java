@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import com.acmerobotics.roadrunner.drive.Drive;
+//import com.acmerobotics.roadrunner.drive.Drive;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -54,7 +54,6 @@ public class IntakeStackCommand extends CommandBase {
 
     @Override
     public void execute() {
-        Drive drive;
         if (runtime.milliseconds() > 3000) {
             extendo.setPosition(ExtendoArm.ArmPositions.DOWN);
         } else if (runtime.milliseconds() > 5000)

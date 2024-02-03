@@ -12,13 +12,13 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+//import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class Drivebase extends SubsystemBase {
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     private DcMotorEx[] allDrivebaseMotors;
     private AHRS imu;
-    private SampleMecanumDrive drive;
+//    private SampleMecanumDrive drive;
 
     private double imuPrevPositionRad = 0.0;
 
@@ -39,7 +39,7 @@ public class Drivebase extends SubsystemBase {
         initializeIMU(hardwareMap); // Initialize IMU with the given parameters
 
         //TODO remove
-        initializeLocalizer(hardwareMap);
+//        initializeLocalizer(hardwareMap);
     }
 
     private void setMotorBehavior (DcMotorEx[] motors) {
@@ -162,14 +162,14 @@ public class Drivebase extends SubsystemBase {
         return (-1.0) * correctedRadReset * (14.0/180.0);
     }
 
-    public void initializeLocalizer (HardwareMap hardwareMap) {
-        drive = new SampleMecanumDrive(hardwareMap);
-    }
+//    public void initializeLocalizer (HardwareMap hardwareMap) {
+//        drive = new SampleMecanumDrive(hardwareMap);
+//    }
 
-    public double getCorrectedYawLocalization () {
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        return poseEstimate.getHeading();
-    }
+//    public double getCorrectedYawLocalization () {
+//        Pose2d poseEstimate = drive.getPoseEstimate();
+//        return poseEstimate.getHeading();
+//    }
 
     public void resetHeading() {
         imuPrevPositionRad = AngleUnit.RADIANS.fromDegrees(imu.getYaw());
