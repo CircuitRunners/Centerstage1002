@@ -63,6 +63,7 @@ public class MappedTrajectorySequenceBuilder {
     public Pose2d mapPose(Pose2d pose) {
         double x = pose.getX();
         double y = pose.getY();
+        // TEST POS
         double heading = pose.getHeading();
         Vector2d conversionVector = new Vector2d(x,y);
         conversionVector = conversionVector.rotated(rotationConstant);

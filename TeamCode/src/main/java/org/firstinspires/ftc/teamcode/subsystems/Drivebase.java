@@ -39,7 +39,7 @@ public class Drivebase extends SubsystemBase {
         initializeIMU(hardwareMap); // Initialize IMU with the given parameters
 
         //TODO remove
-        initializeLocalizer(hardwareMap);
+//        initializeLocalizer(hardwareMap);
     }
 
     private void setMotorBehavior (DcMotorEx[] motors) {
@@ -119,7 +119,7 @@ public class Drivebase extends SubsystemBase {
         // botHeading is in Radians
         Vector2d botVector = new Vector2d(x, y).rotated(-botHeading);
 
-//        // Apply the calculated heading to the input vector for field centric
+        // Apply the calculated heading to the input vector for field centric
         x = botVector.getX(); // strafe r/l transform values
         y = botVector.getY(); // strafe f/b transform values
         // note rx is not here since rotation is always field centric!
@@ -156,20 +156,20 @@ public class Drivebase extends SubsystemBase {
 
     public double getCorrectedYaw () {
         double imuDeg = imu.getYaw();
-//        double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
-        double imuRad = imuDeg;
+        double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
+//        double imuRad = imuDeg;
         double correctedRadReset = imuRad-imuPrevPositionRad;
-        return (-1.0) * correctedRadReset * (14.0/180.0);
+        return (-1.0) * correctedRadReset; //* (14.0/180.0);
     }
 
-    public void initializeLocalizer (HardwareMap hardwareMap) {
-        drive = new SampleMecanumDrive(hardwareMap);
-    }
+//    public void initializeLocalizer (HardwareMap hardwareMap) {
+//        drive = new SampleMecanumDrive(hardwareMap);
+//    }
 
-    public double getCorrectedYawLocalization () {
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        return poseEstimate.getHeading();
-    }
+//    public double getCorrectedYawLocalization () {
+//        Pose2d poseEstimate = drive.getPoseEstimate();
+//        return poseEstimate.getHeading();
+//    }
 
     public void resetHeading() {
         imuPrevPositionRad = AngleUnit.RADIANS.fromDegrees(imu.getYaw());

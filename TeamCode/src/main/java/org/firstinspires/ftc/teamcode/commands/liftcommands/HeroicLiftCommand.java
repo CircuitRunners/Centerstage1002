@@ -8,11 +8,14 @@ import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
+// IF LIFT IS BAD REMOVE PHOTON!!! IMPOPRTANTE
+@Photon
 @Config
 public class HeroicLiftCommand extends CommandBase {
     FtcDashboard dashboard;
