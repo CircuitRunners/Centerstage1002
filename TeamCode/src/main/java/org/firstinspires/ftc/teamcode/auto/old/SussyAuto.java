@@ -83,78 +83,82 @@ public class SussyAuto extends CommandOpMode{
             telemetry.update();
         }
 
-        // Cleanup for other code
+
         detector.stopStream();
 
-        switch(locationID){
-            case LEFT: {
-                PURPLE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-                        .splineTo(Vector2dMapped(-35.84, 36.00), Math.toRadians(0.00))
-                        .build();
-                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
-                        .lineTo(Vector2dMapped(-57.00, 36.00))
-                        .build();
-                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
-                        .lineTo(Vector2dMapped(-35.53, 58))
-                        .lineTo(Vector2dMapped(47.00, 58))
-                        .lineTo(Vector2dMapped(47.00, 43.89))
-                        .build();
-                RETREAT_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
-                        .lineTo(Vector2dMapped(40, 58))
-                        .build();
-                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(RETREAT_FROM_BACKDROP.end())
-                        .lineTo(Vector2dMapped(47.00, 58))
-                        .lineTo(Vector2dMapped(-35.53, 58))
-                        .lineTo(Vector2dMapped(-57.00, 36.00))
-                        .build();
-            }
-            case MIDDLE: {
-                PURPLE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-                        .lineToLinearHeading(Pose2dMapped(-39.75, 33.91, Math.toRadians(270)))
-                        .lineTo(Vector2dMapped(-39.75, 36.66))
-                        .build();
-
-                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
-                        .lineToLinearHeading(Pose2dMapped(-57, 36, Math.toRadians(360)))
-                        .build();
-
-                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
-                        .lineTo(Vector2dMapped(47, 36))
-                        .build();
-
-                RETREAT_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
-                        .lineTo(Vector2dMapped(40, 36))
-                        .build();
-
-                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(RETREAT_FROM_BACKDROP.end())
-                        .lineToLinearHeading(Pose2dMapped(-57, 36, Math.toRadians(360)))
-                        .build();
-
-
-
-            }
-            case RIGHT: {
-                PURPLE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-                        .splineTo(Vector2dMapped(-37.65, 36.00), Math.toRadians(180.00))
-                        .build();
-                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
-                        .lineTo(Vector2dMapped(-57.00, 36.00))
-                        .build();
-                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
-                        .lineTo(Vector2dMapped(-35.53, 58))
-                        .lineTo(Vector2dMapped(47.00, 58))
-                        .lineTo(Vector2dMapped(47.00, 43.89))
-                        .build();
-                RETREAT_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
-                        .lineTo(Vector2dMapped(40, 58))
-                        .build();
-                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(RETREAT_FROM_BACKDROP.end())
-                        .lineTo(Vector2dMapped(47.00, 58))
-                        .lineTo(Vector2dMapped(-35.53, 58))
-                        .lineTo(Vector2dMapped(-57.00, 36.00))
-                        .build();
-            }
-
+//        switch(locationID) {
+//            case LEFT: {
+//                PURPLE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
+//                        .splineTo(Vector2dMapped(-35.84, 36.00), Math.toRadians(0.00))
+//                        .build();
+//                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
+//                        .lineTo(Vector2dMapped(-57.00, 36.00))
+//                        .build();
+//                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
+//                        .lineTo(Vector2dMapped(-35.53, 58))
+//                        .lineTo(Vector2dMapped(47.00, 58))
+//                        .lineTo(Vector2dMapped(47.00, 43.89))
+//                        .build();
+//                RETREAT_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
+//                        .lineTo(Vector2dMapped(40, 58))
+//                        .build();
+//                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(RETREAT_FROM_BACKDROP.end())
+//                        .lineTo(Vector2dMapped(47.00, 58))
+//                        .lineTo(Vector2dMapped(-35.53, 58))
+//                        .lineTo(Vector2dMapped(-57.00, 36.00))
+//                        .build();
+//
+//                break;
+//            }
+//            case MIDDLE: {
+//                PURPLE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
+//                        .lineToLinearHeading(Pose2dMapped(-36.75, 33.91, Math.toRadians(270)))
+//                        .lineTo(Vector2dMapped(-39.75, 36.66))
+//                        .build();
+//
+//                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
+//                        .lineToLinearHeading(Pose2dMapped(-57, 36, Math.toRadians(360)))
+//                        .build();
+//
+//                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
+//                        .lineTo(Vector2dMapped(47, 36))
+//                        .build();
+//
+//                RETREAT_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
+//                        .lineTo(Vector2dMapped(40, 36))
+//                        .build();
+//
+//                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(RETREAT_FROM_BACKDROP.end())
+//                        .lineToLinearHeading(Pose2dMapped(-57, 36, Math.toRadians(360)))
+//                        .build();
+//
+//                break;
+//
+//            }
+//            case RIGHT: {
+//                PURPLE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
+//                        .splineTo(Vector2dMapped(-37.65, 36.00), Math.toRadians(180.00))
+//                        .build();
+//                TO_STACK = drive.trajectorySequenceBuilder(PURPLE_GLOBAL.end())
+//                        .lineTo(Vector2dMapped(-57.00, 36.00))
+//                        .build();
+//                TO_BACKDROP = drive.trajectorySequenceBuilder(TO_STACK.end())
+//                        .lineTo(Vector2dMapped(-35.53, 58))
+//                        .lineTo(Vector2dMapped(47.00, 58))
+//                        .lineTo(Vector2dMapped(47.00, 43.89))
+//                        .build();
+//                RETREAT_FROM_BACKDROP = drive.trajectorySequenceBuilder(TO_BACKDROP.end())
+//                        .lineTo(Vector2dMapped(40, 58))
+//                        .build();
+//                TO_STACK_FROM_BACKDROP = drive.trajectorySequenceBuilder(RETREAT_FROM_BACKDROP.end())
+//                        .lineTo(Vector2dMapped(47.00, 58))
+//                        .lineTo(Vector2dMapped(-35.53, 58))
+//                        .lineTo(Vector2dMapped(-57.00, 36.00))
+//                        .build();
+//
+//                break;
+//            }
+//        }
         TrajectorySequence STRAFE_PARK = drive.trajectorySequenceBuilder(RETREAT_FROM_BACKDROP.end())
                     .lineTo(Vector2dMapped(47, 59.5))
                     .build();
@@ -162,69 +166,71 @@ public class SussyAuto extends CommandOpMode{
 
 
             schedule(
+
                     new SequentialCommandGroup(
-                            new TrajectorySequenceCommand(drive, PURPLE_GLOBAL),
-                            new InstantCommand(claw::open),
-
-
-                            new ParallelCommandGroup(
-                                    new ParallelRaceGroup(
-                                            new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST, extendo),
-                                            new WaitCommand(6000)
-                                    ),
-                                    new InstantCommand(extendo::mid),
-                                    new TrajectorySequenceCommand(drive, TO_STACK),
-                                    new SequentialCommandGroup(
-                                            new WaitCommand(500),
-                                            new InstantCommand(extendo::mid)
-                                    )
-
-                            ),
-                            new TrajectorySequenceCommand(drive, TO_BACKDROP),
-
-                            new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
-                            new InstantCommand(claw::open),
-                            new InstantCommand(()->lift.setLiftPower(-0.2)),
-                            new WaitCommand(300),
-                            new InstantCommand(()->lift.brake_power()),
-
-                            new TrajectorySequenceCommand(drive, RETREAT_FROM_BACKDROP),
-                            new RetractOuttakeCommand(lift, arm, claw),
-
-
-                            new ParallelCommandGroup(
-                                    new ParallelRaceGroup(
-                                            new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST, extendo),
-                                            new WaitCommand(6000)
-                                    ),
-                                    new InstantCommand(extendo::mid),
-                                    new TrajectorySequenceCommand(drive, TO_STACK_FROM_BACKDROP),
-                                    new SequentialCommandGroup(
-                                            new WaitCommand(500),
-                                            new InstantCommand(extendo::mid)
-                                    )
-
-                            ),
-
-                            new TrajectorySequenceCommand(drive, TO_BACKDROP),
-
-                            new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
-                            new InstantCommand(claw::open),
-                            new InstantCommand(()->lift.setLiftPower(-0.2)),
-                            new WaitCommand(300),
-                            new InstantCommand(()->lift.brake_power()),
-
-                            new TrajectorySequenceCommand(drive, RETREAT_FROM_BACKDROP),
-                            new RetractOuttakeCommand(lift, arm, claw),
                             new TrajectorySequenceCommand(drive, STRAFE_PARK)
-
+//                            new TrajectorySequenceCommand(drive, PURPLE_GLOBAL),
+//                            new InstantCommand(claw::open),
+//
+//
+//                            new ParallelCommandGroup(
+//                                    new ParallelRaceGroup(
+//                                            new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST, extendo),
+//                                            new WaitCommand(6000)
+//                                    ),
+//                                    new InstantCommand(extendo::mid),
+//                                    new TrajectorySequenceCommand(drive, TO_STACK),
+//                                    new SequentialCommandGroup(
+//                                            new WaitCommand(500),
+//                                            new InstantCommand(extendo::mid)
+//                                    )
+//
+//                            ),
+//                            new TrajectorySequenceCommand(drive, TO_BACKDROP),
+//
+//                            new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
+//                            new InstantCommand(claw::open),
+//                            new InstantCommand(()->lift.setLiftPower(-0.2)),
+//                            new WaitCommand(300),
+//                            new InstantCommand(()->lift.brake_power()),
+//
+//                            new TrajectorySequenceCommand(drive, RETREAT_FROM_BACKDROP),
+//                            new RetractOuttakeCommand(lift, arm, claw),
+//
+//
+//                            new ParallelCommandGroup(
+//                                    new ParallelRaceGroup(
+//                                            new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST, extendo),
+//                                            new WaitCommand(6000)
+//                                    ),
+//                                    new InstantCommand(extendo::mid),
+//                                    new TrajectorySequenceCommand(drive, TO_STACK_FROM_BACKDROP),
+//                                    new SequentialCommandGroup(
+//                                            new WaitCommand(500),
+//                                            new InstantCommand(extendo::mid)
+//                                    )
+//
+//                            ),
+//
+//                            new TrajectorySequenceCommand(drive, TO_BACKDROP),
+//
+//                            new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
+//                            new InstantCommand(claw::open),
+//                            new InstantCommand(()->lift.setLiftPower(-0.2)),
+//                            new WaitCommand(300),
+//                            new InstantCommand(()->lift.brake_power()),
+//
+//                            new TrajectorySequenceCommand(drive, RETREAT_FROM_BACKDROP),
+//                            new RetractOuttakeCommand(lift, arm, claw),
+//                            new TrajectorySequenceCommand(drive, STRAFE_PARK)
+//
                     )
 
             );
 
     }
 
-}
+
     private double HeadingMapped (double heading) {
         double mapper = rotationConstant;
         return heading + mapper;
