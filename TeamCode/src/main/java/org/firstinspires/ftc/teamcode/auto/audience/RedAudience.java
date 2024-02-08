@@ -89,51 +89,51 @@ public class RedAudience extends CommandOpMode {
         // Cleanup for other code
         detector.stopStream();
 
-        switch (locationID) {
-            case LEFT: {
-                ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-                        .lineToLinearHeading(Pose2dMapped(-43.71, -35.39, Math.toRadians(150.00)))
-                        .lineTo(Vector2dMapped(-36.20, -38.09))
-                        .lineToLinearHeading(Pose2dMapped(-34.32, -9.56, Math.toRadians(0.00)))
-                        .build();
-                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(Pose2dMapped(30.64, -11.30, Math.toRadians(0)))
-                        .lineTo(Vector2dMapped(32.64, -28.47))
-                        .lineTo(Vector2dMapped(48.72, -28.47))
-                        .build();
-                break;
-            }
-            case MIDDLE: {
-                ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-                        .lineToLinearHeading(Pose2dMapped(-36.74, -33.91, Math.toRadians(90.00)))
-                        .lineTo(Vector2dMapped(-36.74, -36.66))
-                        .lineTo(Vector2dMapped(-58.54, -36.66))
-                        .lineTo(Vector2dMapped(-57.60, -25.57))
-                        .lineToLinearHeading(Pose2dMapped(-34.32, -9.56, Math.toRadians(0.00)))
-                        .build();
-
-                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(Pose2dMapped(30.64, -11.30, Math.toRadians(0)))
-                        .lineTo(Vector2dMapped(32.67, -36))
-                        .lineTo(Vector2dMapped(48.22, -36))
-                        .build();
-                break;
-            }
-            case RIGHT: {
-                ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-                        .lineToLinearHeading(Pose2dMapped(-39.75, -35.13, Math.toRadians(30.00)))
-                        .lineTo(Vector2dMapped(-36.64, -35.13))
-                        .lineTo(Vector2dMapped(-42.53, -38.49))
-                        .lineToLinearHeading(Pose2dMapped(-34.32, -9.56, Math.toRadians(0.00)))
-                        .build();
-
-
-
-                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(Pose2dMapped(30.64, -11.30, Math.toRadians(0)))
-                        .lineTo(Vector2dMapped(32.64, -44))
-                        .lineTo(Vector2dMapped(52.22, -44))
-                        .build();
-                break;
-            }
-        }
+//        switch (locationID) {
+//            case LEFT: {
+            ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
+                    .lineToLinearHeading(Pose2dMapped(-43.71, -35.39, Math.toRadians(150.00)))
+                    .lineTo(Vector2dMapped(-36.20, -38.09))
+                    .lineToLinearHeading(Pose2dMapped(-34.32, -9.56, Math.toRadians(0.00)))
+                    .build();
+            THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(Pose2dMapped(30.64, -11.30, Math.toRadians(0)))
+                    .lineTo(Vector2dMapped(32.64, -28.47))
+                    .lineTo(Vector2dMapped(48.72, -28.47))
+                    .build();
+//                break;
+//            }
+//            case MIDDLE: {
+//                ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
+//                        .lineToLinearHeading(Poseq2dMapped(-36.74, -33.91, Math.toRadians(90.00)))
+//                        .lineTo(Vector2dMapped(-36.74, -36.66))
+//                        .lineTo(Vector2dMapped(-58.54, -36.66))
+//                        .lineTo(Vector2dMapped(-57.60, -25.57))
+//                        .lineToLinearHeading(Pose2dMapped(-34.32, -9.56, Math.toRadians(0.00)))
+//                        .build();
+//
+//                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(Pose2dMapped(30.64, -11.30, Math.toRadians(0)))
+//                        .lineTo(Vector2dMapped(32.67, -36))
+//                        .lineTo(Vector2dMapped(48.22, -36))
+//                        .build();
+//                break;
+//            }
+//            case RIGHT: {
+//                ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
+//                        .lineToLinearHeading(Pose2dMapped(-39.75, -35.13, Math.toRadians(30.00)))
+//                        .lineTo(Vector2dMapped(-36.64, -35.13))
+//                        .lineTo(Vector2dMapped(-42.53, -38.49))
+//                        .lineToLinearHeading(Pose2dMapped(-34.32, -9.56, Math.toRadians(0.00)))
+//                        .build();
+//
+//
+//
+//                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(Pose2dMapped(30.64, -11.30, Math.toRadians(0)))
+//                        .lineTo(Vector2dMapped(32.64, -44))
+//                        .lineTo(Vector2dMapped(52.22, -44))
+//                        .build();
+//                break;
+//            }
+//        }
 
         TrajectorySequence FOUR_TO_LIGHTSPEED_BRIDGE_POSITION = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
                 .lineTo(Vector2dMapped(-55.5, -12.98))
@@ -193,14 +193,14 @@ public class RedAudience extends CommandOpMode {
         );
     }
 
-    @Override
-    public void run(){
-        drive.update();
-        CommandScheduler.getInstance().run();
-
-        telemetry.addData("lift", lift.getLiftPosition());
-        telemetry.update();
-    }
+//    @Override
+//    public void run(){
+//        drive.update();
+//        CommandScheduler.getInstance().run();
+//
+//        telemetry.addData("lift", lift.getLiftPosition());
+//        telemetry.update();
+//    }
 
     private double HeadingMapped (double heading) {
         double mapper = rotationConstant;
