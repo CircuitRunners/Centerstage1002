@@ -62,8 +62,6 @@ public class Drivebase extends SubsystemBase {
         );
     }
 
-
-
     private double preprocessInput(double variable) {
         // Input pre process here
         return variable;
