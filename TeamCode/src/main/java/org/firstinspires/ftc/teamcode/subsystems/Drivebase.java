@@ -12,13 +12,13 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+//import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class Drivebase extends SubsystemBase {
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     private DcMotorEx[] allDrivebaseMotors;
     private AHRS imu;
-    private SampleMecanumDrive drive;
+//    private SampleMecanumDrive drive;
 
     private double imuPrevPositionRad = 0.0;
 
@@ -55,10 +55,10 @@ public class Drivebase extends SubsystemBase {
 
     public void initializeIMU (HardwareMap hardwareMap) {
         imu = AHRS.getInstance(
-            hardwareMap.get(
-                    NavxMicroNavigationSensor.class,
-                    "navX2"
-            ), AHRS.DeviceDataType.kProcessedData
+                hardwareMap.get(
+                        NavxMicroNavigationSensor.class,
+                        "navX2"
+                ), AHRS.DeviceDataType.kProcessedData
         );
     }
 
@@ -119,7 +119,7 @@ public class Drivebase extends SubsystemBase {
         // botHeading is in Radians
         Vector2d botVector = new Vector2d(x, y).rotated(-botHeading);
 
-        // Apply the calculated heading to the input vector for field centric
+//        // Apply the calculated heading to the input vector for field centric
         x = botVector.getX(); // strafe r/l transform values
         y = botVector.getY(); // strafe f/b transform values
         // note rx is not here since rotation is always field centric!
@@ -156,10 +156,10 @@ public class Drivebase extends SubsystemBase {
 
     public double getCorrectedYaw () {
         double imuDeg = imu.getYaw();
-        double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
-//        double imuRad = imuDeg;
+//        double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
+        double imuRad = imuDeg;
         double correctedRadReset = imuRad-imuPrevPositionRad;
-        return (-1.0) * correctedRadReset; //* (14.0/180.0);
+        return (-1.0) * correctedRadReset * (14.0/180.0);
     }
 
 //    public void initializeLocalizer (HardwareMap hardwareMap) {
