@@ -36,6 +36,7 @@ import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 public class ServoTesters extends CommandOpMode {
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
+    private double normleft, normright, normfront;
 
     @Override
     public void initialize(){
@@ -56,6 +57,10 @@ public class ServoTesters extends CommandOpMode {
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
         rightEncoder.setDirection(Encoder.Direction.REVERSE);
 
+        normleft = leftEncoder.getCurrentPosition();
+        normright = rightEncoder.getCurrentPosition();
+        normfront = frontEncoder.getCurrentPosition();
+
 
         telemetry.addLine("Ready for start!");
         telemetry.update();
@@ -65,6 +70,10 @@ public class ServoTesters extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+
+        telemetry.addData("norm L", normleft - leftEncoder.getCurrentPosition());
+        telemetry.addData("norm R", normright - rightEncoder.getCurrentPosition());
+        telemetry.addData("norm Front/Perp", normfront - frontEncoder.getCurrentPosition());
 
         telemetry.addData("leftEncoder", leftEncoder.getCurrentPosition());
         telemetry.addData("rightEncoder", rightEncoder.getCurrentPosition());
