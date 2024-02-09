@@ -159,7 +159,7 @@ public class Drivebase extends SubsystemBase {
 //        double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
         double imuRad = imuDeg;
         double correctedRadReset = imuRad-imuPrevPositionRad;
-        return (-1.0) * correctedRadReset * (14.0/180.0);
+        return (-1.0) * correctedRadReset; // * (14.0/180.0);
     }
 
 //    public void initializeLocalizer (HardwareMap hardwareMap) {
