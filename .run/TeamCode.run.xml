@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="TeamCode" type="AndroidRunConfigurationType" factoryName="Android App">
-    <module name="Centerstage1002.TeamCode.main" />
+    <module name="Centerstage1002dup1.TeamCode.main" />
     <option name="DEPLOY" value="true" />
     <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
     <option name="DEPLOY_AS_INSTANT" value="false" />

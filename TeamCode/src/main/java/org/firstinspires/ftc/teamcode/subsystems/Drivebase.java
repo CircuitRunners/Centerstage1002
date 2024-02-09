@@ -55,10 +55,10 @@ public class Drivebase extends SubsystemBase {
 
     public void initializeIMU (HardwareMap hardwareMap) {
         imu = AHRS.getInstance(
-            hardwareMap.get(
-                    NavxMicroNavigationSensor.class,
-                    "navX2"
-            ), AHRS.DeviceDataType.kProcessedData
+                hardwareMap.get(
+                        NavxMicroNavigationSensor.class,
+                        "navX2"
+                ), AHRS.DeviceDataType.kProcessedData
         );
     }
 
