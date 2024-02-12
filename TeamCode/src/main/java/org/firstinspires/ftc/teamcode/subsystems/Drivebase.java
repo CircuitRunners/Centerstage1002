@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 //import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class Drivebase extends SubsystemBase {
+    public static double STRAFE_CONSTANT = 1.06;
+
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
     private DcMotorEx[] allDrivebaseMotors;
     private AHRS imu;
@@ -89,7 +91,7 @@ public class Drivebase extends SubsystemBase {
         // Actual processing
         // Counteract bad strafing
         // TODO to change this as we test!
-        x = x * 1.06;
+        x = x * STRAFE_CONSTANT;
 
         x = postprocessInput(x);
         return x;
@@ -105,7 +107,7 @@ public class Drivebase extends SubsystemBase {
         return rx;
     }
 
-    public void drive(double left_stick_y, double left_stick_x, double right_stick_x) {
+    public void drive(double left_stick_y, double left_stick_x, double right_stick_x, boolean defense_button) {
 
         double y = transformYInput(left_stick_y); // y && strafe forward back
         double x = transformXInput(left_stick_x); // x && strafe right and left
@@ -116,6 +118,11 @@ public class Drivebase extends SubsystemBase {
 
         // botHeading is in Radians
         Vector2d botVector = new Vector2d(x, y).rotated(-botHeading);
+
+        if (defense_button) {
+            double maxPowers = 1.0/botVector.norm();
+            botVector = new Vector2d(x*maxPowers, y*maxPowers).rotated(-botHeading);
+        }
 
 //        // Apply the calculated heading to the input vector for field centric
         x = botVector.getX(); // strafe r/l transform values
@@ -145,7 +152,18 @@ public class Drivebase extends SubsystemBase {
         // Old method below, to ensure the CONTROLLERS no more than 1
         // double denominator = max(abs(y) + abs(x) + abs(rx), 1);
 
+        if (defense_button) {
+
+
+            driveRobotPowers(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+            return;
+        }
+
         // Set the motor powers
+        driveRobotPowers(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+    }
+
+    private void driveRobotPowers (double frontLeftPower, double backLeftPower, double frontRightPower, double backRightPower) {
         frontLeft.setPower(frontLeftPower);
         backLeft.setPower(backLeftPower);
         frontRight.setPower(frontRightPower);
@@ -154,8 +172,8 @@ public class Drivebase extends SubsystemBase {
 
     public double getCorrectedYaw () {
         double imuDeg = imu.getYaw();
-//        double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
-        double imuRad = imuDeg;
+        double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
+//        double imuRad = imuDeg;
         double correctedRadReset = imuRad-imuPrevPositionRad;
         return (-1.0) * correctedRadReset; // * (14.0/180.0);
     }

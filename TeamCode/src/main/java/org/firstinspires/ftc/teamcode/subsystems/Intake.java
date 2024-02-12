@@ -5,13 +5,16 @@ import static org.firstinspires.ftc.teamcode.utilities.Utilities.CLOSE_TO_ZERO;
 import static org.firstinspires.ftc.teamcode.utilities.Utilities.DEBOUNCE_THRESHOLD;
 import static org.firstinspires.ftc.teamcode.utilities.Utilities.squash;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 // Certified Validated!
+@Config
 public class Intake extends SubsystemBase {
+    public static double STOPPED_POWER = 0;
     private DcMotorEx intakeMotor;
     private ElapsedTime runtime;
     private double runDuration;
@@ -67,7 +70,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void setPower(double powerLeft, double powerRight) {
-        setPower(0);
+        setPower(STOPPED_POWER);
         // Set dynamic powers!
         powerRight = squash(powerRight);
         powerLeft = squash(powerLeft);
@@ -127,7 +130,7 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         if (isRunning && runtime.seconds() > runDuration) {
-            setPower(0);
+            setPower(STOPPED_POWER);
             isRunning = false;
         }
     }

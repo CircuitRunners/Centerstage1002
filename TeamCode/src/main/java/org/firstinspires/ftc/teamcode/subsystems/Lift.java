@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+@Config
 public class Lift extends SubsystemBase {
     public enum LiftPositions {
         DOWN(0),
@@ -26,9 +28,20 @@ public class Lift extends SubsystemBase {
         public int getPosition() {
             return this.position;
         }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
     }
 
-    final double winchServoInit = 0.5, winchServoEngage = 0.66;
+    public static double UPPER_LIMIT = 2750, LOWER_LIMIT = 5;
+    public static double winchServoInit = 0.5, winchServoEngage = 0.66;
+
+    public static int
+            LIFTPOSITIONS_DOWN = LiftPositions.DOWN.position,
+            LIFTPOSITIONS_SHORT = LiftPositions.SHORT.position,
+            LIFTPOSITIONS_MID = LiftPositions.MID.position,
+            LIFTPOSITIONS_HIGH = LiftPositions.HIGH.position;
 
     DcMotorEx leftMotor;
     DcMotorEx rightMotor;
@@ -37,7 +50,7 @@ public class Lift extends SubsystemBase {
 
     private VoltageSensor voltageSensor;
     private double voltageComp;
-    private double VOLTAGE_WHEN_LIFT_TUNED = 13.0;
+    public static double VOLTAGE_WHEN_LIFT_TUNED = 13.0;
 
     public Lift(HardwareMap hardwareMap){
 
@@ -71,6 +84,10 @@ public class Lift extends SubsystemBase {
     @Override
     public void periodic(){
         // happens every loop
+        LiftPositions.HIGH.setPosition(LIFTPOSITIONS_HIGH);
+        LiftPositions.MID.setPosition(LIFTPOSITIONS_MID);
+        LiftPositions.SHORT.setPosition(LIFTPOSITIONS_SHORT);
+        LiftPositions.DOWN.setPosition(LIFTPOSITIONS_DOWN);
     }
 
     public void setLiftPower(double power){
@@ -92,11 +109,11 @@ public class Lift extends SubsystemBase {
     }
 
     public boolean atUpperLimit(){
-        return getLiftPosition() > 2750;
+        return getLiftPosition() > UPPER_LIMIT;
     }
 
     public boolean atLowerLimit(){
-        return getLiftPosition() < 5;
+        return getLiftPosition() < LOWER_LIMIT;
     }
 
     public void resetLiftPosition(){

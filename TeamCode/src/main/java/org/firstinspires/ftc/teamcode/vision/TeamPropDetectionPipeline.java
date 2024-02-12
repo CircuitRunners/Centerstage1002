@@ -27,14 +27,14 @@ class TeamPropDetectionPipeline extends OpenCvPipeline {
     private Deque<Point>[] buffer = new Deque[ZONE_COUNT];
     private double[] areaInZone = new double[ZONE_COUNT];
     private static final int MIN_AREA = 300;
-    //private static final Scalar RED_LOWER_BOUND = new Scalar(0, 120, 70);
-    //private static final Scalar RED_UPPER_BOUND = new Scalar(10, 255, 255);
-    //private static final Scalar BLUE_LOWER_BOUND = new Scalar(100, 150, 0);
-    //private static final Scalar BLUE_UPPER_BOUND = new Scalar(140, 255, 255);
-    private static final Scalar RED_LOWER_BOUND = new Scalar(100,100,100);
-    private static final Scalar RED_UPPER_BOUND = new Scalar(255,255,255);
-    private static final Scalar BLUE_LOWER_BOUND = new Scalar(90,60,0);
-    private static final Scalar BLUE_UPPER_BOUND = new Scalar(160, 255, 255);
+    private static final Scalar RED_LOWER_BOUND = new Scalar(0, 120, 70);
+    private static final Scalar RED_UPPER_BOUND = new Scalar(10, 255, 255);
+    private static final Scalar BLUE_LOWER_BOUND = new Scalar(100, 150, 0);
+    private static final Scalar BLUE_UPPER_BOUND = new Scalar(140, 255, 255);
+//    private static final Scalar RED_LOWER_BOUND = new Scalar(100,100,100);
+//    private static final Scalar RED_UPPER_BOUND = new Scalar(255,255,255);
+//    private static final Scalar BLUE_LOWER_BOUND = new Scalar(90,60,0);
+//    private static final Scalar BLUE_UPPER_BOUND = new Scalar(160, 255, 255);
     private static final Size MORPH_KERNEL_SIZE = new Size(5, 5);
 
     private Mat leftZone, middleZone, rightZone;

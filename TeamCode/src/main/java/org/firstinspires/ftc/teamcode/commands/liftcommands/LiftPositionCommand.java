@@ -15,15 +15,15 @@ public class LiftPositionCommand extends CommandBase {
             new PIDCoefficients(0.02, 0.000, 0.000);
     // 0.0269, 0.003, 0.0014
 
-    private double tolerance = 15;
+    public static double tolerance = 15;
     private double targetPosition = 0;
     private boolean holdAtEnd;
     private final Lift lift;
 
     public static double setpointPos;
-    public static double liftPosition = 0;
-    public static double liftVelocity = 0;
-    public static double controllerOutput = 0;
+    double liftPosition = 0;
+    double liftVelocity = 0;
+    double controllerOutput = 0;
 
     public LiftPositionCommand(Lift lift, int targetPosition, boolean holdAtEnd){
         addRequirements(lift);

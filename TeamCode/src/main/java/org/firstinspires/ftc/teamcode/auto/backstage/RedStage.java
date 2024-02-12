@@ -47,7 +47,8 @@ public class RedStage extends CommandOpMode {
     private PropLocation locationID = PropLocation.MIDDLE; // set to center by default
 
 //    private Pose2d startPose = Pose2dMapped(9.00, -61.50, Math.toRadians(90.00));
-    private Pose2d startPose = Pose2dMapped(10.25, -63,  Math.toRadians(90.00));
+//    private Pose2d startPose = Pose2dMapped(10.25, -63,  Math.toRadians(90.00));
+    private Pose2d startPose = Pose2dMapped(12, -59.25,  Math.toRadians(90.00));
     private Lift lift;
     private Arm arm;
     private Claw claw;

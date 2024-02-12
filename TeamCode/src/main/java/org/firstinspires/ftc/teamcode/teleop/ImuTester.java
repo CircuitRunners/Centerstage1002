@@ -100,7 +100,7 @@ public class ImuTester extends CommandOpMode {
     public void run() {
         super.run();
 
-        drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, false);
 
         // Reset heading with MATH
         if (gamepad1.square) {

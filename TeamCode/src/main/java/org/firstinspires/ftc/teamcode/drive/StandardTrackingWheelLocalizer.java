@@ -33,7 +33,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 0.688975; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 14.0946823;//-14.3; // MAKE NEGATIVE AFTER TESTING // physical is about 8.333; // in; distance between the left and right wheels
+    public static double LATERAL_DISTANCE = 14.265;// 14.2796 || 14.2556 // 7.3199 // -14.3; // MAKE NEGATIVE AFTER TESTING // physical is about 8.333; // in; distance between the left and right wheels
     // Testing: 14.061408 --> 14.0946823
     public static double FORWARD_OFFSET = 4.2; //4.58; // in; offset of the lateral wheel
 
@@ -83,7 +83,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     @Override
     public List<Double> getWheelPositions() {
         int leftPos = leftEncoder.getCurrentPosition();
-        int rightPos = (int) (rightEncoder.getCurrentPosition() * (-154898.0/-152838.0));
+        int rightPos = (int) (rightEncoder.getCurrentPosition()); //* (-154898.0/-152838.0));
         int frontPos = frontEncoder.getCurrentPosition();
 
         lastEncPositions.clear();
@@ -102,7 +102,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     @Override
     public List<Double> getWheelVelocities() {
         int leftVel = (int) leftEncoder.getCorrectedVelocity();
-        int rightVel = (int) (rightEncoder.getCorrectedVelocity() * (-154898.0/-152838.0));
+        int rightVel = (int) (rightEncoder.getCorrectedVelocity()); //* (-154898.0/-152838.0));
         int frontVel = (int) frontEncoder.getCorrectedVelocity();
 
         lastEncVels.clear();

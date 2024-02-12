@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.utilities.ServoModule;
 
+@Config
 public class AirplaneLauncher extends SubsystemBase {
 
     // Declarations
@@ -21,6 +23,12 @@ public class AirplaneLauncher extends SubsystemBase {
             this.position = position;
         }
     }
+
+    public static double
+            LAUNCHER_SPRUNG = LauncherPosition.SPRUNG.position,
+            LAUNCHER_LAUNCH = LauncherPosition.LAUNCH.position;
+
+
 
     private ServoImplEx launcherServo;
 
@@ -54,11 +62,11 @@ public class AirplaneLauncher extends SubsystemBase {
 
     // Method to set the launcher to the LAUNCH position
     public void launch() {
-        launcherServo.setPosition(LauncherPosition.LAUNCH.position);
+        launcherServo.setPosition(LAUNCHER_LAUNCH);
     }
     // Method to set the launcher to the SPRUNG position
     public void cock() {
-        launcherServo.setPosition(LauncherPosition.SPRUNG.position);
+        launcherServo.setPosition(LAUNCHER_SPRUNG);
     }
 
     // Special methods

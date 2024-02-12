@@ -14,21 +14,22 @@ import org.firstinspires.ftc.teamcode.subsystems.ExtendoArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 @Photon
+@Config
 public class IntakeCommandEx extends CommandBase {
     private ElapsedTime runtime;
     private ElapsedTime intakeTimer, waitTimer; // Timer for the intake process
     private Intake intake;
-    private DistanceSensor distanceSensor;
+    public DistanceSensor distanceSensor;
     private Claw claw;
     private int pixelsDetectedState = 0;
     private Intake.IntakePowers power;
-    private static final double DETECTION_THRESHOLD = 4.0; // Threshold for the distance sensor
+    public static double DETECTION_THRESHOLD = 4.0; // Threshold for the distance sensor
 
     // consider reducing if need faster cycle times
-    private static final double REQUIRED_TIME_MS = 900; // Required time in milliseconds,
+    public static double REQUIRED_TIME_MS = 200; // Required time in milliseconds,
 
-    private static final double FINISH_LOWSPEED_THRESHOLD = 400;
-    private static final double OUTTAKE_TIME_ROBOT = 1350;
+    public static double FINISH_LOWSPEED_THRESHOLD = 400;
+    public static double OUTTAKE_TIME_ROBOT = 1350;
 
     public IntakeCommandEx(HardwareMap hardwareMap, Claw claw, Intake intake, Intake.IntakePowers power) {
         this.intake = intake;

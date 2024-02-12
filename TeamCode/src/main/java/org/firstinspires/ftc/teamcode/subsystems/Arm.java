@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+@Config
 public class Arm extends SubsystemBase {
     private ServoImplEx leftServo;
     private ServoImplEx rightServo;
@@ -47,7 +49,7 @@ public class Arm extends SubsystemBase {
 
     // Motion profile constraints
     // TODO EDIT THESE
-    private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0.7, 1.0);
+    public static TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(3, 5);
 
 //    PROCESSORS
 

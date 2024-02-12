@@ -128,7 +128,7 @@ public class MainTeleOp extends CommandOpMode {
 
         telemetry.addData("YAW", drivebase.getCorrectedYaw());
 
-        drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.cross); // IN BETA TEST THISIOWHADHSOD
 
         // Reset heading with MATH
         if (gamepad1.square) {
@@ -196,6 +196,8 @@ public class MainTeleOp extends CommandOpMode {
         } else if (gamepad2.square) {
             lift.initialInitHang();
         }
+
+        telemetry.addData("Distance", intakeCommand.distanceSensor.getDistance(DistanceUnit.CM));
 
         // Ensure telemetry actually works
         telemetry.update();
