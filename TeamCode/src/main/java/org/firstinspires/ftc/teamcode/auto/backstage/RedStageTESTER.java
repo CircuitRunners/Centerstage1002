@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.auto.backstage;
 
 import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.rotationConstant;
 
+import android.util.MutableInt;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -26,8 +28,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utilities.PropLocation;
+import org.firstinspires.ftc.teamcode.utilities.Ref;
 import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
+import org.firstinspires.inspection.InspectionActivity;
 
 // Complete! :) [who needs I&R anyways?]
 @Autonomous (name="RED BACKSTAGE TESTER")
@@ -39,6 +43,7 @@ public class RedStageTESTER extends CommandOpMode {
     private TrajectorySequence THREE_PIXEL_ON_BACKDROP;
 
     private TeamPropDetector detector;
+
     private PropLocation locationID = PropLocation.MIDDLE; // set to center by default
 
 //    private Pose2d startPose = Pose2dMapped(9.00, -61.50, Math.toRadians(90.00));
@@ -50,6 +55,8 @@ public class RedStageTESTER extends CommandOpMode {
     private ExtendoArm extendo;
 
     private Intake intake;
+
+    private Integer iteration = 0;
 
     @Override
     public void initialize(){
@@ -72,20 +79,20 @@ public class RedStageTESTER extends CommandOpMode {
         TrajectorySequence untitled0 = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(Pose2dMapped(11.84, -33.90, Math.toRadians(90.00)))
                 .lineToLinearHeading(Pose2dMapped(23.28, -43.74, Math.toRadians(90.00)))
-                .splineToLinearHeading(Pose2dMapped(51.25, -37.75, Math.toRadians(0.00)), MathtoRadians(0.00))
+                .splineToLinearHeading(Pose2dMapped(50.5, -37.75, Math.toRadians(0.0001)), MathtoRadians(0.0001))
                 .build();
 
         TrajectorySequence untitled1 = drive.trajectorySequenceBuilder(untitled0.end())
                 .setReversed(true)
 //                .splineTo(Vector2dMapped(28.93, -11.84), MathtoRadians(180.00))
-                .splineTo(Vector2dMapped(23.55, -15), MathtoRadians(180.00))
-                .splineTo(Vector2dMapped(-59.62, -15), MathtoRadians(180.00))
+                .splineTo(Vector2dMapped(23.55, -13), MathtoRadians(180.00))
+                .splineTo(Vector2dMapped(-54.5, -13), MathtoRadians(180.00)) // -59.something
                 .build();
 
         TrajectorySequence untitled2 = drive.trajectorySequenceBuilder(untitled1.end())
                 .setReversed(false)
 //                .splineTo(Vector2dMapped(28.93, -11.84), MathtoRadians(180.00))
-                .splineTo(Vector2dMapped(23.55, -15), MathtoRadians(0))
+                .splineTo(Vector2dMapped(23.55, -13), MathtoRadians(0))
                 .splineToLinearHeading(Pose2dMapped(51.25, -37.75, Math.toRadians(0.00)), MathtoRadians(0.00))
                 .build();
 
@@ -216,15 +223,91 @@ public class RedStageTESTER extends CommandOpMode {
 //                .lineTo(Vector2dMapped(64.06, -12.65))
 //                .build();
 
+
         schedule(
                 new SequentialCommandGroup(
-                        new TrajectorySequenceCommand(drive, untitled0),
-                        new TrajectorySequenceCommand(drive, untitled1),
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, untitled0), // push pixel, come back, approach board spline
+                                new SequentialCommandGroup(
+                                        new WaitCommand(5000),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open),
+                                        new WaitCommand(1500),
+                                        new RetractOuttakeCommand(lift,arm,claw),
+                                        new InstantCommand(()->lift.setLiftPower(-0.2)),
+                                        new WaitCommand(300),
+                                        new InstantCommand(
+                                                ()-> lift.brake_power()
+                                        )
+                                )
+                        ),
+                        new ParallelCommandGroup(
+                                new ParallelCommandGroup(
+                                        new InstantCommand(extendo::mid),
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(1800),
+                                                new TrajectorySequenceCommand(drive, untitled1) // approach board and then to other side of field
+                                        ),
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(4500),
+                                                new InstantCommand(claw::open),
+                                                new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
+                                                new SequentialCommandGroup(
+                                                        new WaitCommand(500),
+                                                        new InstantCommand(extendo::alpha)
+                                                )
+                                        )
+
+                                )
+                        ),
                         new TrajectorySequenceCommand(drive, untitled2),
-                        new TrajectorySequenceCommand(drive, untitled1),
-                        new TrajectorySequenceCommand(drive, untitled2)
+                        new ParallelCommandGroup(
+                                new SequentialCommandGroup(
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open),
+                                        new WaitCommand(1000),
+                                        new RetractOuttakeCommand(lift,arm,claw),
+                                        new InstantCommand(()->lift.setLiftPower(-0.2)),
+                                        new WaitCommand(300),
+                                        new InstantCommand(
+                                                ()-> lift.brake_power()
+                                        )
+                                ),
+                                new ParallelCommandGroup(
+                                        new InstantCommand(extendo::mid),
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(1500),
+                                                new TrajectorySequenceCommand(drive, untitled1) // approach board and then to other side of field
+                                        ),
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(4500),
+                                                new InstantCommand(claw::open),
+                                                new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
+                                                new SequentialCommandGroup(
+                                                        new WaitCommand(500),
+                                                        new InstantCommand(extendo::down)
+                                                )
+                                        )
+
+                                )
+                        ),
+                        new TrajectorySequenceCommand(drive, untitled2),
+                        new SequentialCommandGroup(
+                                new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                new InstantCommand(claw::open),
+                                new WaitCommand(1000),
+                                new RetractOuttakeCommand(lift,arm,claw),
+                                new InstantCommand(()->lift.setLiftPower(-0.2)),
+                                new WaitCommand(300),
+                                new InstantCommand(
+                                        ()-> lift.brake_power()
+                                )
+                        )
                 )
-//                new SequentialCommandGroup(
+        );
+    };
+
+    //                new SequentialCommandGroup(
 //                        new TrajectorySequenceCommand(drive, ONE_GLOBAL),
 //                        new ParallelCommandGroup(
 //                                new TrajectorySequenceCommand(drive, THREE_PIXEL_ON_BACKDROP),
@@ -257,26 +340,23 @@ public class RedStageTESTER extends CommandOpMode {
 //                                new SequentialCommandGroup(
 //                                        new WaitCommand(500),
 //                                        new InstantCommand(extendo::alpha)
-//
 //                                )
 //                        ),
 //                        new InstantCommand(extendo :: up),
 //                        new TrajectorySequenceCommand(drive, SIX_LIGHTSPEED_BRIDGE_BACK),
 //                        new ParallelCommandGroup(
 //                                new SequentialCommandGroup(
-//                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
-//                                new InstantCommand(claw::open),
-//                        new InstantCommand(()->lift.setLiftPower(-0.2)),
-//                        new WaitCommand(700),
-//                        new InstantCommand(()->lift.brake_power())
-//                                        ),
+    //                                    new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
+        //                                new InstantCommand(claw::open),
+                //                        new InstantCommand(()->lift.setLiftPower(-0.2)),
+                //                        new WaitCommand(700),
+                //                        new InstantCommand(()->lift.brake_power())
+//                                 ),
 //                                new TrajectorySequenceCommand(drive, SEVEN_PIXEL_ON_BACKBOARD)
-//                                    ),
+//                        ),
 //                        new RetractOuttakeCommand(lift,arm,claw),
 //                        new TrajectorySequenceCommand(drive, EIGHT_PARK_END)
 //                )
-        );
-    };
 
 //    @Override
 //    public void run() {

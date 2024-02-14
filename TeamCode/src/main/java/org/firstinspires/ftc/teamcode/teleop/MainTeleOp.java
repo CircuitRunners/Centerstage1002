@@ -137,6 +137,7 @@ public class MainTeleOp extends CommandOpMode {
         }
 
         telemetry.addLine(String.valueOf(navx_device.getYaw()));
+        telemetry.addData("Lift", lift.getLiftPosition());
 
         if (gamepad2.triangle) {
 

@@ -162,7 +162,7 @@ public class RedAudienceFluent extends CommandOpMode {
                         new InstantCommand(claw::open),
                         new ParallelCommandGroup(
                             new ParallelRaceGroup(
-                                    new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
+                                    new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST),
                                     new WaitCommand(6000)
                             ),
                             new InstantCommand(extendo::mid),

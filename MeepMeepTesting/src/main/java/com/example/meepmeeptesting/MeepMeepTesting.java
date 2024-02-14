@@ -37,25 +37,10 @@ public class MeepMeepTesting {
                                            .build()
                         );*/
                        .followTrajectorySequence(drive ->
-                               drive.trajectorySequenceBuilder(front_blue)
-                                       .splineTo(new Vector2d(-37.65, 36.00), Math.toRadians(180.00))
-                                       .lineToLinearHeading(new Pose2d(-57.00, 36.00, Math.toRadians(0)))
-
-                                       .lineTo(new Vector2d(-35.53, 58))
-                                       .lineTo(new Vector2d(47.00, 58))
-                                       .lineTo(new Vector2d(47.00, 43.89))
-                                       .lineTo(new Vector2d(47.00, 58))
-                                       .lineTo(new Vector2d(-35.53, 58))
-                                       .lineTo(new Vector2d(-57.00, 36.00))
-                                       .lineTo(new Vector2d(-35.53, 58))
-                                       .lineTo(new Vector2d(47.00, 58))
-                                       .lineTo(new Vector2d(47.00, 43.89))
-
-
-//                                       .lineTo(new Vector2d(48.63, 36))
-//                                       .lineTo(new Vector2d(-57, 36))
-//                                       .lineTo(new Vector2d(48.63, 36))
-//                                       .lineTo(new Vector2d(48.63, 59.5))
+                               drive.trajectorySequenceBuilder(new Pose2d(10.5, -62.5,  Math.toRadians(90.00)))
+                                       .lineToLinearHeading(new Pose2d(11.84, -33.90, Math.toRadians(90.00)))
+                                       .lineToLinearHeading(new Pose2d(23.28, -43.74, Math.toRadians(90.00)))
+                                       .splineToLinearHeading(new Pose2d(50.5, -37.75, Math.toRadians(0.0001)), Math.toRadians(1.52001))
                                        .build()
 
 

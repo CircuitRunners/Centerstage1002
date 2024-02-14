@@ -49,7 +49,7 @@ public class Arm extends SubsystemBase {
 
     // Motion profile constraints
     // TODO EDIT THESE
-    public static TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(3, 5);
+    public static TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(1.5, 4.2);
 
 //    PROCESSORS
 
