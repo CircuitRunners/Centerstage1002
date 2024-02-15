@@ -98,50 +98,6 @@ public class RedStageTESTER extends CommandOpMode {
 
 
 
-
-
-
-
-//                .splineTo(Vector2dMapped(-54.24, -39.03), Math.toRadians(90.00))
-//                .splineTo(Vector2dMapped(-42.66, -27.05), Math.toRadians(30.00))
-//                .lineToLinearHeading(Pose2dMapped(-56.25, -25.30, Math.toRadians(0.00)))
-//                .lineTo(Vector2dMapped(-56.12, -11.17))
-//                .lineTo(Vector2dMapped(39.57, -11.30))
-//                .lineTo(Vector2dMapped(51.68, -36.07))
-//                .lineToLinearHeading(Pose2dMapped(35.53, -11.44, Math.toRadians(180.00)))
-//                .lineTo(Vector2dMapped(-60.29, -11.04))
-//                .lineToLinearHeading(Pose2dMapped(43.33, -11.30, Math.toRadians(0.00)))
-//                .lineTo(Vector2dMapped(51.41, -35.93))
-//                .build();
-
-
-//        TrajectorySequence purplePixelBackboard = drive.trajectorySequenceBuilder(startPose)
-//                .lineTo(Vector2dMapped(19.5, -40))
-//                .splineToConstantHeading(Vector2dMapped(20, -44), Math.toRadians(90.00))
-//                .splineToConstantHeading(Vector2dMapped(33, -51), Math.toRadians(90.00))
-//                .waitSeconds(0.1)
-//                .splineToLinearHeading(Pose2dMapped(44.51, -36.70,Math.toRadians(0)), Math.toRadians(0.00))
-//                .build();
-//
-//        TrajectorySequence depositBackboardAndWithdraw = drive.trajectorySequenceBuilder(purplePixelBackboard.end())
-//                .lineTo(Vector2dMapped(51, -39))
-//                .waitSeconds(1)
-//                .lineTo(Vector2dMapped(45.51, -39))
-//                .build();
-//
-//        TrajectorySequence toStacks = drive.trajectorySequenceBuilder(depositBackboardAndWithdraw.end())
-//                .splineToConstantHeading(Vector2dMapped(11.71, -36.74), Math.toRadians(90.00))
-//                .lineTo(Vector2dMapped(-58, -40.34))
-//
-//                .build();
-//        TrajectorySequence backupFromStacksForPixelIntake = drive.trajectorySequenceBuilder(toStacks.end())
-//                .lineTo(Vector2dMapped(-54.5, -40.34))
-//                .build();
-//
-//        TrajectorySequence backToRightSide = drive.trajectorySequenceBuilder(backupFromStacksForPixelIntake.end())
-//                .lineTo(Vector2dMapped(52.25, -36.07))
-//                .build();
-
 //        detector.startStream();
 //
         while(opModeInInit()){
@@ -191,38 +147,6 @@ public class RedStageTESTER extends CommandOpMode {
 //                break;
 //            }
 //        }
-
-//        TrajectorySequence THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-//                .splineToLinearHeading(Pose2dMapped(48.31, -36.47, Math.toRadians(0.00)), MathtoRadians(0.00))
-//                .lineTo(Vector2dMapped(52.22, -36.47))
-//                .build();
-
-        // Stack
-//        TrajectorySequence FOUR_TO_LIGHTSPEED_BRIDGE_POSITION = drive.trajectorySequenceBuilder(THREE_PIXEL_ON_BACKDROP.end())
-//                .lineTo(Vector2dMapped(33.24, -12.25))
-//                .lineTo(Vector2dMapped(-52.22, -12.98))
-//                .build();
-//
-//        // Back 2 The Backboard
-//        TrajectorySequence FIVE_INTAKE_PIXELS_STACK = drive.trajectorySequenceBuilder(FOUR_TO_LIGHTSPEED_BRIDGE_POSITION.end())
-//                .lineTo(Vector2dMapped(-56.29, -12.98))
-//                .build();
-//
-//        TrajectorySequence SIX_LIGHTSPEED_BRIDGE_BACK = drive.trajectorySequenceBuilder(FIVE_INTAKE_PIXELS_STACK.end())
-//                .lineTo(Vector2dMapped(39.84, -12.11))
-//                .build();
-//
-//        TrajectorySequence SEVEN_PIXEL_ON_BACKBOARD = drive.trajectorySequenceBuilder(SIX_LIGHTSPEED_BRIDGE_BACK.end())
-//                .lineTo(Vector2dMapped(42.80, -31.76))
-//                .lineTo(Vector2dMapped(52.35, -36.99))
-//                .build();
-//
-//        TrajectorySequence EIGHT_PARK_END = drive.trajectorySequenceBuilder(SEVEN_PIXEL_ON_BACKBOARD.end())
-//                .lineTo(Vector2dMapped(48.72, -26.24))
-//                .lineTo(Vector2dMapped(51.54, -11.98))
-//                .lineTo(Vector2dMapped(64.06, -12.65))
-//                .build();
-
 
         schedule(
                 new SequentialCommandGroup(

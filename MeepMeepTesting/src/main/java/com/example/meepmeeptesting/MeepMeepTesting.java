@@ -2,9 +2,14 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
 
 public class MeepMeepTesting {
 
@@ -25,10 +30,27 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
+        double center_line_y = -11.5, stack_x = -55.5, avoidance_x_constant = 1;
+
+        Pose2d startPose = new Pose2d(10.5, -62.5,  Math.toRadians(90.00));
+
+        Pose2d pixel_left = new Pose2d(22.4, -42, Math.toRadians(90.00));
+        Pose2d pixel_center = new Pose2d(11.84, -33.90, Math.toRadians(90.00));
+        Pose2d pixel_right = new Pose2d(27, -40, Math.toRadians(115));
+
+        Pose2d boardPosition_left = new Pose2d(50.5, -29, Math.toRadians(0));
+        Pose2d boardPosition_center = new Pose2d(50.5, -35, Math.toRadians(0.00));
+        Pose2d boardPosition_right = new Pose2d(50.5, -41, Math.toRadians(0));
+
+        Pose2d purplePixel = pixel_center;
+        Pose2d boardPosition = boardPosition_left;
+
+        double fastVelocity = 60;
+
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                //.setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(37.7594893, 37.7594893, Math.toRadians(180), Math.toRadians(180), 14.28)
                  /* .followTrajectorySequence(drive ->
                                    drive.trajectorySequenceBuilder(right_red)
                                            .forward(1.25*tile - square_edge)
@@ -37,10 +59,71 @@ public class MeepMeepTesting {
                                            .build()
                         );*/
                        .followTrajectorySequence(drive ->
-                               drive.trajectorySequenceBuilder(new Pose2d(10.5, -62.5,  Math.toRadians(90.00)))
-                                       .lineToLinearHeading(new Pose2d(11.84, -33.90, Math.toRadians(90.00)))
-                                       .lineToLinearHeading(new Pose2d(23.28, -43.74, Math.toRadians(90.00)))
-                                       .splineToLinearHeading(new Pose2d(50.5, -37.75, Math.toRadians(0.0001)), Math.toRadians(1.52001))
+                               drive.trajectorySequenceBuilder(startPose)
+//                                       .lineToLinearHeading(purplePixel) // center pixel
+//                                       .splineToSplineHeading(purplePixel, Math.toRadians(45)) // right pixel
+                                       .splineTo(new Vector2d(8, -37.5), Math.toRadians(135.00))
+
+
+                                       .setReversed(true)
+                                       .splineToLinearHeading(boardPosition, Math.toRadians(0))
+
+                                       .setReversed(true)
+                                       // move smoothly away from the board to the launch point to go across the field to stack
+                                       .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+                                       //* set the speed to be greater to zoom faster
+                                       .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
+                                       // zoom across to the pixel stack
+                                       .splineTo(new Vector2d(stack_x, center_line_y), Math.toRadians(180.00))
+
+
+                                       .setReversed(false)
+                                       // zoom across the middle of the field
+                                       .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+                                       .resetVelConstraint()
+                                       // back to the board
+                                       .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
+
+                                       .setReversed(true)
+                                       // move smoothly away from the board to the launch point to go across the field to stack
+                                       .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+                                       //* set the speed to be greater to zoom faster
+                                       .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
+                                       // zoom across to the pixel stack
+                                       .splineTo(new Vector2d(stack_x, center_line_y), Math.toRadians(180.00))
+
+
+                                       .setReversed(false)
+                                       // zoom across the middle of the field
+                                       .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+                                       .resetVelConstraint()
+                                       // back to the board
+                                       .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
+
+                                       .setReversed(true)
+                                       // move smoothly away from the board to the launch point to go across the field to stack
+                                       .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+                                       //* set the speed to be greater to zoom faster
+                                       .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
+                                       // zoom across to the pixel stack
+                                       .splineTo(new Vector2d(stack_x - avoidance_x_constant, center_line_y), Math.toRadians(180.00))
+                                       .strafeRight(12)
+                                       .strafeLeft(12)
+                                       .setReversed(false)
+
+                                       // zoom across the middle of the field
+                                       .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+                                       .resetVelConstraint()
+                                       // back to the board
+                                       .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
+
+//                                        // come back from the board a tiny bit
+//                                       .lineToConstantHeading(new Vector2d(46.54, -27.71))
+//                                       // move up to the park zone and turn so that dillans forward is close to forward
+//                                       .lineToSplineHeading(new Pose2d(46.36, -12.82, Math.toRadians(90)))
+
+
+
                                        .build()
 
 

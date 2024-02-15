@@ -7,6 +7,7 @@ import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
@@ -24,6 +25,11 @@ public class Drivebase extends SubsystemBase {
 
     private double imuPrevPositionRad = 0.0;
 
+    private ElapsedTime timer;
+
+    boolean defense = false;
+    public static double defensePeriod = 1000, scalingFactor = 0.7;
+
     // Constructor with IMU parameters
     public Drivebase(HardwareMap hardwareMap) {
         // Drivetrain motors setup
@@ -33,6 +39,8 @@ public class Drivebase extends SubsystemBase {
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
 
         allDrivebaseMotors = new DcMotorEx[]{frontLeft, backLeft, frontRight, backRight};
+
+        timer = new ElapsedTime();
 
         // We love the IMU..!
 
@@ -119,9 +127,20 @@ public class Drivebase extends SubsystemBase {
         // botHeading is in Radians
         Vector2d botVector = new Vector2d(x, y).rotated(-botHeading);
 
+
         if (defense_button) {
+            if (!defense) {
+                timer.reset();
+            }
+            defense = true;
             double maxPowers = 1.0/botVector.norm();
-            botVector = new Vector2d(x*maxPowers, y*maxPowers).rotated(-botHeading);
+
+            double sineWave = Math.sin(2 * Math.PI * timer.milliseconds() / defensePeriod);
+            double adjustedDivisor = sineWave * scalingFactor;
+
+            botVector = new Vector2d(x*maxPowers/adjustedDivisor, y*maxPowers/adjustedDivisor).rotated(-botHeading);
+        } else if (defense) {
+            defense = false;
         }
 
 //        // Apply the calculated heading to the input vector for field centric
@@ -147,16 +166,6 @@ public class Drivebase extends SubsystemBase {
             backLeftPower /= denominator;
             frontRightPower /= denominator;
             backRightPower /= denominator;
-        }
-
-        // Old method below, to ensure the CONTROLLERS no more than 1
-        // double denominator = max(abs(y) + abs(x) + abs(rx), 1);
-
-        if (defense_button) {
-
-
-            driveRobotPowers(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
-            return;
         }
 
         // Set the motor powers
