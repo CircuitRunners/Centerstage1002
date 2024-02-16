@@ -218,6 +218,26 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new InstantCommand(
                                         ()-> lift.brake_power()
                                 )
+                        )),
+                        runAtTime(10600, new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT)),
+                        runAtTime(10800, new InstantCommand(claw::open)),
+                        runAtTime(12690, new SequentialCommandGroup(
+                                new RetractOuttakeCommand(lift,arm,claw),
+                                new InstantCommand(()->lift.setLiftPower(-0.2)),
+                                new WaitCommand(300),
+                                new InstantCommand(
+                                        ()-> lift.brake_power()
+                                )
+                        )),
+                        runAtTime(19200, new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT)),
+                        runAtTime(20000, new InstantCommand(claw::open)),
+                        runAtTime(21310, new SequentialCommandGroup(
+                                new RetractOuttakeCommand(lift,arm,claw),
+                                new InstantCommand(()->lift.setLiftPower(-0.2)),
+                                new WaitCommand(300),
+                                new InstantCommand(
+                                        ()-> lift.brake_power()
+                                )
                         ))
 //                        runAtTime(5600, new InstantCommand(claw::open)), // extendo to first stack
 //                        runAtTime(6900, new InstantCommand(claw::open)), // intake stack command
