@@ -1,26 +1,18 @@
 package org.firstinspires.ftc.teamcode.auto.backstage;
 
 import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.rotationConstant;
-
-import android.util.MutableInt;
+import static org.firstinspires.ftc.teamcode.utilities.PropLocation.RIGHT;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
-import org.firstinspires.ftc.teamcode.commands.IntakeStackCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
-import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommand;
-import org.firstinspires.ftc.teamcode.commands.presets.RetractOuttakeCommand;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
@@ -29,15 +21,13 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utilities.PropLocation;
-import org.firstinspires.ftc.teamcode.utilities.Ref;
 import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
-import org.firstinspires.inspection.InspectionActivity;
 
 // Complete! :) [who needs I&R anyways?]
-@Autonomous (name="RED BACKSTAGE TESTER")
+@Autonomous (name="RED BACKSTAGE OMEGA")
 @Config
-public class RedStageTESTER extends CommandOpMode {
+public class RedStageOMEGA extends CommandOpMode {
     private SampleMecanumDrive drive;
     private TrajectorySequence ONE_GLOBAL;
 
@@ -66,7 +56,7 @@ public class RedStageTESTER extends CommandOpMode {
     Pose2d boardPosition_right = new Pose2d(50.5, -38 - offsetFromBoard, Math.toRadians(0));
 
     Pose2d purplePixel = pixel_right;
-    Pose2d boardPosition = boardPosition_right;
+    Pose2d boardPosition = boardPosition_center;
 
     double fastVelocity = 60;
 
@@ -83,6 +73,7 @@ public class RedStageTESTER extends CommandOpMode {
     public void initialize(){
 //        detector = new TeamPropDetector(hardwareMap, true, Team.RED);
         schedule(new BulkCacheCommand(hardwareMap));
+        detector = new TeamPropDetector(hardwareMap, true, Team.RED);
 
         intake = new Intake(hardwareMap);
         drive = new SampleMecanumDrive(hardwareMap);
@@ -96,7 +87,60 @@ public class RedStageTESTER extends CommandOpMode {
 
         drive.setPoseEstimate(startPose);
 
-//        TrajectorySequence testTopTrajectory = drive.trajectorySequenceBuilder(Pose2dMapped(-40, -62.5, Math.toRadians(90.00)))
+        // Left Trajectories
+
+
+        TrajectorySequence toPixelLeft = drive.trajectorySequenceBuilder(startPose)
+                .splineTo(new Vector2d(8, -37.5), Math.toRadians(135.00)) // left
+                .setReversed(true)
+                .splineToLinearHeading(boardPosition, Math.toRadians(0))
+                .build();
+
+        TrajectorySequence toPixelCenter = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(purplePixel) // center pixel
+                .setReversed(true)
+                .splineToLinearHeading(boardPosition, Math.toRadians(0))
+                .build();
+
+        TrajectorySequence toPixelRight = drive.trajectorySequenceBuilder(startPose)
+               .splineToSplineHeading(purplePixel, Math.toRadians(45)) // right pixel
+                .setReversed(true)
+                .splineToLinearHeading(boardPosition, Math.toRadians(0))
+                .build();
+
+        TrajectorySequence toPixelStack = drive.trajectorySequenceBuilder(startPose)
+                .setReversed(true)
+                // move smoothly away from the board to the launch point to go across the field to stack
+                .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+                //* set the speed to be greater to zoom faster
+                .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
+                // zoom across to the pixel stack
+                .splineTo(new Vector2d(stack_x, center_line_y), Math.toRadians(180.00))
+                .build();
+
+        TrajectorySequence toBoardAgain = drive.trajectorySequenceBuilder(startPose)
+                .setReversed(false)
+                // zoom across the middle of the field
+                .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+                .resetVelConstraint()
+                // back to the board
+                .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
+                .build();
+
+        TrajectorySequence toBoardThenStack = drive.trajectorySequenceBuilder(startPose)
+                .setReversed(true)
+                // move smoothly away from the board to the launch point to go across the field to stack
+                .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+                //* set the speed to be greater to zoom faster
+                .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
+                // zoom across to the pixel stack
+                .splineTo(new Vector2d(stack_x - avoidance_x_constant, center_line_y), Math.toRadians(180.00))
+                .strafeRight(12)
+                .strafeLeft(12)
+                .setReversed(false)
+                .build();
+
+
 //        TrajectorySequence untitled0 = drive.trajectorySequenceBuilder(startPose)
 //                .lineToLinearHeading(Pose2dMapped(11.84, -33.90, Math.toRadians(90.00)))
 //                .lineToLinearHeading(Pose2dMapped(23.28, -43.74, Math.toRadians(90.00)))
@@ -116,7 +160,6 @@ public class RedStageTESTER extends CommandOpMode {
 //                .splineTo(Vector2dMapped(23.55, -13), MathtoRadians(0))
 //                .splineToLinearHeading(Pose2dMapped(51.25, -37.75, Math.toRadians(0.00)), MathtoRadians(0.00))
 //                .build();
-
         TrajectorySequence untitled3 = drive.trajectorySequenceBuilder(startPose)
                .lineToLinearHeading(purplePixel) // center pixel
 //               .splineToSplineHeading(purplePixel, Math.toRadians(45)) // right pixel
@@ -182,57 +225,45 @@ public class RedStageTESTER extends CommandOpMode {
 
 
 
-//        detector.startStream();
+
+
+        detector.startStream();
 //
         while(opModeInInit()){
-//            locationID = detector.update();
+            locationID = detector.update();
             telemetry.addLine("Ready for start!");
-//            telemetry.addData("Prop", locationID.getLocation());
+            telemetry.addData("Prop", locationID.getLocation());
             telemetry.update();
         }
 //
-//        detector.stopStream();
+        detector.stopStream();
 
         // Purple pixel
 //        switch (locationID) {
 //            case LEFT: {
-//                ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-//                        .lineToLinearHeading(Pose2dMapped(14.4, -42.64, Math.toRadians(155.00)))
-//                        .lineTo(Vector2dMapped(8.75, -39))
-//                        .lineToLinearHeading(Pose2dMapped(32.30, -45.89, Math.toRadians(2.5)))
-//                        .build();
-//                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-//                        .splineToLinearHeading(Pose2dMapped(52.31, -28.87, Math.toRadians(2.5)), MathtoRadians(2.5))
-//                        .lineTo(Vector2dMapped(52.72, -28.87))
-//                        .build();
+//
 //              break;
 //            }
 //            case MIDDLE: {
-//                ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-//                        .lineTo(Vector2dMapped(12.3800001, -34.24))
-//                        .lineTo(Vector2dMapped(32.30, -45.89))
-//                        .build();
-//                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-//                        .splineToLinearHeading(Pose2dMapped(48.31, -37, Math.toRadians(0.00)), MathtoRadians(0.00))
-//                        .lineTo(Vector2dMapped(52.72, -37))
-//                        .build();
+//
 //                break;
 //            }
 //            case RIGHT: {
-//                ONE_GLOBAL = drive.trajectorySequenceBuilder(startPose)
-//                        .lineTo(Vector2dMapped(21.53, -39.57))
-//                        .lineTo(Vector2dMapped(21.53, -42.57))
-//                        .lineTo(Vector2dMapped(32.30, -45.89))
-//                        .build();
-//                THREE_PIXEL_ON_BACKDROP = drive.trajectorySequenceBuilder(ONE_GLOBAL.end())
-//                        .splineToLinearHeading(Pose2dMapped(48.31, -46.47, Math.toRadians(0.00)), MathtoRadians(0.00))
-//                        .lineTo(Vector2dMapped(52.72, -46.47))
-//                        .build();
+//
 //                break;
 //            }
 //        }
 
         schedule(
+                new SequentialCommandGroup(
+                        new TrajectorySequenceCommand(drive, toPixelCenter),
+                        new TrajectorySequenceCommand(drive, toBoardAgain),
+                        new TrajectorySequenceCommand(drive, toPixelStack),
+                        new TrajectorySequenceCommand(drive, toBoardAgain),
+                        new TrajectorySequenceCommand(drive, toPixelStack),
+                        new TrajectorySequenceCommand(drive, toBoardThenStack),
+                        new TrajectorySequenceCommand(drive, toBoardAgain)
+                )
 //                new SequentialCommandGroup(
 ////                        new ParallelCommandGroup(
 ////                                new TrajectorySequenceCommand(drive, untitled0), // push pixel, come back, approach board spline
@@ -299,7 +330,7 @@ public class RedStageTESTER extends CommandOpMode {
 ////
 ////                                )
 ////                        ),
-                        new TrajectorySequenceCommand(drive, untitled3)
+//                        new TrajectorySequenceCommand(drive, untitled3)
 //                        new SequentialCommandGroup(
 //                                new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
 //                                new InstantCommand(claw::open),
@@ -373,43 +404,5 @@ public class RedStageTESTER extends CommandOpMode {
 //        telemetry.update();
 //    }
 
-
-    private double HeadingMapped(double heading) {
-        double mapper = rotationConstant;
-        double returnVal =  heading + mapper;
-//        while (returnVal > Math.toRadians(180)) {
-//            returnVal/=returnVal-Math.toRadians(180);
-//        };
-        return returnVal;
-    }
-
-    private double HMapRadians (double headingDeg) {
-        return HeadingMapped(Math.toRadians(headingDeg));
-    }
-    private double MathtoRadians (double toRad) {
-        return HMapRadians(toRad);
-    }
-
-    // Wrapper class for bogus mogus
-    public Vector2d Vector2dMapped(double x, double y) {
-        Vector2d conversionVector = new Vector2d(x,y);
-        conversionVector = conversionVector.rotated(rotationConstant);
-        Vector2d returnVector = new Vector2d(conversionVector.getX(), conversionVector.getY());
-        return returnVector;
-    }
-    public Pose2d Pose2dMapped(double x, double y, double heading) {
-        Vector2d conversionVector = new Vector2d(x,y);
-        conversionVector = conversionVector.rotated(rotationConstant);
-        return new Pose2d(conversionVector.getX(), conversionVector.getY(), HeadingMapped(heading));
-    }
-
-    public Pose2d Pose2dMapped(Pose2d pose) {
-        double x = pose.getX();
-        double y = pose.getY();
-        double heading = pose.getHeading();
-        Vector2d conversionVector = new Vector2d(x,y);
-        conversionVector = conversionVector.rotated(rotationConstant);
-        return new Pose2d(conversionVector.getX(), conversionVector.getY(), HeadingMapped(heading));
-    }
 
 }

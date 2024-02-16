@@ -36,14 +36,14 @@ public class MeepMeepTesting {
 
         Pose2d pixel_left = new Pose2d(22.4, -42, Math.toRadians(90.00));
         Pose2d pixel_center = new Pose2d(11.84, -33.90, Math.toRadians(90.00));
-        Pose2d pixel_right = new Pose2d(27, -40, Math.toRadians(115));
+        Pose2d pixel_right = new Pose2d(27, -40, Math.toRadians(105));
 
         Pose2d boardPosition_left = new Pose2d(50.5, -29, Math.toRadians(0));
         Pose2d boardPosition_center = new Pose2d(50.5, -35, Math.toRadians(0.00));
         Pose2d boardPosition_right = new Pose2d(50.5, -41, Math.toRadians(0));
 
-        Pose2d purplePixel = pixel_center;
-        Pose2d boardPosition = boardPosition_left;
+        Pose2d purplePixel = pixel_right;
+        Pose2d boardPosition = boardPosition_right;
 
         double fastVelocity = 60;
 
@@ -60,9 +60,9 @@ public class MeepMeepTesting {
                         );*/
                        .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(startPose)
-//                                       .lineToLinearHeading(purplePixel) // center pixel
+                                       .lineToLinearHeading(purplePixel) // center pixel
 //                                       .splineToSplineHeading(purplePixel, Math.toRadians(45)) // right pixel
-                                       .splineTo(new Vector2d(8, -37.5), Math.toRadians(135.00))
+//                                       .splineTo(new Vector2d(8, -37.5), Math.toRadians(135.00))
 
 
                                        .setReversed(true)
