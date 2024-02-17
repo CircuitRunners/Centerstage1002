@@ -11,6 +11,8 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
 
+import jdk.javadoc.internal.doclets.toolkit.taglets.UserTaglet;
+
 public class MeepMeepTesting {
 
 
@@ -32,11 +34,11 @@ public class MeepMeepTesting {
 
         double center_line_y = -11.5, stack_x = -55.5, avoidance_x_constant = 1;
 
-        Pose2d startPose = new Pose2d(10.5, -62.5,  Math.toRadians(90.00));
+        Pose2d startPose = new Pose2d(-39.5, -62.5,  Math.toRadians(90.00));
 
-        Pose2d pixel_left = new Pose2d(22.4, -42, Math.toRadians(90.00));
-        Pose2d pixel_center = new Pose2d(11.84, -33.90, Math.toRadians(90.00));
-        Pose2d pixel_right = new Pose2d(27, -40, Math.toRadians(105));
+        Pose2d pixel_left = new Pose2d(-27.6, -42, Math.toRadians(90.00));
+        Pose2d pixel_center = new Pose2d(-38.16, -33.90, Math.toRadians(90.00));
+        Pose2d pixel_right = new Pose2d(-23, -40, Math.toRadians(105));
 
         Pose2d boardPosition_left = new Pose2d(50.5, -29, Math.toRadians(0));
         Pose2d boardPosition_center = new Pose2d(50.5, -35, Math.toRadians(0.00));
@@ -60,62 +62,106 @@ public class MeepMeepTesting {
                         );*/
                        .followTrajectorySequence(drive ->
                                drive.trajectorySequenceBuilder(startPose)
-                                       .lineToLinearHeading(purplePixel) // center pixel
-//                                       .splineToSplineHeading(purplePixel, Math.toRadians(45)) // right pixel
-//                                       .splineTo(new Vector2d(8, -37.5), Math.toRadians(135.00))
-
-
+                                       // pixel and backoff
+//                                       .splineTo(new Vector2d(-31.90, -38.62), Math.toRadians(45.00)) // right
+//                                       .splineTo(new Vector2d(-40.5, -34.5), Math.toRadians(120.00)) // left
+                                       .lineToLinearHeading(new Pose2d(-35, -34, Math.toRadians(90.00)))
                                        .setReversed(true)
-                                       .splineToLinearHeading(boardPosition, Math.toRadians(0))
+                                       .splineTo(new Vector2d(-37.14, -58), Math.toRadians(-90))
 
-                                       .setReversed(true)
-                                       // move smoothly away from the board to the launch point to go across the field to stack
-                                       .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
-                                       //* set the speed to be greater to zoom faster
-                                       .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
-                                       // zoom across to the pixel stack
-                                       .splineTo(new Vector2d(stack_x, center_line_y), Math.toRadians(180.00))
-
-
+                                       // across the field to board
                                        .setReversed(false)
-                                       // zoom across the middle of the field
-                                       .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
-                                       .resetVelConstraint()
-                                       // back to the board
-                                       .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
+                                       .lineTo(new Vector2d(32.16, -58))
+                                       .splineToLinearHeading(new Pose2d(51.01, -40.24, Math.toRadians(0.00)), Math.toRadians(0.00))
 
+                                       // from board to first stack
                                        .setReversed(true)
-                                       // move smoothly away from the board to the launch point to go across the field to stack
-                                       .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
-                                       //* set the speed to be greater to zoom faster
-                                       .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
-                                       // zoom across to the pixel stack
-                                       .splineTo(new Vector2d(stack_x, center_line_y), Math.toRadians(180.00))
+                                       .splineToConstantHeading(new Vector2d(32.16, -58), Math.toRadians(180))
+                                       .lineTo(new Vector2d(-37.14, -58))
+                                       .splineToConstantHeading(new Vector2d(-60, -37), Math.toRadians(180))
 
-
+                                       // first stack to board
                                        .setReversed(false)
-                                       // zoom across the middle of the field
-                                       .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
-                                       .resetVelConstraint()
-                                       // back to the board
-                                       .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
+                                       .splineToConstantHeading(new Vector2d(-37.14, -58), Math.toRadians(0))
+                                       .lineTo(new Vector2d(32.16, -58))
+                                       .splineToConstantHeading(new Vector2d(51.01, -40.24), Math.toRadians(0))
 
+                                       // board to second stack
                                        .setReversed(true)
-                                       // move smoothly away from the board to the launch point to go across the field to stack
-                                       .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
-                                       //* set the speed to be greater to zoom faster
-                                       .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
-                                       // zoom across to the pixel stack
-                                       .splineTo(new Vector2d(stack_x - avoidance_x_constant, center_line_y), Math.toRadians(180.00))
-                                       .strafeRight(12)
-                                       .strafeLeft(12)
-                                       .setReversed(false)
+                                       .splineToConstantHeading(new Vector2d(32.16, -58), Math.toRadians(180))
+                                       .lineTo(new Vector2d(-37.14, -58))
+                                       .splineToConstantHeading(new Vector2d(-60, -37), Math.toRadians(180))
 
-                                       // zoom across the middle of the field
-                                       .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
-                                       .resetVelConstraint()
-                                       // back to the board
-                                       .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
+                                       // stack to board
+                                       .setReversed(false)
+                                       .splineToConstantHeading(new Vector2d(-37.14, -58), Math.toRadians(0))
+                                       .lineTo(new Vector2d(32.16, -58))
+                                       .splineToConstantHeading(new Vector2d(51.01, -40.24), Math.toRadians(0))
+
+
+//                                       .lineTo(new Vector2d(34.59, -58.68))
+//
+//
+////                                       .setReversed(true)
+////                                       .splineTo(new Vector2d(-30, -37), Math.toRadians(45))
+//////                                       .splineToSplineHeading(purplePixel, Math.toRadians(45)) // right pixel
+//////                                       .splineTo(new Vector2d(-42, -37.5), Math.toRadians(135))
+////
+//////                                       .splineTo(new Vector2d(-30, -56), Math.toRadians(90))
+//////                                       .setReversed(false)
+////                                       .splineTo(new Vector2d(-35, -58), Math.toRadians(90))
+////                                       .lineTo(new Vector2d(37, -58))
+//
+//                                       .splineToLinearHeading(boardPosition, Math.toRadians(0))
+//
+//                                       .setReversed(true)
+//                                       // move smoothly away from the board to the launch point to go across the field to stack
+//                                       .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+//                                       //* set the speed to be greater to zoom faster
+//                                       .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
+//                                       // zoom across to the pixel stack
+//                                       .splineTo(new Vector2d(stack_x, center_line_y), Math.toRadians(180.00))
+//
+//
+//                                       .setReversed(false)
+//                                       // zoom across the middle of the field
+//                                       .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+//                                       .resetVelConstraint()
+//                                       // back to the board
+//                                       .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
+//
+//                                       .setReversed(true)
+//                                       // move smoothly away from the board to the launch point to go across the field to stack
+//                                       .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+//                                       //* set the speed to be greater to zoom faster
+//                                       .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
+//                                       // zoom across to the pixel stack
+//                                       .splineTo(new Vector2d(stack_x, center_line_y), Math.toRadians(180.00))
+//
+//
+//                                       .setReversed(false)
+//                                       // zoom across the middle of the field
+//                                       .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+//                                       .resetVelConstraint()
+//                                       // back to the board
+//                                       .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
+//
+//                                       .setReversed(true)
+//                                       // move smoothly away from the board to the launch point to go across the field to stack
+//                                       .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+//                                       //* set the speed to be greater to zoom faster
+//                                       .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, 14.28))
+//                                       // zoom across to the pixel stack
+//                                       .splineTo(new Vector2d(stack_x - avoidance_x_constant, center_line_y), Math.toRadians(180.00))
+//                                       .strafeRight(12)
+//                                       .strafeLeft(12)
+//                                       .setReversed(false)
+//
+//                                       // zoom across the middle of the field
+//                                       .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+//                                       .resetVelConstraint()
+//                                       // back to the board
+//                                       .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
 
 //                                        // come back from the board a tiny bit
 //                                       .lineToConstantHeading(new Vector2d(46.54, -27.71))
