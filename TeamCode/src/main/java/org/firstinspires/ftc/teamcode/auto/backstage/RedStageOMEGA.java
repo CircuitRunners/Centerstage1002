@@ -278,7 +278,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
                                         new InstantCommand(claw::open)
                                 )
-                        )
+                        ),
                         // 2+6 in progress
                         new ParallelCommandGroup(
                                 new RetractOuttakeCommand(lift, arm, claw)
@@ -455,14 +455,17 @@ public class RedStageOMEGA extends CommandOpMode {
         switch (locationID) {
             case LEFT: {
                 scheduledCommandGroup = leftPositions;
+                break;
             }
             case MIDDLE: {
                 scheduledCommandGroup = centerPositions;
+                break;
             }
             case RIGHT:
             default: {
                 scheduledCommandGroup = rightPositions;
             }
+            break;
         }
 
         telemetry.addData("Status", "Loaded!");
