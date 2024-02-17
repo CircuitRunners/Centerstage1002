@@ -224,7 +224,7 @@ public class BlueStage extends CommandOpMode {
                         new ParallelCommandGroup(
                                 new ParallelRaceGroup(
                                         new WaitCommand(6000),
-                                        new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo)
+                                        new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST)
                                 ),
                                 new InstantCommand(extendo::mid),
                                 new TrajectorySequenceCommand(drive, FIVE_INTAKE_PIXELS_STACK)

@@ -2,32 +2,29 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class ExtendoArm extends SubsystemBase {
     private ServoImplEx leftServo;
     private ServoImplEx rightServo;
 
-    public enum ArmPositions {
-        DOWN(0.74, 0.31),
-        TRANSPORT(0.67,0.33),
+    public enum ExtendoPositions {
+        DOWN(0.75, 0.32),
+        TRANSPORT(0.67,0.34),
         TRANSPORT_ALPHA(0.649,0.359),
-        UP(0.4,0.64);
+        UP(0.4,0.64),
+        PIXEL1(0,0),
+        PIXEL2(0.67,0.34),
+        PIXEL3(0.67,0.36),
+        PIXEL4(0.64,0.37),
+        PIXEL5(0.63,0.40);
 
         private final double position_right;
         private final double position_left;
 
-        ArmPositions(double position_left, double position_right) {
+        ExtendoPositions(double position_left, double position_right) {
             this.position_right = position_right;
             this.position_left = position_left;
         }
@@ -48,10 +45,17 @@ public class ExtendoArm extends SubsystemBase {
         up();
     }
 
-    public void setPosition(ArmPositions target) {
+    public void setPosition(ExtendoPositions target) {
         // Create a new profile starting from the last position command
         leftServo.setPosition(target.getLeftPosition());
         rightServo.setPosition(target.getRightPosition());
+    }
+
+
+    public void setPosition(double target_left, double target_right) {
+        // Create a new profile starting from the last position command
+        leftServo.setPosition(target_left);
+        rightServo.setPosition(target_right);
     }
 
     // Set the servos to a numerical position -- love polymorphism <3
@@ -65,16 +69,32 @@ public class ExtendoArm extends SubsystemBase {
 
     // All the way to the rest position
     public void down(){
-        setPosition(ArmPositions.DOWN);
+        setPosition(ExtendoPositions.DOWN);
     }
 
-    public void up(){
-        setPosition(ArmPositions.UP);
+    public void up() {
+        setPosition(ExtendoPositions.UP);
     }
-    public void mid(){
-        setPosition(ArmPositions.TRANSPORT);
+    public void mid() {
+        setPosition(ExtendoPositions.TRANSPORT);
     }
     public void alpha () {
-        setPosition(ArmPositions.TRANSPORT_ALPHA);
+        setPosition(ExtendoPositions.TRANSPORT_ALPHA);
+    }
+
+    public void toPixel1 () {
+        setPosition(ExtendoPositions.PIXEL1);
+    }
+    public void toPixel2 () {
+        setPosition(ExtendoPositions.PIXEL2);
+    }
+    public void toPixel3 () {
+        setPosition(ExtendoPositions.PIXEL3);
+    }
+    public void toPixel4 () {
+        setPosition(ExtendoPositions.PIXEL4);
+    }
+    public void toPixel5 () {
+        setPosition(ExtendoPositions.PIXEL5);
     }
 }

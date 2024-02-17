@@ -163,14 +163,17 @@ public class BlueAudience extends CommandOpMode {
                         new InstantCommand(claw::open),
                         new ParallelCommandGroup(
                                 new ParallelRaceGroup(
-                                        new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
+                                        new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST),
                                         new WaitCommand(6000)
                                 ),
                                 new InstantCommand(extendo::mid),
-                                new TrajectorySequenceCommand(drive, FIVE_INTAKE_PIXELS_STACK),
+                                new SequentialCommandGroup(
+                                        new TrajectorySequenceCommand(drive, FIVE_INTAKE_PIXELS_STACK),
+                                        new InstantCommand(extendo::toPixel4)
+                                ),
                                 new SequentialCommandGroup(
                                         new WaitCommand(500),
-                                        new InstantCommand(extendo::alpha)
+                                        new InstantCommand(extendo::toPixel5)
                                 )
                         ),
                         new TrajectorySequenceCommand(drive,  BACK_TO_PIXEL_BACKBOARD),

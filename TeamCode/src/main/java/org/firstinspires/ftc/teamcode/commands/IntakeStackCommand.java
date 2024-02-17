@@ -6,7 +6,6 @@ import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
@@ -30,18 +29,6 @@ public class IntakeStackCommand extends CommandBase {
 
     public static double FINISH_LOWSPEED_THRESHOLD = 400;
     public static double OUTTAKE_TIME_ROBOT = 1350;
-
-    public IntakeStackCommand(HardwareMap hardwareMap, Claw claw, Intake intake, Intake.IntakePowers power, ExtendoArm extendo) {
-        this.intake = intake;
-        this.claw = claw;
-        this.distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
-        this.runtime = new ElapsedTime();
-        this.intakeTimer = new ElapsedTime();
-        this.waitTimer = new ElapsedTime();
-        this.power = power;
-
-        addRequirements(claw, intake); // If using Command-based structure, declare subsystem dependencies.
-    }
 
     public IntakeStackCommand(HardwareMap hardwareMap, Claw claw, Intake intake, Intake.IntakePowers power) {
         this.intake = intake;

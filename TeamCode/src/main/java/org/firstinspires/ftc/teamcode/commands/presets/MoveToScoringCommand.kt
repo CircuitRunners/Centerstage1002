@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw
 class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Claw, preset: Presets) : ParallelCommandGroup() {
 
     enum class Presets {
+        BOTTOM,
         SHORT,
         MID,
         HIGH
@@ -40,7 +41,8 @@ class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Claw, preset: Presets) : 
                         ProfiledLiftCommand(lift, LiftPositions.MID.position, true)
                     Presets.HIGH ->
                         ProfiledLiftCommand(lift, LiftPositions.HIGH.position, true)
-
+                    Presets.BOTTOM ->
+                        ProfiledLiftCommand(lift, 300, true);
                 }
             )
         )

@@ -15,6 +15,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
+import org.firstinspires.ftc.teamcode.commands.IntakeStackCommand;
 import org.firstinspires.ftc.teamcode.commands.TrajectorySequenceCommand;
 import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommand;
 import org.firstinspires.ftc.teamcode.commands.presets.RetractOuttakeCommand;
@@ -37,8 +38,7 @@ public class RedStageOMEGA extends CommandOpMode {
 
     TeamPropDetector detector;
 
-    PropLocation locationID = PropLocation.RIGHT; // set to center by default
-    PropLocation lastLocation = null; // set to center by default
+    PropLocation locationID = PropLocation.RIGHT; // set to right by default
 
     private Lift lift;
     private Arm arm;
@@ -47,14 +47,7 @@ public class RedStageOMEGA extends CommandOpMode {
 
     private Intake intake;
 
-    private Integer iteration = 0;
-
-
-//    private Pose2d startPose = Pose2dMapped(9.00, -61.50, Math.toRadians(90.00));
-//    private Pose2d startPose = Pose2dMapped(10.25, -63,  Math.toRadians(90.00));
-//    public Pose2d startPose = Pose2dMapped(10.5, -62.5,  Math.toRadians(90.00));
-
-    double center_line_y = -12.5, stack_x = -55.5, avoidance_x_constant = 1,
+    double center_line_y = -12.5, stack_x = -53.5, avoidance_x_constant = 1,
             fastVelocity = 60, offsetFromBoard = 4.0;;
 
     Pose2d startPose = new Pose2d(10.5, -62.5,  Math.toRadians(90.00));
@@ -64,50 +57,40 @@ public class RedStageOMEGA extends CommandOpMode {
     Pose2d pixel_right = new Pose2d(27, -40, Math.toRadians(105));
 
 
-    Pose2d boardPosition_left = new Pose2d(50.5, -32 - offsetFromBoard, Math.toRadians(0));
-    Pose2d boardPosition_center = new Pose2d(50.5, -35 - offsetFromBoard, Math.toRadians(0.00));
+    // TODO set the x values to the correct on
+    Pose2d boardPosition_left = new Pose2d(52, -32 - offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_center = new Pose2d(50.5, -35 - offsetFromBoard, Math.toRadians(0));
     Pose2d boardPosition_right = new Pose2d(50.5, -38 - offsetFromBoard, Math.toRadians(0));
 
-    TrajectorySequence toPixel, toBoard, toStack, toStackThenBoard;
+    ParallelCommandGroup scheduledCommandGroup;
 
-    public void generateTrajectories (PropLocation propLocation) {
-        Pose2d boardPosition;
-        switch (propLocation) {
-            case LEFT: {
-                boardPosition = boardPosition_left;
-                break;
-            }
-            case MIDDLE: {
-                boardPosition = boardPosition_center;
-                break;
-            }
-            case RIGHT:
-            default: {
-                boardPosition = boardPosition_right;
-                break;
-            }
-        }
+    public ParallelCommandGroup generateLeftTrajectories () {
+        TrajectorySequence toPixelLeft = drive.trajectorySequenceBuilder(startPose)
+                .splineTo(new Vector2d(8, -37.5), Math.toRadians(135.00)) // left
+                .setReversed(true)
+                .splineToLinearHeading(boardPosition_left, Math.toRadians(0))
+                .build();
 
-        toStack = drive.trajectorySequenceBuilder(boardPosition)
+        TrajectorySequence toStack = drive.trajectorySequenceBuilder(boardPosition_left)
                 .setReversed(true)
                 // move smoothly away from the board to the launch point to go across the field to stack
-                .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+                .splineToConstantHeading(new Vector2d(23.55, center_line_y + 0), Math.toRadians(180.00))
                 //* set the speed to be greater to zoom faster
                 .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
                 // zoom across to the pixel stack
-                .splineTo(new Vector2d(stack_x, center_line_y), Math.toRadians(180.00))
+                .splineTo(new Vector2d(stack_x + 0.0, center_line_y + 0.0), Math.toRadians(180.00))
                 .build();
 
-        toBoard = drive.trajectorySequenceBuilder(toStack.end())
+        TrajectorySequence toBoard = drive.trajectorySequenceBuilder(toStack.end())
                 .setReversed(false)
                 // zoom across the middle of the field
                 .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
                 .resetVelConstraint()
                 // back to the board
-                .splineToLinearHeading(boardPosition, Math.toRadians(0.00))
+                .splineToLinearHeading(boardPosition_left, Math.toRadians(0.00))
                 .build();
 
-        toStackThenBoard = drive.trajectorySequenceBuilder(boardPosition)
+        TrajectorySequence toStackPlus6 = drive.trajectorySequenceBuilder(boardPosition_left)
                 .setReversed(true)
                 // move smoothly away from the board to the launch point to go across the field to stack
                 .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
@@ -119,13 +102,298 @@ public class RedStageOMEGA extends CommandOpMode {
                 .strafeLeft(12)
                 .setReversed(false)
                 .build();
-        // End
+
+        return new ParallelCommandGroup(
+                new SequentialCommandGroup(
+                        // This will go to the pixel stack, then score on the board!
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toPixelLeft),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.BOTTOM),
+                                        new InstantCommand(claw::open)
+                                )
+                        ),
+                        // This will retract the lift, go to stack, and then intake, cumulative 2+0 up to == this
+                        new ParallelCommandGroup(
+                                new RetractOuttakeCommand(lift, arm, claw),
+                                new TrajectorySequenceCommand(drive, toStack),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3000),
+                                        new InstantCommand(extendo::toPixel3),
+                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+                                )
+                        ),
+                        // Go to the board and drop, cumulative 2+2 u2==this
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toBoard),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open)
+                                )
+                        ),
+
+                        // 2+4 in progress
+                        new ParallelCommandGroup(
+                                new RetractOuttakeCommand(lift, arm, claw),
+                                new TrajectorySequenceCommand(drive, toStack),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3000),
+                                        new InstantCommand(extendo::toPixel3),
+                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+                                )
+                        ),
+                        // 2+4 complete
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toBoard),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open)
+                                )
+                        ),
+                        // 2+6 in progress
+                        new ParallelCommandGroup(
+                                new RetractOuttakeCommand(lift, arm, claw),
+                                new TrajectorySequenceCommand(drive, toStackPlus6),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3000),
+                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+                                )
+                        ),
+                        // 2+6 complete
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toBoard),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open)
+                                )
+                        )
+                )
+        );
     }
 
-    public ParallelCommandGroup runAtTime (long ms, Command command) {
+    public ParallelCommandGroup generateCenterTrajectories () {
+        TrajectorySequence toPixelCenter = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(pixel_center) // center pixel
+                .setReversed(true)
+                .splineToLinearHeading(boardPosition_center, Math.toRadians(0))
+                .build();
+
+        TrajectorySequence toStack = drive.trajectorySequenceBuilder(boardPosition_center)
+                .setReversed(true)
+                // move smoothly away from the board to the launch point to go across the field to stack
+                .splineToConstantHeading(new Vector2d(23.55, center_line_y + 0), Math.toRadians(180.00))
+                //* set the speed to be greater to zoom faster
+                .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
+                // zoom across to the pixel stack
+                .splineTo(new Vector2d(stack_x + 0.0, center_line_y + 0.0), Math.toRadians(180.00))
+                .build();
+
+        TrajectorySequence toBoard = drive.trajectorySequenceBuilder(toStack.end())
+                .setReversed(false)
+                // zoom across the middle of the field
+                .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+                .resetVelConstraint()
+                // back to the board
+                .splineToLinearHeading(boardPosition_center, Math.toRadians(0.00))
+                .build();
+
+        TrajectorySequence toStackPlus6 = drive.trajectorySequenceBuilder(boardPosition_center)
+                .setReversed(true)
+                // move smoothly away from the board to the launch point to go across the field to stack
+                .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+                //* set the speed to be greater to zoom faster
+                .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
+                // zoom across to the pixel stack
+                .splineTo(new Vector2d(stack_x - avoidance_x_constant, center_line_y), Math.toRadians(180.00))
+                .strafeRight(12)
+                .strafeLeft(12)
+                .setReversed(false)
+                .build();
+
         return new ParallelCommandGroup(
-            new WaitCommand(ms),
-            command
+                new SequentialCommandGroup(
+                        // This will go to the pixel stack, then score on the board!
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toPixelCenter),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.BOTTOM),
+                                        new InstantCommand(claw::open)
+                                )
+                        ),
+                        // This will retract the lift, go to stack, and then intake, cumulative 2+0 up to == this
+                        new ParallelCommandGroup(
+                                new RetractOuttakeCommand(lift, arm, claw),
+                                new TrajectorySequenceCommand(drive, toStack),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3000),
+                                        new InstantCommand(extendo::toPixel3),
+                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+                                )
+                        ),
+                        // Go to the board and drop, cumulative 2+2 u2==this
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toBoard),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open)
+                                )
+                        ),
+
+                        // 2+4 in progress
+                        new ParallelCommandGroup(
+                                new RetractOuttakeCommand(lift, arm, claw),
+                                new TrajectorySequenceCommand(drive, toStack),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3000),
+                                        new InstantCommand(extendo::toPixel3),
+                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+                                )
+                        ),
+                        // 2+4 complete
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toBoard),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open)
+                                )
+                        ),
+                        // 2+6 in progress
+                        new ParallelCommandGroup(
+                                new RetractOuttakeCommand(lift, arm, claw),
+                                new TrajectorySequenceCommand(drive, toStackPlus6),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3000),
+                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+                                )
+                        ),
+                        // 2+6 complete
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toBoard),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open)
+                                )
+                        )
+                )
+        );
+    }
+
+    public ParallelCommandGroup generateRightTrajectories () {
+        TrajectorySequence toPixelRight = drive.trajectorySequenceBuilder(startPose)
+                .splineToSplineHeading(pixel_right, Math.toRadians(45)) // right pixel
+                .setReversed(true)
+                .splineToLinearHeading(boardPosition_right, Math.toRadians(0))
+                .build();
+
+        TrajectorySequence toStack = drive.trajectorySequenceBuilder(boardPosition_right)
+                .setReversed(true)
+                // move smoothly away from the board to the launch point to go across the field to stack
+                .splineToConstantHeading(new Vector2d(23.55, center_line_y + 0), Math.toRadians(180.00))
+                //* set the speed to be greater to zoom faster
+                .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
+                // zoom across to the pixel stack
+                .splineTo(new Vector2d(stack_x + 0.0, center_line_y + 0.0), Math.toRadians(180.00))
+                .build();
+
+        TrajectorySequence toBoard = drive.trajectorySequenceBuilder(toStack.end())
+                .setReversed(false)
+                // zoom across the middle of the field
+                .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+                .resetVelConstraint()
+                // back to the board
+                .splineToLinearHeading(boardPosition_right, Math.toRadians(0.00))
+                .build();
+
+        TrajectorySequence toStackPlus6 = drive.trajectorySequenceBuilder(boardPosition_right)
+                .setReversed(true)
+                // move smoothly away from the board to the launch point to go across the field to stack
+                .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+                //* set the speed to be greater to zoom faster
+                .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
+                // zoom across to the pixel stack
+                .splineTo(new Vector2d(stack_x - avoidance_x_constant, center_line_y), Math.toRadians(180.00))
+                .strafeRight(12)
+                .strafeLeft(12)
+                .setReversed(false)
+                .build();
+
+        return new ParallelCommandGroup(
+                new SequentialCommandGroup(
+                        // This will go to the pixel stack, then score on the board!
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toPixelRight),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.BOTTOM),
+                                        new InstantCommand(claw::open)
+                                )
+                        ),
+                        // This will retract the lift, go to stack, and then intake, cumulative 2+0 up to == this
+                        new ParallelCommandGroup(
+                                new RetractOuttakeCommand(lift, arm, claw),
+                                new TrajectorySequenceCommand(drive, toStack),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3000),
+                                        new InstantCommand(extendo::toPixel3),
+                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+                                )
+                        ),
+                        // Go to the board and drop, cumulative 2+2 u2==this
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toBoard),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open)
+                                )
+                        ),
+
+                        // 2+4 in progress
+                        new ParallelCommandGroup(
+                                new RetractOuttakeCommand(lift, arm, claw),
+                                new TrajectorySequenceCommand(drive, toStack),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3000),
+                                        new InstantCommand(extendo::toPixel3),
+                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+                                )
+                        ),
+                        // 2+4 complete
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toBoard),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open)
+                                )
+                        ),
+                        // 2+6 in progress
+                        new ParallelCommandGroup(
+                                new RetractOuttakeCommand(lift, arm, claw),
+                                new TrajectorySequenceCommand(drive, toStackPlus6),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3000),
+                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+                                )
+                        ),
+                        // 2+6 complete
+                        new ParallelCommandGroup(
+                                new TrajectorySequenceCommand(drive, toBoard),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(3100),
+                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new InstantCommand(claw::open)
+                                )
+                        )
+                )
         );
     }
 
@@ -146,217 +414,38 @@ public class RedStageOMEGA extends CommandOpMode {
 
         drive.setPoseEstimate(startPose);
 
-        TrajectorySequence toPixelLeft = drive.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(8, -37.5), Math.toRadians(135.00)) // left
-                .setReversed(true)
-                .splineToLinearHeading(boardPosition_left, Math.toRadians(0))
-                .build();
-
-        TrajectorySequence toPixelCenter = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(pixel_center) // center pixel
-                .setReversed(true)
-                .splineToLinearHeading(boardPosition_center, Math.toRadians(0))
-                .build();
-
-        TrajectorySequence toPixelRight = drive.trajectorySequenceBuilder(startPose)
-                .splineToSplineHeading(pixel_right, Math.toRadians(45)) // right pixel
-                .setReversed(true)
-                .splineToLinearHeading(boardPosition_right, Math.toRadians(0))
-                .build();
+        ParallelCommandGroup leftPositions = generateLeftTrajectories();
+        ParallelCommandGroup centerPositions = generateCenterTrajectories();
+        ParallelCommandGroup rightPositions = generateRightTrajectories();
 
         detector.startStream();
-//
+
         while(opModeInInit()){
             locationID = detector.update();
-            telemetry.addLine("Ready for start!");
+            telemetry.addData("Status", "In Init. Loading...");
             telemetry.addData("Prop", locationID.getLocation());
             telemetry.update();
-
-            if (lastLocation != locationID) {
-                switch (locationID) {
-                    case LEFT: {
-                        toPixel = toPixelLeft;
-                        break;
-                    }
-                    case MIDDLE: {
-                        toPixel = toPixelCenter;
-                        break;
-                    }
-                    case RIGHT: {
-                        toPixel = toPixelRight;
-                        break;
-
-                    }
-                }
-
-                generateTrajectories(locationID);
-            }
-
             sleep(50);
-
         }
-//
+
         detector.stopStream();
 
-        schedule(
-                new SequentialCommandGroup(
-                        new TrajectorySequenceCommand(drive, toPixel),
-                        new TrajectorySequenceCommand(drive, toBoard),
-                        new TrajectorySequenceCommand(drive, toStack),
-                        new TrajectorySequenceCommand(drive, toBoard),
-                        new TrajectorySequenceCommand(drive, toStack),
-                        new TrajectorySequenceCommand(drive, toBoard),
-                        new TrajectorySequenceCommand(drive, toStackThenBoard)
-                ),
-                new SequentialCommandGroup(
-                        runAtTime(2800, new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT)),
-                        runAtTime(3000, new InstantCommand(claw::open)),
-                        runAtTime(4270, new SequentialCommandGroup(
-                                new RetractOuttakeCommand(lift,arm,claw),
-                                new InstantCommand(()->lift.setLiftPower(-0.2)),
-                                new WaitCommand(300),
-                                new InstantCommand(
-                                        ()-> lift.brake_power()
-                                )
-                        )),
-                        runAtTime(10600, new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT)),
-                        runAtTime(10800, new InstantCommand(claw::open)),
-                        runAtTime(12690, new SequentialCommandGroup(
-                                new RetractOuttakeCommand(lift,arm,claw),
-                                new InstantCommand(()->lift.setLiftPower(-0.2)),
-                                new WaitCommand(300),
-                                new InstantCommand(
-                                        ()-> lift.brake_power()
-                                )
-                        )),
-                        runAtTime(19200, new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT)),
-                        runAtTime(20000, new InstantCommand(claw::open)),
-                        runAtTime(21310, new SequentialCommandGroup(
-                                new RetractOuttakeCommand(lift,arm,claw),
-                                new InstantCommand(()->lift.setLiftPower(-0.2)),
-                                new WaitCommand(300),
-                                new InstantCommand(
-                                        ()-> lift.brake_power()
-                                )
-                        ))
-//                        runAtTime(5600, new InstantCommand(claw::open)), // extendo to first stack
-//                        runAtTime(6900, new InstantCommand(claw::open)), // intake stack command
-                )
+        switch (locationID) {
+            case LEFT: {
+                scheduledCommandGroup = leftPositions;
+            }
+            case MIDDLE: {
+                scheduledCommandGroup = centerPositions;
+            }
+            case RIGHT:
+            default: {
+                scheduledCommandGroup = rightPositions;
+            }
+        }
 
-////                        new ParallelCommandGroup(
-////                                new ParallelCommandGroup(
-////                                        new InstantCommand(extendo::mid),
-////                                        new SequentialCommandGroup(
-////                                                new WaitCommand(1800),
-////                                                new TrajectorySequenceCommand(drive, untitled1) // approach board and then to other side of field
-////                                        ),
-////                                        new SequentialCommandGroup(
-////                                                new WaitCommand(4500),
-////                                                new InstantCommand(claw::open),
-////                                                new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
-////                                                new SequentialCommandGroup(
-////                                                        new WaitCommand(500),
-////                                                        new InstantCommand(extendo::alpha)
-////                                                )
-////                                        )
-////
-////                                )
-////                        ),
-////                        new TrajectorySequenceCommand(drive, untitled2),
-////                        new ParallelCommandGroup(
-////                                new SequentialCommandGroup(
-////                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-////                                        new InstantCommand(claw::open),
-////                                        new WaitCommand(1000),
-////                                        new RetractOuttakeCommand(lift,arm,claw),
-////                                        new InstantCommand(()->lift.setLiftPower(-0.2)),
-////                                        new WaitCommand(300),
-////                                        new InstantCommand(
-////                                                ()-> lift.brake_power()
-////                                        )
-////                                ),
-////                                new ParallelCommandGroup(
-////                                        new InstantCommand(extendo::mid),
-////                                        new SequentialCommandGroup(
-////                                                new WaitCommand(1500),
-////                                                new TrajectorySequenceCommand(drive, untitled1) // approach board and then to other side of field
-////                                        ),
-////                                        new SequentialCommandGroup(
-////                                                new WaitCommand(4500),
-////                                                new InstantCommand(claw::open),
-////                                                new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
-////                                                new SequentialCommandGroup(
-////                                                        new WaitCommand(500),
-////                                                        new InstantCommand(extendo::down)
-////                                                )
-////                                        )
-////
-////                                )
-////                        ),
-//                        new TrajectorySequenceCommand(drive, untitled3)
-//                        new SequentialCommandGroup(
-//                                new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-//                                new InstantCommand(claw::open),
-//                                new WaitCommand(1000),
-//                                new RetractOuttakeCommand(lift,arm,claw),
-//                                new InstantCommand(()->lift.setLiftPower(-0.2)),
-//                                new WaitCommand(300),
-//                                new InstantCommand(
-//                                        ()-> lift.brake_power()
-//                                )
-//                        )
-//                );
-        );
-    };
+        telemetry.addData("Status", "Loaded!");
+        telemetry.update();
 
-    //                new SequentialCommandGroup(
-//                        new TrajectorySequenceCommand(drive, ONE_GLOBAL),
-//                        new ParallelCommandGroup(
-//                                new TrajectorySequenceCommand(drive, THREE_PIXEL_ON_BACKDROP),
-//                                new SequentialCommandGroup(
-//                                    new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-//                                        new InstantCommand(claw::open),
-//                                        new InstantCommand(()->lift.setLiftPower(-0.2)),
-//                                        new WaitCommand(300),
-//                                        new InstantCommand(()->lift.brake_power())
-//                                )
-//                        ),
-//                        new ParallelCommandGroup(
-//                                new TrajectorySequenceCommand(drive,FOUR_TO_LIGHTSPEED_BRIDGE_POSITION),
-//                                new SequentialCommandGroup(
-//                                    new RetractOuttakeCommand(lift,arm,claw),
-//            //                        new WaitCommand(1000),
-//                                    new InstantCommand(()->lift.setLiftPower(-0.2)),
-//                                    new WaitCommand(700),
-//                                    new InstantCommand(()->lift.brake_power())
-//                                        )
-//                        ),
-//                        new ParallelCommandGroup(
-//                                new ParallelRaceGroup(
-//                                        new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
-//                                        new WaitCommand(6000)
-//                                ),
-//
-//                                new InstantCommand(extendo::mid),
-//                                new TrajectorySequenceCommand(drive, FIVE_INTAKE_PIXELS_STACK),
-//                                new SequentialCommandGroup(
-//                                        new WaitCommand(500),
-//                                        new InstantCommand(extendo::alpha)
-//                                )
-//                        ),
-//                        new InstantCommand(extendo :: up),
-//                        new TrajectorySequenceCommand(drive, SIX_LIGHTSPEED_BRIDGE_BACK),
-//                        new ParallelCommandGroup(
-//                                new SequentialCommandGroup(
-    //                                    new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID),
-        //                                new InstantCommand(claw::open),
-                //                        new InstantCommand(()->lift.setLiftPower(-0.2)),
-                //                        new WaitCommand(700),
-                //                        new InstantCommand(()->lift.brake_power())
-//                                 ),
-//                                new TrajectorySequenceCommand(drive, SEVEN_PIXEL_ON_BACKBOARD)
-//                        ),
-//                        new RetractOuttakeCommand(lift,arm,claw),
-//                        new TrajectorySequenceCommand(drive, EIGHT_PARK_END)
-//                )
+        schedule(scheduledCommandGroup);
+    }
 }

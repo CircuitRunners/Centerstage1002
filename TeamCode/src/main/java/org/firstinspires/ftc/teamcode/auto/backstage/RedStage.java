@@ -223,7 +223,7 @@ public class RedStage extends CommandOpMode {
                         ),
                         new ParallelCommandGroup(
                                 new ParallelRaceGroup(
-                                        new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST, extendo),
+                                        new IntakeStackCommand(hardwareMap,claw,intake, Intake.IntakePowers.FAST),
                                         new WaitCommand(6000)
                                 ),
 
