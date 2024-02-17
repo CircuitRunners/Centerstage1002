@@ -32,9 +32,9 @@ import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
 // Complete! :) [who needs I&R anyways?]
-@Autonomous (name="RED AUDIENCE 2+1")
+@Autonomous (name="BLUE AUDIENCE 2+1")
 @Config
-public class RedAudienceFluent extends CommandOpMode {
+public class BlueAudienceFluent extends CommandOpMode {
     private SampleMecanumDrive drive;
 
     TeamPropDetector detector;
@@ -48,30 +48,29 @@ public class RedAudienceFluent extends CommandOpMode {
 
     private Intake intake;
 
-    double center_line_y = -60.5, stack_x = -58.5, avoidance_x_constant = 1,
+    double center_line_y = 60.5, stack_x = -53.5, avoidance_x_constant = 1,
             fastVelocity = 60, offsetFromBoard = 4.0;;
 
-    Pose2d startPose = new Pose2d(-38.39, -63.28, Math.toRadians(90.00));
+    Pose2d startPose = new Pose2d(-38.39, 63.28, Math.toRadians(270.00));
 
-    Pose2d pixel_left = new Pose2d(-50, -34.90, Math.toRadians(90.00));
-    Pose2d pixel_center = new Pose2d(-38.39, -33.90, Math.toRadians(90.00));
-    Pose2d pixel_right = new Pose2d(-22, -40, Math.toRadians(105));
+    Pose2d pixel_left = new Pose2d(-48, 34.90, Math.toRadians(270.00));
+    Pose2d pixel_center = new Pose2d(-38.39, 33.90, Math.toRadians(270.00));
+    Pose2d pixel_right = new Pose2d(-48, 34.90, Math.toRadians(270));
 
 
     // TODO set the x values to the correct on
-    Pose2d boardPosition_left = new Pose2d(46.5, -27 - offsetFromBoard, Math.toRadians(0));
-    Pose2d boardPosition_center = new Pose2d(50.5, -35 - offsetFromBoard, Math.toRadians(0));
-    Pose2d boardPosition_right = new Pose2d(50.5, -39 - offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_left = new Pose2d(52, 38 - offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_center = new Pose2d(50.5, 35 - offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_right = new Pose2d(50.5, 32 - offsetFromBoard, Math.toRadians(0));
 
     ParallelCommandGroup scheduledCommandGroup;
 
     public ParallelCommandGroup generateLeftTrajectories () {
         TrajectorySequence toPixelCenter = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(pixel_left)
-                .lineTo(new Vector2d(-50, -40.90))
-                .lineTo(new Vector2d(-38.39, -36.90))// center pixel
+                .splineTo(new Vector2d(-31,37.5),Math.toRadians(315))
+                .lineTo(new Vector2d(-38.39, 36.90))// center pixel
                 .setReversed(true)
-                .splineTo(new Vector2d(stack_x, -36.69), Math.toRadians(180.00))
+                .splineTo(new Vector2d(stack_x, 36.69), Math.toRadians(180.00))
                 .build();
 
 
@@ -80,17 +79,13 @@ public class RedAudienceFluent extends CommandOpMode {
                 .lineTo(new Vector2d(stack_x,center_line_y))
                 // zoom across to the pixel stack
                 .setReversed(false)
-                .splineTo(new Vector2d(21.71, center_line_y + 0.0), Math.toRadians(0))
+                .splineTo(new Vector2d(21.71, center_line_y + 0.0), Math.toRadians(360))
                 .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
                 .splineToLinearHeading(boardPosition_left, Math.toRadians(0))
                 .resetVelConstraint()
                 .build();
 
-        TrajectorySequence Score = drive.trajectorySequenceBuilder(toBackboard.end())
-                .lineTo(new Vector2d(50.5 , -27))
-                .build();
-
-        TrajectorySequence Park = drive.trajectorySequenceBuilder(Score.end())
+        TrajectorySequence Park = drive.trajectorySequenceBuilder(toBackboard.end())
                 .setReversed(false)
                 // zoom across the middle of the field
                 .lineTo(new Vector2d(46.5, -35 - offsetFromBoard))
@@ -105,11 +100,12 @@ public class RedAudienceFluent extends CommandOpMode {
                         // This will go to the pixel stack, then score on the board!
                         new ParallelCommandGroup(
                                 new TrajectorySequenceCommand(drive, toPixelCenter),
-                                new InstantCommand(claw:: open), 
+                                new InstantCommand(claw:: open),
                                 new SequentialCommandGroup(
                                         new WaitCommand(3000),
                                         new InstantCommand(extendo::toPixel3),
                                         new ParallelRaceGroup(
+                                                new WaitCommand(6000),
                                                 new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
                                         )
                                 )
@@ -122,12 +118,6 @@ public class RedAudienceFluent extends CommandOpMode {
                                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
                                         new InstantCommand(claw:: open)
 
-                                )
-                        ),
-                        new ParallelCommandGroup(
-                                new SequentialCommandGroup(
-                                        new WaitCommand(1000),
-                                new TrajectorySequenceCommand(drive,Score)
                                 )
                         ),
                         new ParallelCommandGroup(
@@ -158,7 +148,7 @@ public class RedAudienceFluent extends CommandOpMode {
                 .lineTo(new Vector2d(stack_x,center_line_y))
                 // zoom across to the pixel stack
                 .setReversed(false)
-                .splineTo(new Vector2d(21.71, center_line_y + 0.0), Math.toRadians(0))
+                .splineTo(new Vector2d(21.71, center_line_y + 0.0), Math.toRadians(360))
                 .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
                 .splineToLinearHeading(boardPosition_center, Math.toRadians(0))
                 .resetVelConstraint()
@@ -187,7 +177,7 @@ public class RedAudienceFluent extends CommandOpMode {
                                                 new WaitCommand(6000),
                                                 new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
                                         )
-                                    )
+                                )
                         ),
 //                        // This will retract the lift, go to stack, and then intake, cumulative 2+0 up to == this
                         new ParallelCommandGroup(
@@ -213,11 +203,13 @@ public class RedAudienceFluent extends CommandOpMode {
 
     public ParallelCommandGroup generateRightTrajectories () {
         TrajectorySequence toPixelCenter = drive.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(-31,-37.5),Math.toRadians(45))
-                .lineTo(new Vector2d(-38.39, -36.90))// center pixel
-                .setReversed(true)
-                .splineTo(new Vector2d(stack_x, -36.69), Math.toRadians(180.00))
-                .build();
+            .lineToLinearHeading(pixel_right)
+                    .lineTo(new Vector2d(-48, 40.90))
+                    .lineTo(new Vector2d(-38.39, 36.90))// center pixel
+                    .setReversed(true)
+                    .splineTo(new Vector2d(stack_x, 36.69), Math.toRadians(180.00))
+                    .build();
+
 
 
         TrajectorySequence toBackboard = drive.trajectorySequenceBuilder(toPixelCenter.end())
@@ -225,7 +217,7 @@ public class RedAudienceFluent extends CommandOpMode {
                 .lineTo(new Vector2d(stack_x,center_line_y))
                 // zoom across to the pixel stack
                 .setReversed(false)
-                .splineTo(new Vector2d(21.71, center_line_y + 0.0), Math.toRadians(0))
+                .splineTo(new Vector2d(21.71, center_line_y + 0.0), Math.toRadians(360))
                 .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
                 .splineToLinearHeading(boardPosition_right, Math.toRadians(0))
                 .resetVelConstraint()
@@ -282,7 +274,7 @@ public class RedAudienceFluent extends CommandOpMode {
     @Override
     public void initialize(){
         schedule(new BulkCacheCommand(hardwareMap));
-        detector = new TeamPropDetector(hardwareMap, true, Team.RED);
+        detector = new TeamPropDetector(hardwareMap, true, Team.BLUE);
 
         intake = new Intake(hardwareMap);
         drive = new SampleMecanumDrive(hardwareMap);

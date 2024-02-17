@@ -32,9 +32,9 @@ import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
 // Complete! :) [who needs I&R anyways?]
-@Autonomous (name="RED BACKSTAGE 2+4")
+@Autonomous (name="BLUE BACKSTAGE 2+4")
 @Config
-public class RedStageOMEGA extends CommandOpMode {
+public class BlueStageOMEGA extends CommandOpMode {
     private SampleMecanumDrive drive;
 
     TeamPropDetector detector;
@@ -48,28 +48,28 @@ public class RedStageOMEGA extends CommandOpMode {
 
     private Intake intake;
 
-    double center_line_y = -12.5, stack_x = -55.5, avoidance_x_constant = 1,
+    double center_line_y = 15.5, stack_x = -56, avoidance_x_constant = 1,
             fastVelocity = 60, offsetFromBoard = 4.0;;
 
-    Pose2d startPose = new Pose2d(10.5, -62.5,  Math.toRadians(90.00));
+    Pose2d startPose = new Pose2d(10.5, 62.5,  Math.toRadians(270.00));
 
-    Pose2d pixel_left = new Pose2d(22.4, -42, Math.toRadians(90.00));
-    Pose2d pixel_center = new Pose2d(11.84, -33.90, Math.toRadians(90.00));
-    Pose2d pixel_right = new Pose2d(27, -40, Math.toRadians(105));
+    Pose2d pixel_left = new Pose2d(27, 38, Math.toRadians(270.00));
+    Pose2d pixel_center = new Pose2d(11.84, 33.90, Math.toRadians(270.00));
+    Pose2d pixel_right = new Pose2d(27, 40, Math.toRadians(105));
 
 
     // TODO set the x values to the correct on
-    Pose2d boardPosition_left = new Pose2d(52, -27 - offsetFromBoard, Math.toRadians(0));
-    Pose2d boardPosition_center = new Pose2d(50.5, -35 - offsetFromBoard, Math.toRadians(0));
-    Pose2d boardPosition_right = new Pose2d(50.5, -38 - offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_left = new Pose2d(52.65, 43.65 - offsetFromBoard, Math.toRadians(360));
+    Pose2d boardPosition_center = new Pose2d(52.65, 39.65 - offsetFromBoard, Math.toRadians(360));
+    Pose2d boardPosition_right = new Pose2d(52.65, 35  - offsetFromBoard, Math.toRadians(360));
 
     ParallelCommandGroup scheduledCommandGroup;
 
     public ParallelCommandGroup generateLeftTrajectories () {
         TrajectorySequence toPixelLeft = drive.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(6, -37.5), Math.toRadians(135.00)) // left
+                .splineToSplineHeading(pixel_left, Math.toRadians(315)) // right pixel
                 .setReversed(true)
-                .splineToLinearHeading(boardPosition_left, Math.toRadians(0))
+                .splineToLinearHeading(boardPosition_left, Math.toRadians(360))
                 .build();
 
         TrajectorySequence toStack = drive.trajectorySequenceBuilder(boardPosition_left)
@@ -85,10 +85,10 @@ public class RedStageOMEGA extends CommandOpMode {
         TrajectorySequence toBoard = drive.trajectorySequenceBuilder(toStack.end())
                 .setReversed(false)
                 // zoom across the middle of the field
-                .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+                .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(360.00))
                 .resetVelConstraint()
                 // back to the board
-                .splineToLinearHeading(boardPosition_left, Math.toRadians(0.00))
+                .splineToLinearHeading(boardPosition_center , Math.toRadians(360.00))
                 .build();
 
         TrajectorySequence toStackPlus6 = drive.trajectorySequenceBuilder(boardPosition_left)
@@ -125,7 +125,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                         new InstantCommand(extendo::toPixel3),
                                         new ParallelRaceGroup(
 //                                                new WaitCommand(3000),
-                                                new IntakeStackCommand(hardwareMap,  claw, intake, Intake.IntakePowers.FAST)
+                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
                                         )
                                 )
                         ),
@@ -135,7 +135,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(3100),
                                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                                        new WaitCommand(500),
+                                        new WaitCommand(1000),
                                         new InstantCommand(claw::open)
                                 )
                         ),
@@ -146,7 +146,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new TrajectorySequenceCommand(drive, toStack),
                                 new SequentialCommandGroup(
                                         new WaitCommand(3000),
-                                        new InstantCommand(extendo::down),
+                                        new InstantCommand(extendo::down ),
                                         new ParallelRaceGroup(
 //                                                new WaitCommand(3000),
                                                 new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
@@ -159,7 +159,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(3100),
                                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                                        new WaitCommand(500),
+                                        new WaitCommand(1000),
                                         new InstantCommand(claw::open)
                                 )
                         ),
@@ -207,10 +207,10 @@ public class RedStageOMEGA extends CommandOpMode {
         TrajectorySequence toBoard = drive.trajectorySequenceBuilder(toStack.end())
                 .setReversed(false)
                 // zoom across the middle of the field
-                .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+                .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(360.00))
                 .resetVelConstraint()
                 // back to the board
-                .splineToLinearHeading(boardPosition_center, Math.toRadians(0.00))
+                .splineToLinearHeading(boardPosition_center, Math.toRadians(360.00))
                 .build();
 
         TrajectorySequence toStackPlus6 = drive.trajectorySequenceBuilder(boardPosition_center)
@@ -234,6 +234,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(3100),
                                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.BOTTOM),
+                                        new WaitCommand(1000),
                                         new InstantCommand(claw::open)
                                 )
                         ),
@@ -256,6 +257,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(3100),
                                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new WaitCommand(1000),
                                         new InstantCommand(claw::open)
                                 )
                         ),
@@ -266,7 +268,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new TrajectorySequenceCommand(drive, toStack),
                                 new SequentialCommandGroup(
                                         new WaitCommand(3000),
-                                        new InstantCommand(extendo::toPixel2),
+                                        new InstantCommand(extendo::down),
                                         new ParallelRaceGroup(
                                                 new WaitCommand(3000),
                                                 new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
@@ -279,6 +281,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(3100),
                                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new WaitCommand(1000),
                                         new InstantCommand(claw::open)
                                 )
                         ),
@@ -306,10 +309,10 @@ public class RedStageOMEGA extends CommandOpMode {
 
     public ParallelCommandGroup generateRightTrajectories () {
         TrajectorySequence toPixelRight = drive.trajectorySequenceBuilder(startPose)
-                .splineToSplineHeading(pixel_right, Math.toRadians(45)) // right pixel
-                .setReversed(true)
-                .splineToLinearHeading(boardPosition_right, Math.toRadians(0))
-                .build();
+            .splineTo(new Vector2d(6, 37.5), Math.toRadians(225.00)) // left
+                    .setReversed(true)
+                    .splineToLinearHeading(boardPosition_right, Math.toRadians(360))
+                    .build();
 
         TrajectorySequence toStack = drive.trajectorySequenceBuilder(boardPosition_right)
                 .setReversed(true)
@@ -324,10 +327,10 @@ public class RedStageOMEGA extends CommandOpMode {
         TrajectorySequence toBoard = drive.trajectorySequenceBuilder(toStack.end())
                 .setReversed(false)
                 // zoom across the middle of the field
-                .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(0.00))
+                .splineTo(new Vector2d(23.55, center_line_y), Math.toRadians(360.00))
                 .resetVelConstraint()
                 // back to the board
-                .splineToLinearHeading(boardPosition_right, Math.toRadians(0.00))
+                .splineToLinearHeading(boardPosition_left, Math.toRadians(360.00))
                 .build();
 
         TrajectorySequence toStackPlus6 = drive.trajectorySequenceBuilder(boardPosition_right)
@@ -351,6 +354,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(3100),
                                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.BOTTOM),
+                                        new WaitCommand(1000),
                                         new InstantCommand(claw::open)
                                 )
                         ),
@@ -363,7 +367,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                         new InstantCommand(extendo::toPixel3),
                                         new ParallelRaceGroup(
                                                 new WaitCommand(3000),
-                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
                                         )
                                 )
                         ),
@@ -373,6 +377,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new WaitCommand(3100),
                                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+                                        new WaitCommand(1000),
                                         new InstantCommand(claw::open)
                                 )
                         ),
@@ -383,7 +388,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                 new TrajectorySequenceCommand(drive, toStack),
                                 new SequentialCommandGroup(
                                         new WaitCommand(3000),
-                                        new InstantCommand(extendo::toPixel2),
+                                        new InstantCommand(extendo::down),
                                         new ParallelRaceGroup(
                                                 new WaitCommand(3000),
                                                 new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
@@ -397,6 +402,7 @@ public class RedStageOMEGA extends CommandOpMode {
                                         new WaitCommand(3100),
                                         new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
                                         new InstantCommand(claw::open),
+                                        new WaitCommand(1000),
                                         new RetractOuttakeCommand(lift,arm, claw)
                                 )
                         ),
@@ -425,7 +431,7 @@ public class RedStageOMEGA extends CommandOpMode {
     @Override
     public void initialize(){
         schedule(new BulkCacheCommand(hardwareMap));
-        detector = new TeamPropDetector(hardwareMap, true, Team.RED);
+        detector = new TeamPropDetector(hardwareMap, true, Team.BLUE);
 
         intake = new Intake(hardwareMap);
         drive = new SampleMecanumDrive(hardwareMap);
