@@ -15,6 +15,7 @@ import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeStackCommand;
@@ -35,6 +36,7 @@ import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 import org.firstinspires.inspection.InspectionActivity;
 
 // Complete! :) [who needs I&R anyways?]
+@Disabled
 @Autonomous (name="RED BACKSTAGE TESTER")
 @Config
 public class RedStageTESTER extends CommandOpMode {

@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -32,9 +31,9 @@ import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
 // Complete! :) [who needs I&R anyways?]
-@Autonomous (name="RED BACKSTAGE 2+4")
+@Autonomous (name="BLUE BACKSTAGE 2+4")
 @Config
-public class RedStageOMEGA extends CommandOpMode {
+public class BlueStageOMEGA extends CommandOpMode {
     private SampleMecanumDrive drive;
 
     TeamPropDetector detector;
@@ -48,20 +47,18 @@ public class RedStageOMEGA extends CommandOpMode {
 
     private Intake intake;
 
-    double center_line_y = -12.5, stack_x = -53.5, avoidance_x_constant = 1,
+    double center_line_y = 12.5, stack_x = -53.5, avoidance_x_constant = 1,
             fastVelocity = 60, offsetFromBoard = 4.0;;
 
-    Pose2d startPose = new Pose2d(10.5, -62.5,  Math.toRadians(90.00));
+    Pose2d startPose = new Pose2d(10.5, 62.5,  Math.toRadians(-90.00));
 
-    Pose2d pixel_left = new Pose2d(22.4, -42, Math.toRadians(90.00));
-    Pose2d pixel_center = new Pose2d(11.84, -33.90, Math.toRadians(90.00));
-    Pose2d pixel_right = new Pose2d(27, -40, Math.toRadians(105));
-
+    Pose2d pixel_left = new Pose2d(22.4, 42, Math.toRadians(-90.00));
+    Pose2d pixel_center = new Pose2d(11.84, 33.90, Math.toRadians(-90.00));
 
     // TODO set the x values to the correct on
-    Pose2d boardPosition_left = new Pose2d(52, -32 - offsetFromBoard, Math.toRadians(0));
-    Pose2d boardPosition_center = new Pose2d(52, -35 - offsetFromBoard, Math.toRadians(0));
-    Pose2d boardPosition_right = new Pose2d(52, -38 - offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_right = new Pose2d(52, 32 + offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_center = new Pose2d(52, 35 + offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_left = new Pose2d(52, 38 + offsetFromBoard, Math.toRadians(0));
 
     ParallelCommandGroup scheduledCommandGroup;
 
@@ -69,11 +66,11 @@ public class RedStageOMEGA extends CommandOpMode {
         TrajectorySequence toStack = drive.trajectorySequenceBuilder(toPixel.end())
                 .setReversed(true)
                 // move smoothly away from the board to the launch point to go across the field to stack
-                .splineToConstantHeading(new Vector2d(23.55, center_line_y + 0), Math.toRadians(180.00))
+                .splineToConstantHeading(new Vector2d(23.55, center_line_y + 0), Math.toRadians(-180.00))
                 //* set the speed to be greater to zoom faster
                 .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
                 // zoom across to the pixel stack
-                .splineTo(new Vector2d(stack_x + 0.0, center_line_y + 0.0), Math.toRadians(180.00))
+                .splineTo(new Vector2d(stack_x + 0.0, center_line_y + 0.0), Math.toRadians(-180.00))
                 .build();
 
         TrajectorySequence toBoard = drive.trajectorySequenceBuilder(toStack.end())
@@ -88,11 +85,11 @@ public class RedStageOMEGA extends CommandOpMode {
         TrajectorySequence toStack2 = drive.trajectorySequenceBuilder(toBoard.end())
                 .setReversed(true)
                 // move smoothly away from the board to the launch point to go across the field to stack
-                .splineToConstantHeading(new Vector2d(23.55, center_line_y + 0), Math.toRadians(180.00))
+                .splineToConstantHeading(new Vector2d(23.55, center_line_y + 0), Math.toRadians(-180.00))
                 //* set the speed to be greater to zoom faster
                 .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
                 // zoom across to the pixel stack
-                .splineTo(new Vector2d(stack_x + 0.0, center_line_y + 0.0), Math.toRadians(180.00))
+                .splineTo(new Vector2d(stack_x + 0.0, center_line_y + 0.0), Math.toRadians(-180.00))
                 .build();
 
         TrajectorySequence toBoard2 = drive.trajectorySequenceBuilder(toStack2.end())
@@ -107,11 +104,11 @@ public class RedStageOMEGA extends CommandOpMode {
         TrajectorySequence toStackPlus6 = drive.trajectorySequenceBuilder(toBoard2.end())
                 .setReversed(true)
                 // move smoothly away from the board to the launch point to go across the field to stack
-                .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(180.00))
+                .splineToConstantHeading(new Vector2d(23.55, center_line_y), Math.toRadians(-180.00))
                 //* set the speed to be greater to zoom faster
                 .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
                 // zoom across to the pixel stack
-                .splineTo(new Vector2d(stack_x - avoidance_x_constant, center_line_y), Math.toRadians(180.00))
+                .splineTo(new Vector2d(stack_x - avoidance_x_constant, center_line_y), Math.toRadians(-180.00))
                 .strafeRight(12)
                 .strafeLeft(12)
                 .setReversed(false)
@@ -213,8 +210,8 @@ public class RedStageOMEGA extends CommandOpMode {
 
         drive.setPoseEstimate(startPose);
 
-        TrajectorySequence toPixelLeft = drive.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(8, -37.5), Math.toRadians(135.00)) // left
+        TrajectorySequence toPixelRight = drive.trajectorySequenceBuilder(startPose)
+                .splineTo(new Vector2d(8, 37.5), Math.toRadians(-135.00)) // left
                 .setReversed(true)
                 .splineToLinearHeading(boardPosition_left, Math.toRadians(0))
                 .build();
@@ -223,8 +220,8 @@ public class RedStageOMEGA extends CommandOpMode {
                 .setReversed(true)
                 .splineToLinearHeading(boardPosition_center, Math.toRadians(0))
                 .build();
-        TrajectorySequence toPixelRight = drive.trajectorySequenceBuilder(startPose)
-                .splineToSplineHeading(pixel_right, Math.toRadians(45)) // right pixel
+        TrajectorySequence toPixelLeft = drive.trajectorySequenceBuilder(startPose)
+                .splineToSplineHeading(pixel_left, Math.toRadians(-45)) // right pixel
                 .setReversed(true)
                 .splineToLinearHeading(boardPosition_right, Math.toRadians(0))
                 .build();
