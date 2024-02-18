@@ -32,9 +32,9 @@ import org.firstinspires.ftc.teamcode.utilities.Team;
 import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 
 // Complete! :) [who needs I&R anyways?]
-@Autonomous (name="RED BACKSTAGE 2+4")
+@Autonomous (name="RED BACKSTAGE 2+0")
 @Config
-public class RedStageOMEGA extends CommandOpMode {
+public class RedStageZero extends CommandOpMode {
     private SampleMecanumDrive drive;
 
     TeamPropDetector detector;
@@ -59,9 +59,9 @@ public class RedStageOMEGA extends CommandOpMode {
 
 
     // TODO set the x values to the correct on
-    Pose2d boardPosition_left = new Pose2d(52.65, -27 - offsetFromBoard, Math.toRadians(0));
-    Pose2d boardPosition_center = new Pose2d(52.65, -35 - offsetFromBoard, Math.toRadians(0));
-    Pose2d boardPosition_right = new Pose2d(52.65, -38 - offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_left = new Pose2d(52, -27 - offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_center = new Pose2d(50.5, -35 - offsetFromBoard, Math.toRadians(0));
+    Pose2d boardPosition_right = new Pose2d(50.5, -38 - offsetFromBoard, Math.toRadians(0));
 
     ParallelCommandGroup scheduledCommandGroup;
 
@@ -74,12 +74,7 @@ public class RedStageOMEGA extends CommandOpMode {
 
         TrajectorySequence toStack = drive.trajectorySequenceBuilder(boardPosition_left)
                 .setReversed(true)
-                // move smoothly away from the board to the launch point to go across the field to stack
-                .splineToConstantHeading(new Vector2d(23.55, center_line_y + 0), Math.toRadians(180.00))
-                //* set the speed to be greater to zoom faster
-                .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
-                // zoom across to the pixel stack
-                .splineTo(new Vector2d(stack_x + 0.0, center_line_y + 0.0), Math.toRadians(180.00))
+                .lineTo(new Vector2d(48.5, -12))
                 .build();
 
         TrajectorySequence toBoard = drive.trajectorySequenceBuilder(toStack.end())
@@ -119,69 +114,68 @@ public class RedStageOMEGA extends CommandOpMode {
                         // This will retract the lift, go to stack, and then intake, cumulative 2+0 up to == this
                         new ParallelCommandGroup(
                                 new RetractOuttakeCommand(lift, arm, claw),
-                                new TrajectorySequenceCommand(drive, toStack),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3000),
-                                        new InstantCommand(extendo::toPixel3),
-                                        new ParallelRaceGroup(
-//                                                new WaitCommand(3000),
-                                                new IntakeStackCommand(hardwareMap,  claw, intake, Intake.IntakePowers.FAST)
-                                        )
-                                )
-                        ),
-                        // Go to the board and drop, cumulative 2+2 u2==this
-                        new ParallelCommandGroup(
-                                new TrajectorySequenceCommand(drive, toBoard),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3100),
-                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                                        new WaitCommand(500),
-                                        new InstantCommand(claw::open)
-                                )
-                        ),
-
-                        // 2+4 in progress
-                        new ParallelCommandGroup(
-                                new RetractOuttakeCommand(lift, arm, claw),
-                                new TrajectorySequenceCommand(drive, toStack),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3000),
-                                        new InstantCommand(extendo::down),
-                                        new ParallelRaceGroup(
-//                                                new WaitCommand(3000),
-                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
-                                        )
-                                )
-                        ),
-                        // 2+4 complete
-                        new ParallelCommandGroup(
-                                new TrajectorySequenceCommand(drive, toBoard),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3100),
-                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                                        new WaitCommand(500),
-                                        new InstantCommand(claw::open)
-                                )
-                        ),
-                        // 2+6 in progress
-                        new ParallelCommandGroup(
-                                new WaitCommand(1000),
-                                new RetractOuttakeCommand(lift, arm, claw)
-//                                new TrajectorySequenceCommand(drive, toStackPlus6),
+                                new TrajectorySequenceCommand(drive, toStack)
 //                                new SequentialCommandGroup(
 //                                        new WaitCommand(3000),
-//                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+//                                        new InstantCommand(extendo::toPixel3),
+//                                        new ParallelRaceGroup(
+////                                                new WaitCommand(3000),
+//                                                new IntakeStackCommand(hardwareMap,  claw, intake, Intake.IntakePowers.FAST)
+//                                        )
 //                                )
                         )
-//                        // 2+6 complete
+//                        // Go to the board and drop, cumulative 2+2 u2==this
 //                        new ParallelCommandGroup(
 //                                new TrajectorySequenceCommand(drive, toBoard),
 //                                new SequentialCommandGroup(
 //                                        new WaitCommand(3100),
 //                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+//                                        new WaitCommand(500),
 //                                        new InstantCommand(claw::open)
 //                                )
+//                        ),
+//
+//                        // 2+4 in progress
+//                        new ParallelCommandGroup(
+//                                new RetractOuttakeCommand(lift, arm, claw),
+//                                new TrajectorySequenceCommand(drive, toStack),
+//                                new SequentialCommandGroup(
+//                                        new WaitCommand(3000),
+//                                        new InstantCommand(extendo::down),
+//                                        new ParallelRaceGroup(
+////                                                new WaitCommand(3000),
+//                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+//                                        )
+//                                )
+//                        ),
+//                        // 2+4 complete
+//                        new ParallelCommandGroup(
+//                                new TrajectorySequenceCommand(drive, toBoard),
+//                                new SequentialCommandGroup(
+//                                        new WaitCommand(3100),
+//                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+//                                        new WaitCommand(500),
+//                                        new InstantCommand(claw::open)
+//                                )
+//                        ),
+//                        // 2+6 in progress
+//                        new ParallelCommandGroup(
+//                                new RetractOuttakeCommand(lift, arm, claw)
+////                                new TrajectorySequenceCommand(drive, toStackPlus6),
+////                                new SequentialCommandGroup(
+////                                        new WaitCommand(3000),
+////                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+////                                )
 //                        )
+////                        // 2+6 complete
+////                        new ParallelCommandGroup(
+////                                new TrajectorySequenceCommand(drive, toBoard),
+////                                new SequentialCommandGroup(
+////                                        new WaitCommand(3100),
+////                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+////                                        new InstantCommand(claw::open)
+////                                )
+////                        )
                 )
         );
     }
@@ -197,12 +191,7 @@ public class RedStageOMEGA extends CommandOpMode {
 
         TrajectorySequence toStack = drive.trajectorySequenceBuilder(boardPosition_center)
                 .setReversed(true)
-                // move smoothly away from the board to the launch point to go across the field to stack
-                .splineToConstantHeading(new Vector2d(23.55, center_line_y + 0), Math.toRadians(180.00))
-                //* set the speed to be greater to zoom faster
-                .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
-                // zoom across to the pixel stack
-                .splineTo(new Vector2d(stack_x + 0.0, center_line_y + 0.0), Math.toRadians(180.00))
+                .lineTo(new Vector2d(48.5, -12))
                 .build();
 
         TrajectorySequence toBoard = drive.trajectorySequenceBuilder(toStack.end())
@@ -241,59 +230,17 @@ public class RedStageOMEGA extends CommandOpMode {
                         // This will retract the lift, go to stack, and then intake, cumulative 2+0 up to == this
                         new ParallelCommandGroup(
                                 new RetractOuttakeCommand(lift, arm, claw),
-                                new TrajectorySequenceCommand(drive, toStack),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3000),
-                                        new InstantCommand(extendo::toPixel3),
-                                        new ParallelRaceGroup(
-                                                new WaitCommand(3000),
-                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
-                                        )
-                                )
-                        ),
-                        // Go to the board and drop, cumulative 2+2 u2==this
-                        new ParallelCommandGroup(
-                                new TrajectorySequenceCommand(drive, toBoard),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3100),
-                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                                        new InstantCommand(claw::open)
-                                )
-                        ),
-
-                        // 2+4 in progress
-                        new ParallelCommandGroup(
-                                new RetractOuttakeCommand(lift, arm, claw),
-                                new TrajectorySequenceCommand(drive, toStack),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3000),
-                                        new InstantCommand(extendo::toPixel2),
-                                        new ParallelRaceGroup(
-                                                new WaitCommand(3000),
-                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
-                                        )
-                                )
-                        ),
-                        // 2+4 complete
-                        new ParallelCommandGroup(
-                                new TrajectorySequenceCommand(drive, toBoard),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3100),
-                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                                        new InstantCommand(claw::open)
-                                )
-                        ),
-                        // 2+6 in progress
-                        new ParallelCommandGroup(
-                                new WaitCommand(1000),
-                                new RetractOuttakeCommand(lift, arm, claw)
-//                                new TrajectorySequenceCommand(drive, toStackPlus6),
+                                new TrajectorySequenceCommand(drive, toStack)
 //                                new SequentialCommandGroup(
 //                                        new WaitCommand(3000),
-//                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+//                                        new InstantCommand(extendo::toPixel3),
+//                                        new ParallelRaceGroup(
+//                                                new WaitCommand(3000),
+//                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+//                                        )
 //                                )
                         )
-//                        // 2+6 complete
+//                        // Go to the board and drop, cumulative 2+2 u2==this
 //                        new ParallelCommandGroup(
 //                                new TrajectorySequenceCommand(drive, toBoard),
 //                                new SequentialCommandGroup(
@@ -301,7 +248,48 @@ public class RedStageOMEGA extends CommandOpMode {
 //                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
 //                                        new InstantCommand(claw::open)
 //                                )
+//                        ),
+//
+//                        // 2+4 in progress
+//                        new ParallelCommandGroup(
+//                                new RetractOuttakeCommand(lift, arm, claw),
+//                                new TrajectorySequenceCommand(drive, toStack),
+//                                new SequentialCommandGroup(
+//                                        new WaitCommand(3000),
+//                                        new InstantCommand(extendo::toPixel2),
+//                                        new ParallelRaceGroup(
+//                                                new WaitCommand(3000),
+//                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+//                                        )
+//                                )
+//                        ),
+//                        // 2+4 complete
+//                        new ParallelCommandGroup(
+//                                new TrajectorySequenceCommand(drive, toBoard),
+//                                new SequentialCommandGroup(
+//                                        new WaitCommand(3100),
+//                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+//                                        new InstantCommand(claw::open)
+//                                )
+//                        ),
+//                        // 2+6 in progress
+//                        new ParallelCommandGroup(
+//                                new RetractOuttakeCommand(lift, arm, claw)
+////                                new TrajectorySequenceCommand(drive, toStackPlus6),
+////                                new SequentialCommandGroup(
+////                                        new WaitCommand(3000),
+////                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+////                                )
 //                        )
+////                        // 2+6 complete
+////                        new ParallelCommandGroup(
+////                                new TrajectorySequenceCommand(drive, toBoard),
+////                                new SequentialCommandGroup(
+////                                        new WaitCommand(3100),
+////                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+////                                        new InstantCommand(claw::open)
+////                                )
+////                        )
                 )
         );
     }
@@ -315,12 +303,7 @@ public class RedStageOMEGA extends CommandOpMode {
 
         TrajectorySequence toStack = drive.trajectorySequenceBuilder(boardPosition_right)
                 .setReversed(true)
-                // move smoothly away from the board to the launch point to go across the field to stack
-                .splineToConstantHeading(new Vector2d(23.55, center_line_y + 0), Math.toRadians(180.00))
-                //* set the speed to be greater to zoom faster
-                .setVelConstraint(new MecanumVelocityConstraint(fastVelocity, TRACK_WIDTH))
-                // zoom across to the pixel stack
-                .splineTo(new Vector2d(stack_x + 0.0, center_line_y + 0.0), Math.toRadians(180.00))
+                .lineTo(new Vector2d(48.5, -12))
                 .build();
 
         TrajectorySequence toBoard = drive.trajectorySequenceBuilder(toStack.end())
@@ -359,60 +342,17 @@ public class RedStageOMEGA extends CommandOpMode {
                         // This will retract the lift, go to stack, and then intake, cumulative 2+0 up to == this
                         new ParallelCommandGroup(
                                 new RetractOuttakeCommand(lift, arm, claw),
-                                new TrajectorySequenceCommand(drive, toStack),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3000),
-                                        new InstantCommand(extendo::toPixel3),
-                                        new ParallelRaceGroup(
-                                                new WaitCommand(3000),
-                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
-                                        )
-                                )
-                        ),
-                        // Go to the board and drop, cumulative 2+2 u2==this
-                        new ParallelCommandGroup(
-                                new TrajectorySequenceCommand(drive, toBoard),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3100),
-                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                                        new InstantCommand(claw::open)
-                                )
-                        ),
-
-                        // 2+4 in progress
-                        new ParallelCommandGroup(
-                                new RetractOuttakeCommand(lift, arm, claw),
-                                new TrajectorySequenceCommand(drive, toStack),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3000),
-                                        new InstantCommand(extendo::toPixel2),
-                                        new ParallelRaceGroup(
-                                                new WaitCommand(3000),
-                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
-                                        )
-                                )
-                        ),
-                        // 2+4 complete
-                        new ParallelCommandGroup(
-                                new TrajectorySequenceCommand(drive, toBoard),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(3100),
-                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
-                                        new InstantCommand(claw::open),
-                                        new RetractOuttakeCommand(lift,arm, claw)
-                                )
-                        ),
-//                         2+6 in progress
-                        new ParallelCommandGroup(
-                                new WaitCommand(1000),
-                                new RetractOuttakeCommand(lift, arm, claw)
-//                                new TrajectorySequenceCommand(drive, toStackPlus6),
+                                new TrajectorySequenceCommand(drive, toStack)
 //                                new SequentialCommandGroup(
 //                                        new WaitCommand(3000),
-//                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+//                                        new InstantCommand(extendo::toPixel3),
+//                                        new ParallelRaceGroup(
+//                                                new WaitCommand(3000),
+//                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+//                                        )
 //                                )
                         )
-//                       // 2+6 complete
+//                        // Go to the board and drop, cumulative 2+2 u2==this
 //                        new ParallelCommandGroup(
 //                                new TrajectorySequenceCommand(drive, toBoard),
 //                                new SequentialCommandGroup(
@@ -420,7 +360,49 @@ public class RedStageOMEGA extends CommandOpMode {
 //                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
 //                                        new InstantCommand(claw::open)
 //                                )
+//                        ),
+//
+//                        // 2+4 in progress
+//                        new ParallelCommandGroup(
+//                                new RetractOuttakeCommand(lift, arm, claw),
+//                                new TrajectorySequenceCommand(drive, toStack),
+//                                new SequentialCommandGroup(
+//                                        new WaitCommand(3000),
+//                                        new InstantCommand(extendo::toPixel2),
+//                                        new ParallelRaceGroup(
+//                                                new WaitCommand(3000),
+//                                                new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+//                                        )
+//                                )
+//                        ),
+//                        // 2+4 complete
+//                        new ParallelCommandGroup(
+//                                new TrajectorySequenceCommand(drive, toBoard),
+//                                new SequentialCommandGroup(
+//                                        new WaitCommand(3100),
+//                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+//                                        new InstantCommand(claw::open),
+//                                        new RetractOuttakeCommand(lift,arm, claw)
+//                                )
+//                        ),
+////                         2+6 in progress
+//                        new ParallelCommandGroup(
+//                                new RetractOuttakeCommand(lift, arm, claw)
+////                                new TrajectorySequenceCommand(drive, toStackPlus6),
+////                                new SequentialCommandGroup(
+////                                        new WaitCommand(3000),
+////                                        new IntakeStackCommand(hardwareMap, claw, intake, Intake.IntakePowers.FAST)
+////                                )
 //                        )
+////                       // 2+6 complete
+////                        new ParallelCommandGroup(
+////                                new TrajectorySequenceCommand(drive, toBoard),
+////                                new SequentialCommandGroup(
+////                                        new WaitCommand(3100),
+////                                        new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT),
+////                                        new InstantCommand(claw::open)
+////                                )
+////                        )
                 )
         );
     }
