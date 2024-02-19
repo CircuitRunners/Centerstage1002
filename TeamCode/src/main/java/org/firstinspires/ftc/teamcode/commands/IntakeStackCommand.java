@@ -24,6 +24,7 @@ public class IntakeStackCommand extends CommandBase {
     private Intake.IntakePowers power;
     public static double DETECTION_THRESHOLD = 4.0; // Threshold for the distance sensor
 
+    public static double MOTOR_CURRENT_THRESHOLD = 5; //
     // consider reducing if need faster cycle times
     public static double REQUIRED_TIME_MS = 200; // Required time in milliseconds,
 
@@ -53,6 +54,7 @@ public class IntakeStackCommand extends CommandBase {
 
     @Override
     public void execute() {
+
         switch (pixelsDetectedState) {
             case 0: // Pixel not detected
                 intake.setPower(power);
@@ -84,6 +86,40 @@ public class IntakeStackCommand extends CommandBase {
                 }
                 break;
         }
+
+        // use motor current power as an additional criteria for auto outtake
+//        switch (pixelsDetectedState) {
+//            case 0: // Pixel not detected
+//                intake.setPower(power);
+//                if (distanceSensor.getDistance(DistanceUnit.CM) < DETECTION_THRESHOLD && intake.getCurrent() < MOTOR_CURRENT_THRESHOLD) {
+//                    intakeTimer.reset();
+//                    pixelsDetectedState = 1;
+//                }
+//                break;
+//            case 1: // Pixel detected, timer running
+//                if (intakeTimer.milliseconds() < REQUIRED_TIME_MS && intake.getCurrent() < MOTOR_CURRENT_THRESHOLD) {
+//                    intake.setPower(power);
+//                    if (distanceSensor.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD) {
+//                        pixelsDetectedState = 0; // Reset if the distance goes above the threshold
+//                    }
+//                } else {
+//                    pixelsDetectedState = 2; // Time required has passed, and pixel is consistently detected
+//                    waitTimer.reset();
+//                }
+//                break;
+//            case 2: // Pixel intake process is complete
+//                claw.close();
+//                if (waitTimer.milliseconds() < FINISH_LOWSPEED_THRESHOLD) {
+//                    intake.setPower(Intake.IntakePowers.SLOW);
+//                } else if (waitTimer.milliseconds() < OUTTAKE_TIME_ROBOT) {
+//                    intake.setPower(Intake.OuttakePowers.NORMAL);
+//                } else {
+//                    intake.setPower(0);
+//                    pixelsDetectedState = 3;
+//                }
+//                break;
+//        }
+
     }
 
     @Override
