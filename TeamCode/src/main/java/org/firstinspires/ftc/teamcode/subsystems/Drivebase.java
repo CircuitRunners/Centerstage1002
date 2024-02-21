@@ -27,13 +27,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 //import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class Drivebase extends SubsystemBase {
-    public static double DESIRED_DISTANCE = 6;
-
-    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int DESIRED_TAG_ID = 0;     // Choose the tag you want to approach or set to -1 for ANY tag.
-    private VisionPortal visionPortal;               // Used to manage the video source.
-    private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
-    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
     public static double STRAFE_CONSTANT = 1.06;
 
     private DcMotorEx frontLeft, backLeft, frontRight, backRight;
@@ -65,7 +58,6 @@ public class Drivebase extends SubsystemBase {
         // Begin doing things
         setMotorBehavior(allDrivebaseMotors);
         initializeIMU(hardwareMap); // Initialize IMU with the given parameters
-        initAprilTag(hardwareMap);
 
 
         //TODO remove
@@ -223,14 +215,5 @@ public class Drivebase extends SubsystemBase {
     public void forceResetIMU(HardwareMap hardwareMap) {
         imu = null;
         initializeIMU(hardwareMap);
-    }
-
-    public void initAprilTag(HardwareMap hardwareMap) {
-        aprilTag = new AprilTagProcessor.Builder().build();
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(aprilTag)
-                .build();
-
     }
 }
