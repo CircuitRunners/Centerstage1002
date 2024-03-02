@@ -17,9 +17,9 @@ public class RedBlockDetectionPipeline extends OpenCvPipeline {
     private final Scalar upperRed2 = new Scalar(179, 255, 255);
 
     private final int Y_OFFSET = 0;
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(280, 540 + Y_OFFSET);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(960, 540 + Y_OFFSET);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1600, 540 + + Y_OFFSET);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(280, 540);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(960, 540);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(1600, 540);
     static final int REGION_WIDTH = 75;
     static final int REGION_HEIGHT = 75;
 
