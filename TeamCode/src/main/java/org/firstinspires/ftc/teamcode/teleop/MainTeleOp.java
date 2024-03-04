@@ -231,10 +231,17 @@ public class MainTeleOp extends CommandOpMode {
         airplaneLauncher.processInput(gamepad1.dpad_down, false);
 
         // Transfer/Claw
-        if (gamepad2.right_bumper) {
-            claw.close();
-        } else if (gamepad2.left_bumper) {
-            claw.open();
+//        if (gamepad2.right_bumper) {
+//            claw.close();
+//        } else if (gamepad2.left_bumper) {
+//            claw.open();
+//        }
+        if (gamepad2.left_bumper) {
+            if (claw.getPosition() == 0.26) {
+                claw.close();
+            } else {
+                claw.open();
+            }
         }
 
         // Arm commands
