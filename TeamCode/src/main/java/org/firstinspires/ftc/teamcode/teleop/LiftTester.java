@@ -91,6 +91,7 @@ public class LiftTester extends CommandOpMode {
 
 
         // Lift brakes when not doing anything
+        telemetry.addData("lift pos", lift.getLiftPosition());
 
 //        double lift_speed = 0.7;
 //        double gravity_constant = 0.23;

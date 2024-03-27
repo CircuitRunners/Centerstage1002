@@ -156,32 +156,34 @@ public class MainTeleOp extends CommandOpMode {
         super.run();
 
         boolean targetFound = false;
-        initAprilTag(hardwareMap);
+//        initAprilTag(hardwareMap);
 
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        for (AprilTagDetection detection : currentDetections) {
-            if ((detection.metadata != null) &&
-                    ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))  ){
-                targetFound = true;
-                desiredTag = detection;
-                break;  // don't look any further.
-            } else {
-                telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
-            }
-        }
+//        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+//        for (AprilTagDetection detection : currentDetections) {
+//            if ((detection.metadata != null) &&
+//                    ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))  ){
+//                targetFound = true;
+//                desiredTag = detection;
+//                break;  // don't look any further.
+//            } else {
+//                telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+//            }
+//        }
+//
+//        if (targetFound) {
+//            telemetry.addData(">","Slowing robot down\n");
+//            telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+//            telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+//            telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+//            telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+//            drivebase.drive(gamepad1.left_stick_y / 2.0, gamepad1.left_stick_x/2.0, gamepad1.right_stick_x/3.0, gamepad1.cross);
+//        } else {
+//            telemetry.addData(">","Drive using joysticks to find valid target\n");
+//            drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.cross);
+//        }
+//        telemetry.update();
 
-        if (targetFound) {
-            telemetry.addData(">","Slowing robot down\n");
-            telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-            telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-            telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-            telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
-            drivebase.drive(gamepad1.left_stick_y / 2.0, gamepad1.left_stick_x/2.0, gamepad1.right_stick_x/3.0, gamepad1.cross);
-        } else {
-            telemetry.addData(">","Drive using joysticks to find valid target\n");
-            drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.cross);
-        }
-        telemetry.update();
+        drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.cross);
 
         setManualExposure(6, 250);
 
@@ -270,7 +272,7 @@ public class MainTeleOp extends CommandOpMode {
         telemetry.update();
     }
 
-    private void    setManualExposure(int exposureMS, int gain) {
+    private void setManualExposure(int exposureMS, int gain) {
         // Wait for the camera to be open, then use the controls
 
         if (visionPortal == null) {

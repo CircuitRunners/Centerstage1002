@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 public class Pivot extends SubsystemBase{
 
     private ServoImplEx pivotServo;
-    private String servoHardwareMapName = "pivot";
+    private String servoHardwareMapName = "rotation"; // sussy baka richard behavior for rotationServo
 
     public enum PivotPositions{
         INTAKE(0);
