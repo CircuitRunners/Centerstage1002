@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.acmerobotics.dashboard.config.Config;
+import static org.firstinspires.ftc.teamcode.subsystems.Pivot.PivotPositions.INTAKE;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -20,6 +21,9 @@ public class Pivot extends SubsystemBase{
 
         public final double position;
 
+        PivotPositions(double position) {
+            this.position = position;
+        }
     }
 
     public Pivot(HardwareMap hardwareMap){
@@ -29,7 +33,7 @@ public class Pivot extends SubsystemBase{
 
 
     public void reset(){
-        pivotServo.setPosition(INTAKE);
+        pivotServo.setPosition(INTAKE.position);
     }
 
 

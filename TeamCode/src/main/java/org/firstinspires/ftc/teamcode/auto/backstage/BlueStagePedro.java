@@ -47,7 +47,7 @@ import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 import org.firstinspires.ftc.teamcode.commands.FollowPath;
 
 // Complete! :) [who needs I&R anyways?]
-@Autonomous (name="BLUE BACKSTAGE")
+@Autonomous (name="BLUE BS PEDRO")
 public class BlueStagePedro extends CommandOpMode {
     private SampleMecanumDrive drive;
     private TrajectorySequence ONE_GLOBAL;
