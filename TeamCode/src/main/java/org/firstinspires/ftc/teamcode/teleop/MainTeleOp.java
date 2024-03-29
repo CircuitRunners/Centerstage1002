@@ -2,12 +2,11 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 
 import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.circle;
-import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.triangle;
 import static org.firstinspires.ftc.teamcode.utilities.Utilities.debounce;
+import static org.firstinspires.ftc.teamcode.utilities.Utilities.differential;
 
 import android.annotation.SuppressLint;
 
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -19,22 +18,21 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommandEx;
+import org.firstinspires.ftc.teamcode.subsystems.Pivot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommandEx;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
@@ -69,6 +67,8 @@ public class MainTeleOp extends CommandOpMode {
     private Claw claw;
     private Intake intake;
     private ExtendoArm frontArm;
+    private Pivot pivot;
+
     private ManualLiftCommand manualLiftCommand;
     private IntakeCommandEx intakeCommand;
     private DistanceSensor distanceSensor;
@@ -98,6 +98,7 @@ public class MainTeleOp extends CommandOpMode {
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
         intake = new Intake(hardwareMap);
+        pivot = new Pivot(hardwareMap);
 
         manualLiftCommand = new ManualLiftCommand(lift, manipulator);
         manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
@@ -106,24 +107,24 @@ public class MainTeleOp extends CommandOpMode {
         lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 
         new Trigger(() -> manipulator.getLeftY() > 0.4)
-                .whenActive(new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.HIGH)
+                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.HIGH, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
         new Trigger(() -> manipulator.getLeftY() < -0.6)
-                .whenActive(new RetractOuttakeCommand(lift, arm, claw)
+                .whenActive(new RetractOuttakeCommand(lift, arm, claw, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
         //Mid preset
         new Trigger(() -> manipulator.getRightY() > -0.4)
-                .whenActive(new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID)
+                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.MID, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
         //Short preset
         new Trigger(() -> manipulator.getRightY() < 0.4)
-                .whenActive(new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT)
+                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.SHORT, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
@@ -136,6 +137,7 @@ public class MainTeleOp extends CommandOpMode {
         frontArm = new ExtendoArm(hardwareMap);
         claw.open();
         lift.initialInitHang();
+        pivot.left();
 
         telemetry.addLine("Ready for start!");
         telemetry.update();
@@ -188,6 +190,7 @@ public class MainTeleOp extends CommandOpMode {
         setManualExposure(6, 250);
 
         telemetry.addData("YAW", drivebase.getCorrectedYaw());
+        telemetry.addData("current", intakeCommand.getIntakeCurrent());
 
          // IN BETA TEST THISIOWHADHSOD
 
@@ -239,7 +242,7 @@ public class MainTeleOp extends CommandOpMode {
 //            claw.open();
 //        }
         if (gamepad2.left_bumper) {
-            if (claw.getPosition() == 0.26) {
+            if (differential(claw.getPosition() - Claw.IntakePositions.OPEN.position, 0.01)) {
                 claw.close();
             } else {
                 claw.open();

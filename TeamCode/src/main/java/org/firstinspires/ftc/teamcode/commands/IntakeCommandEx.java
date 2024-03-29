@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.outoftheboxrobotics.photoncore.Photon;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -30,6 +31,7 @@ public class IntakeCommandEx extends CommandBase {
 
     public static double FINISH_LOWSPEED_THRESHOLD = 400;
     public static double OUTTAKE_TIME_ROBOT = 1350;
+    public static double MOTOR_CURRENT_THRESHOLD = 5.0;
 
     public IntakeCommandEx(HardwareMap hardwareMap, Claw claw, Intake intake, Intake.IntakePowers power) {
         this.intake = intake;
@@ -61,9 +63,13 @@ public class IntakeCommandEx extends CommandBase {
                     intakeTimer.reset();
                     pixelsDetectedState = 1;
                 }
+                else if (intake.getCurrent() > MOTOR_CURRENT_THRESHOLD) {
+                    pixelsDetectedState = 2;
+                }
                 break;
             case 1: // Pixel detected, timer running
-                if (intakeTimer.milliseconds() < REQUIRED_TIME_MS) {
+                if (intakeTimer.milliseconds() < REQUIRED_TIME_MS && intake.getCurrent() > MOTOR_CURRENT_THRESHOLD) {
+
                     intake.setPower(power);
                     if (distanceSensor.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD) {
                         pixelsDetectedState = 0; // Reset if the distance goes above the threshold
@@ -90,6 +96,10 @@ public class IntakeCommandEx extends CommandBase {
     @Override
     public boolean isFinished() {
         return pixelsDetectedState == 3;
+    }
+
+    public double getIntakeCurrent () {
+        return intake.getCurrent();
     }
 
     @Override

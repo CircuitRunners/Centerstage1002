@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Lift.LiftPositions
 import org.firstinspires.ftc.teamcode.subsystems.Claw
 import org.firstinspires.ftc.teamcode.subsystems.Pivot
 
-class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Claw, preset: Presets) : ParallelCommandGroup() {
+class MoveToScoringCommandEx(lift: Lift, arm: Arm, claw: Claw, preset: Presets, pivot: Pivot) : ParallelCommandGroup() {
 
     enum class Presets {
         BOTTOM,
@@ -25,6 +25,7 @@ class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Claw, preset: Presets) : 
             ParallelCommandGroup(
                 SequentialCommandGroup(
                     // Change this ms to change when the arm comes up
+                    InstantCommand(pivot::center),
                     WaitCommand(20),
                     InstantCommand({
                         arm.up()
