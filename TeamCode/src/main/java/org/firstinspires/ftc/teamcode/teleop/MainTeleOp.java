@@ -8,10 +8,12 @@ import static org.firstinspires.ftc.teamcode.utilities.Utilities.differential;
 import android.annotation.SuppressLint;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -74,6 +76,8 @@ public class MainTeleOp extends CommandOpMode {
     private DistanceSensor distanceSensor;
     private ManualLiftResetCommand manualLiftResetCommand;
 
+    private ToggleButtonReader clawReader;
+
     private boolean isUp = false, isDown = true, isTransport = false, isPressed = false;
     private double upOffset = 0.0, downOffset = 0.0, transportOffset = 0.0;
     private double overallOffset = 0.05;
@@ -106,27 +110,50 @@ public class MainTeleOp extends CommandOpMode {
 
         lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 
+//        clawReader = new ToggleButtonReader(manipulator, GamepadKeys.Button.RIGHT_BUMPER);
+
         new Trigger(() -> manipulator.getLeftY() > 0.4)
-                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.HIGH, pivot)
+                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.MID, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
-        new Trigger(() -> manipulator.getLeftY() < -0.6)
+        new Trigger(() -> manipulator.getLeftY() < -0.4)
                 .whenActive(new RetractOuttakeCommand(lift, arm, claw, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
         //Mid preset
-        new Trigger(() -> manipulator.getRightY() > -0.4)
-                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.MID, pivot)
+        new Trigger(() -> manipulator.getLeftX() > 0.6)
+                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.SHORT, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
         //Short preset
-        new Trigger(() -> manipulator.getRightY() < 0.4)
-                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.SHORT, pivot)
+        new Trigger(() -> manipulator.getLeftX() < -0.6)
+                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.HIGH, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
+
+        new Trigger(() -> manipulator.getRightY() < -0.4)
+                .whenActive(new InstantCommand(()-> {
+                        if (!lift.atLowerLimit()){
+                            pivot.center();
+                        }
+                }));
+        new Trigger(() -> manipulator.getRightX() > 0.4)
+                .whenActive(new InstantCommand(()-> {
+                    if (!lift.atLowerLimit()){
+                        pivot.right();
+                    }
+                }));
+        new Trigger(() -> manipulator.getRightX() < -0.4)
+                .whenActive(new InstantCommand(()-> {
+                    if (!lift.atLowerLimit()){
+                        pivot.left();
+                    }
+                }));
+
+
 
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT) // Playstation Triangle
                 .whenHeld(manualLiftResetCommand);
@@ -137,7 +164,6 @@ public class MainTeleOp extends CommandOpMode {
         frontArm = new ExtendoArm(hardwareMap);
         claw.open();
         lift.initialInitHang();
-        pivot.left();
 
         telemetry.addLine("Ready for start!");
         telemetry.update();
@@ -235,19 +261,25 @@ public class MainTeleOp extends CommandOpMode {
         // Airplane Launcher
         airplaneLauncher.processInput(gamepad1.dpad_down, false);
 
-        // Transfer/Claw
-//        if (gamepad2.right_bumper) {
-//            claw.close();
-//        } else if (gamepad2.left_bumper) {
-//            claw.open();
-//        }
+//        // Transfer/Claw
+        if (gamepad2.right_bumper) {
+            claw.close();
+        } else if (gamepad2.left_bumper) {
+            claw.open();
+        }
         if (gamepad2.left_bumper) {
-            if (differential(claw.getPosition() - Claw.IntakePositions.OPEN.position, 0.01)) {
+            if (differential(claw.getPosition() - Claw.IntakePositions.OPEN.position, 0.001)) {
                 claw.close();
             } else {
                 claw.open();
             }
         }
+
+//        if (clawReader.getState()) {
+//            claw.open();
+//        } else {
+//            claw.close();
+//        }
 
         // Arm commands
         if (debounce(gamepad2.right_trigger)) { // outtake
