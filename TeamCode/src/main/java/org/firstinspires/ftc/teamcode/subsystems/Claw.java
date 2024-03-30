@@ -14,8 +14,8 @@ public class Claw extends SubsystemBase {
     }
 
     public enum IntakePositions {
-        OPEN(0.26),
-        CLOSE(0.36);
+        OPEN(0.39),
+        CLOSE(0.56);
 
         public double position;
 

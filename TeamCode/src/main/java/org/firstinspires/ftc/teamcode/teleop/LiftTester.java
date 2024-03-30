@@ -1,28 +1,14 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 
-import static org.firstinspires.ftc.teamcode.utilities.Utilities.debounce;
-
 import android.annotation.SuppressLint;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.PerpetualCommand;
-import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.kauailabs.navx.ftc.AHRS;
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
-import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommand;
-import org.firstinspires.ftc.teamcode.commands.presets.RetractOuttakeCommand;
-import org.firstinspires.ftc.teamcode.subsystems.Drivebase;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
 
@@ -91,6 +77,7 @@ public class LiftTester extends CommandOpMode {
 
 
         // Lift brakes when not doing anything
+        telemetry.addData("lift pos", lift.getLiftPosition());
 
 //        double lift_speed = 0.7;
 //        double gravity_constant = 0.23;

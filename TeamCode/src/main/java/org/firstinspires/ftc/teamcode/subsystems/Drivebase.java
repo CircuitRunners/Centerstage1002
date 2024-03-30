@@ -8,6 +8,17 @@ import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
@@ -48,11 +59,12 @@ public class Drivebase extends SubsystemBase {
         setMotorBehavior(allDrivebaseMotors);
         initializeIMU(hardwareMap); // Initialize IMU with the given parameters
 
+
         //TODO remove
 //        initializeLocalizer(hardwareMap);
     }
 
-    private void setMotorBehavior (DcMotorEx[] motors) {
+    private void setMotorBehavior(DcMotorEx[] motors) {
         // Set motor directions and zero power behavior
         frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
         backLeft.setDirection(DcMotorEx.Direction.REVERSE);
@@ -63,7 +75,7 @@ public class Drivebase extends SubsystemBase {
         }
     }
 
-    public void initializeIMU (HardwareMap hardwareMap) {
+    public void initializeIMU(HardwareMap hardwareMap) {
         imu = AHRS.getInstance(
                 hardwareMap.get(
                         NavxMicroNavigationSensor.class,
@@ -82,7 +94,7 @@ public class Drivebase extends SubsystemBase {
         return variable;
     }
 
-    private double transformYInput (double y) {
+    private double transformYInput(double y) {
         y = preprocessInput(y);
 
         // Actual processing
@@ -93,7 +105,7 @@ public class Drivebase extends SubsystemBase {
         return y;
     }
 
-    private double transformXInput (double x) {
+    private double transformXInput(double x) {
         x = preprocessInput(x);
 
         // Actual processing
@@ -105,7 +117,7 @@ public class Drivebase extends SubsystemBase {
         return x;
     }
 
-    private double transformRotationInput (double rx) {
+    private double transformRotationInput(double rx) {
         rx = preprocessInput(rx);
 
         // Actual processing
@@ -133,12 +145,12 @@ public class Drivebase extends SubsystemBase {
                 timer.reset();
             }
             defense = true;
-            double maxPowers = 1.0/botVector.norm();
+            double maxPowers = 1.0 / botVector.norm();
 
             double sineWave = Math.sin(2 * Math.PI * timer.milliseconds() / defensePeriod);
             double adjustedDivisor = sineWave * scalingFactor;
 
-            botVector = new Vector2d(x*maxPowers/adjustedDivisor, y*maxPowers/adjustedDivisor).rotated(-botHeading);
+            botVector = new Vector2d(x * maxPowers / adjustedDivisor, y * maxPowers / adjustedDivisor).rotated(-botHeading);
         } else if (defense) {
             defense = false;
         }
@@ -172,18 +184,18 @@ public class Drivebase extends SubsystemBase {
         driveRobotPowers(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
     }
 
-    private void driveRobotPowers (double frontLeftPower, double backLeftPower, double frontRightPower, double backRightPower) {
+    private void driveRobotPowers(double frontLeftPower, double backLeftPower, double frontRightPower, double backRightPower) {
         frontLeft.setPower(frontLeftPower);
         backLeft.setPower(backLeftPower);
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
     }
 
-    public double getCorrectedYaw () {
+    public double getCorrectedYaw() {
         double imuDeg = imu.getYaw();
         double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
 //        double imuRad = imuDeg;
-        double correctedRadReset = imuRad-imuPrevPositionRad;
+        double correctedRadReset = imuRad - imuPrevPositionRad;
         return (-1.0) * correctedRadReset; // * (14.0/180.0);
     }
 

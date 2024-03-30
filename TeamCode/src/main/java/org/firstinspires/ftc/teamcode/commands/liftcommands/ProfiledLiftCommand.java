@@ -31,9 +31,9 @@ public class ProfiledLiftCommand extends CommandBase {
     double liftVelocity = 0;
     double controllerOutput = 0;
 
-    public static double MOTION_PROFILE_MAX_VELOCITY = 10000,
-            MOTION_PROFILE_MAX_ACCEL = 9000,
-            MOTION_PROFILE_MAX_JERK = 0;
+    public static double MOTION_PROFILE_MAX_VELOCITY = 15000,
+            MOTION_PROFILE_MAX_ACCEL = 15000,
+            MOTION_PROFILE_MAX_JERK = 50000;
 
     public static double GRAVITY_FEEDFORWARD_COMPENSATION_FIRST_STAGE = 0.09,
             GRAVITY_FEEDFORWARD_COMPENSATION_SECOND_STAGE = 0.11,

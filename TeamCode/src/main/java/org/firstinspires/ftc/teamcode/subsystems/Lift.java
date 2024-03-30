@@ -34,7 +34,7 @@ public class Lift extends SubsystemBase {
         }
     }
 
-    public static double UPPER_LIMIT = 2750, LOWER_LIMIT = 5;
+    public static double UPPER_LIMIT = 2300, LOWER_LIMIT = 250;
     public static double winchServoInit = 0.5, winchServoEngage = 0.66;
 
     public static int

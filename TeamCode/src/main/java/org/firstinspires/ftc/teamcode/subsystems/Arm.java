@@ -20,8 +20,8 @@ public class Arm extends SubsystemBase {
 
     public enum ArmPositions {
         // (left, right)
-        DOWN(.75, .737), // 0.740, 0.737
-        SCORING(.23, .23); // 0.9 0.333
+        DOWN(.17, .17), // right 0.22 before
+        SCORING(.73, .73); // 0.9 0.333
 
         private final double position_right;
         private final double position_left;

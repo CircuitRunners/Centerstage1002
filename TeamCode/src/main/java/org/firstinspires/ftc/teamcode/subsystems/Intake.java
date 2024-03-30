@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 // Certified Validated!
 @Config
 public class Intake extends SubsystemBase {
@@ -89,6 +91,8 @@ public class Intake extends SubsystemBase {
     public double getPower() {
         return intakeMotor.getPower();
     }
+
+    public double getCurrent() { return intakeMotor.getCurrent(CurrentUnit.AMPS); }
 
     public void runForDuration(double duration, double speed) {
         setPower(speed);

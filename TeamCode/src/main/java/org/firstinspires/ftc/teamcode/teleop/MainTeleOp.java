@@ -2,25 +2,39 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 
 import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.circle;
-import static org.firstinspires.ftc.teamcode.utilities.CrossBindings.triangle;
 import static org.firstinspires.ftc.teamcode.utilities.Utilities.debounce;
+import static org.firstinspires.ftc.teamcode.utilities.Utilities.differential;
 
 import android.annotation.SuppressLint;
 
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.teamcode.commands.presets.MoveToScoringCommandEx;
+import org.firstinspires.ftc.teamcode.subsystems.Pivot;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.concurrent.TimeUnit;
+
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommandEx;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
@@ -37,6 +51,13 @@ import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 @TeleOp (name="MainTeleOp")
 public class MainTeleOp extends CommandOpMode {
+    public static double DESIRED_DISTANCE = 6;
+
+    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
+    private static final int DESIRED_TAG_ID = 0;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private VisionPortal visionPortal;               // Used to manage the video source.
+    private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
+    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
     private DcMotorEx frontLeft, backLeft, frontRight, backRight, intakeMotor;
     private DcMotorEx[] drivebaseMotors;
     private double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
@@ -48,10 +69,14 @@ public class MainTeleOp extends CommandOpMode {
     private Claw claw;
     private Intake intake;
     private ExtendoArm frontArm;
+    private Pivot pivot;
+
     private ManualLiftCommand manualLiftCommand;
     private IntakeCommandEx intakeCommand;
     private DistanceSensor distanceSensor;
     private ManualLiftResetCommand manualLiftResetCommand;
+
+    private ToggleButtonReader clawReader;
 
     private boolean isUp = false, isDown = true, isTransport = false, isPressed = false;
     private double upOffset = 0.0, downOffset = 0.0, transportOffset = 0.0;
@@ -77,6 +102,7 @@ public class MainTeleOp extends CommandOpMode {
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
         intake = new Intake(hardwareMap);
+        pivot = new Pivot(hardwareMap);
 
         manualLiftCommand = new ManualLiftCommand(lift, manipulator);
         manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
@@ -84,27 +110,50 @@ public class MainTeleOp extends CommandOpMode {
 
         lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 
+//        clawReader = new ToggleButtonReader(manipulator, GamepadKeys.Button.RIGHT_BUMPER);
+
         new Trigger(() -> manipulator.getLeftY() > 0.4)
-                .whenActive(new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.HIGH)
+                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.MID, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
-        new Trigger(() -> manipulator.getLeftY() < -0.6)
-                .whenActive(new RetractOuttakeCommand(lift, arm, claw)
+        new Trigger(() -> manipulator.getLeftY() < -0.4)
+                .whenActive(new RetractOuttakeCommand(lift, arm, claw, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
         //Mid preset
-        new Trigger(() -> manipulator.getRightY() > -0.4)
-                .whenActive(new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.MID)
+        new Trigger(() -> manipulator.getLeftX() > 0.6)
+                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.SHORT, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
         //Short preset
-        new Trigger(() -> manipulator.getRightY() < 0.4)
-                .whenActive(new MoveToScoringCommand(lift, arm, claw, MoveToScoringCommand.Presets.SHORT)
+        new Trigger(() -> manipulator.getLeftX() < -0.6)
+                .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.HIGH, pivot)
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
+
+        new Trigger(() -> manipulator.getRightY() < -0.4)
+                .whenActive(new InstantCommand(()-> {
+                        if (!lift.atLowerLimit()){
+                            pivot.center();
+                        }
+                }));
+        new Trigger(() -> manipulator.getRightX() > 0.4)
+                .whenActive(new InstantCommand(()-> {
+                    if (!lift.atLowerLimit()){
+                        pivot.right();
+                    }
+                }));
+        new Trigger(() -> manipulator.getRightX() < -0.4)
+                .whenActive(new InstantCommand(()-> {
+                    if (!lift.atLowerLimit()){
+                        pivot.left();
+                    }
+                }));
+
+
 
         manipulator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT) // Playstation Triangle
                 .whenHeld(manualLiftResetCommand);
@@ -120,15 +169,56 @@ public class MainTeleOp extends CommandOpMode {
         telemetry.update();
     }
 
+    public void initAprilTag(HardwareMap hardwareMap) {
+        aprilTag = new AprilTagProcessor.Builder().build();
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .addProcessor(aprilTag)
+                .build();
+
+    }
 
     @SuppressLint("DefaultLocale")
     @Override
     public void run() {
         super.run();
 
-        telemetry.addData("YAW", drivebase.getCorrectedYaw());
+        boolean targetFound = false;
+//        initAprilTag(hardwareMap);
 
-        drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.cross); // IN BETA TEST THISIOWHADHSOD
+//        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+//        for (AprilTagDetection detection : currentDetections) {
+//            if ((detection.metadata != null) &&
+//                    ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))  ){
+//                targetFound = true;
+//                desiredTag = detection;
+//                break;  // don't look any further.
+//            } else {
+//                telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+//            }
+//        }
+//
+//        if (targetFound) {
+//            telemetry.addData(">","Slowing robot down\n");
+//            telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+//            telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+//            telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+//            telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+//            drivebase.drive(gamepad1.left_stick_y / 2.0, gamepad1.left_stick_x/2.0, gamepad1.right_stick_x/3.0, gamepad1.cross);
+//        } else {
+//            telemetry.addData(">","Drive using joysticks to find valid target\n");
+//            drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.cross);
+//        }
+//        telemetry.update();
+
+        drivebase.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.cross);
+
+        setManualExposure(6, 250);
+
+        telemetry.addData("YAW", drivebase.getCorrectedYaw());
+        telemetry.addData("current", intakeCommand.getIntakeCurrent());
+
+         // IN BETA TEST THISIOWHADHSOD
 
         // Reset heading with MATH
         if (gamepad1.square) {
@@ -171,12 +261,25 @@ public class MainTeleOp extends CommandOpMode {
         // Airplane Launcher
         airplaneLauncher.processInput(gamepad1.dpad_down, false);
 
-        // Transfer/Claw
+//        // Transfer/Claw
         if (gamepad2.right_bumper) {
             claw.close();
         } else if (gamepad2.left_bumper) {
             claw.open();
         }
+        if (gamepad2.left_bumper) {
+            if (differential(claw.getPosition() - Claw.IntakePositions.OPEN.position, 0.001)) {
+                claw.close();
+            } else {
+                claw.open();
+            }
+        }
+
+//        if (clawReader.getState()) {
+//            claw.open();
+//        } else {
+//            claw.close();
+//        }
 
         // Arm commands
         if (debounce(gamepad2.right_trigger)) { // outtake
@@ -202,5 +305,39 @@ public class MainTeleOp extends CommandOpMode {
 
         // Ensure telemetry actually works
         telemetry.update();
+    }
+
+    private void setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortal == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+        }
     }
 }

@@ -16,6 +16,10 @@ public class Utilities {
         return Math.abs(input) > DEBOUNCE_THRESHOLD;
     }
 
+    public static boolean differential(double input, double DEBOUNCE_OVERRIDE_THRESHOLD) {
+        return Math.abs(input) > DEBOUNCE_OVERRIDE_THRESHOLD;
+    }
+
     public static double squash(double input) {
         if (debounce(input)) {
             return input;
