@@ -11,7 +11,7 @@ public class ExtendoArm extends SubsystemBase {
     private ServoImplEx rightServo;
 
     public enum ExtendoPositions {
-        DOWN(0.75, 0.26),
+        DOWN(0.7325, 0.29),
         TRANSPORT(0.67,0.34),
         TRANSPORT_ALPHA(0.649,0.359),
         UP(0.4,0.64),

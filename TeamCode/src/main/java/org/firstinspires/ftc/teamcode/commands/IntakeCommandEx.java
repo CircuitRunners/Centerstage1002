@@ -30,9 +30,9 @@ public class IntakeCommandEx extends CommandBase {
     // consider reducing if need faster cycle times
     public static double REQUIRED_TIME_MS = 200; // Required time in milliseconds,
 
-    public static double FINISH_LOWSPEED_THRESHOLD = 400;
+    public static double FINISH_LOWSPEED_THRESHOLD = 200;
     public static double OUTTAKE_TIME_ROBOT = 1350;
-    public static double MOTOR_CURRENT_THRESHOLD = 5.0;
+    public static double MOTOR_CURRENT_THRESHOLD = 9;
 
     public IntakeCommandEx(HardwareMap hardwareMap, Claw claw, Intake intake, Intake.IntakePowers power) {
         this.intake = intake;
@@ -65,12 +65,9 @@ public class IntakeCommandEx extends CommandBase {
                     intakeTimer.reset();
                     pixelsDetectedState = 1;
                 }
-                else if (intake.getCurrent() > MOTOR_CURRENT_THRESHOLD) {
-                    pixelsDetectedState = 2;
-                }
                 break;
             case 1: // Pixel detected, timer running
-                if (intakeTimer.milliseconds() < REQUIRED_TIME_MS && intake.getCurrent() > MOTOR_CURRENT_THRESHOLD) {
+                if (intakeTimer.milliseconds() < REQUIRED_TIME_MS) {
 
                     intake.setPower(power);
                     if (distanceSensor.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD && distanceSensorTop.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD) {
