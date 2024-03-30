@@ -19,6 +19,7 @@ public class IntakeStackCommand extends CommandBase {
     private ElapsedTime intakeTimer, waitTimer; // Timer for the intake process
     private Intake intake;
     public DistanceSensor distanceSensor;
+    public DistanceSensor distanceSensorTop;
     private Claw claw;
     private int pixelsDetectedState = 0;
     private Intake.IntakePowers power;
@@ -35,6 +36,7 @@ public class IntakeStackCommand extends CommandBase {
         this.intake = intake;
         this.claw = claw;
         this.distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+        this.distanceSensor = hardwareMap.get(DistanceSensor.class, "topDistanceSensor");
         this.runtime = new ElapsedTime();
         this.intakeTimer = new ElapsedTime();
         this.waitTimer = new ElapsedTime();
@@ -91,15 +93,19 @@ public class IntakeStackCommand extends CommandBase {
         switch (pixelsDetectedState) {
             case 0: // Pixel not detected
                 intake.setPower(power);
-                if (distanceSensor.getDistance(DistanceUnit.CM) < DETECTION_THRESHOLD && intake.getCurrent() < MOTOR_CURRENT_THRESHOLD) {
+                if (distanceSensor.getDistance(DistanceUnit.CM) < DETECTION_THRESHOLD && distanceSensorTop.getDistance(DistanceUnit.CM) < DETECTION_THRESHOLD) {
                     intakeTimer.reset();
                     pixelsDetectedState = 1;
                 }
+                else if (intake.getCurrent() > MOTOR_CURRENT_THRESHOLD) {
+                    pixelsDetectedState = 2;
+                }
                 break;
             case 1: // Pixel detected, timer running
-                if (intakeTimer.milliseconds() < REQUIRED_TIME_MS && intake.getCurrent() < MOTOR_CURRENT_THRESHOLD) {
+                if (intakeTimer.milliseconds() < REQUIRED_TIME_MS && intake.getCurrent() > MOTOR_CURRENT_THRESHOLD) {
+
                     intake.setPower(power);
-                    if (distanceSensor.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD) {
+                    if (distanceSensor.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD && distanceSensorTop.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD) {
                         pixelsDetectedState = 0; // Reset if the distance goes above the threshold
                     }
                 } else {

@@ -21,6 +21,7 @@ public class IntakeCommandEx extends CommandBase {
     private ElapsedTime intakeTimer, waitTimer; // Timer for the intake process
     private Intake intake;
     public DistanceSensor distanceSensor;
+    public DistanceSensor distanceSensorTop;
     private Claw claw;
     private int pixelsDetectedState = 0;
     private Intake.IntakePowers power;
@@ -37,6 +38,7 @@ public class IntakeCommandEx extends CommandBase {
         this.intake = intake;
         this.claw = claw;
         this.distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+        this.distanceSensorTop = hardwareMap.get(DistanceSensor.class, "topDistanceSensor");
         this.runtime = new ElapsedTime();
         this.intakeTimer = new ElapsedTime();
         this.waitTimer = new ElapsedTime();
@@ -59,7 +61,7 @@ public class IntakeCommandEx extends CommandBase {
         switch (pixelsDetectedState) {
             case 0: // Pixel not detected
                 intake.setPower(power);
-                if (distanceSensor.getDistance(DistanceUnit.CM) < DETECTION_THRESHOLD) {
+                if (distanceSensor.getDistance(DistanceUnit.CM) < DETECTION_THRESHOLD && distanceSensorTop.getDistance(DistanceUnit.CM) < DETECTION_THRESHOLD) {
                     intakeTimer.reset();
                     pixelsDetectedState = 1;
                 }
@@ -71,7 +73,7 @@ public class IntakeCommandEx extends CommandBase {
                 if (intakeTimer.milliseconds() < REQUIRED_TIME_MS && intake.getCurrent() > MOTOR_CURRENT_THRESHOLD) {
 
                     intake.setPower(power);
-                    if (distanceSensor.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD) {
+                    if (distanceSensor.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD && distanceSensorTop.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD) {
                         pixelsDetectedState = 0; // Reset if the distance goes above the threshold
                     }
                 } else {
