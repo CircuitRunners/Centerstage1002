@@ -36,7 +36,7 @@ public class IntakeStackCommand extends CommandBase {
         this.intake = intake;
         this.claw = claw;
         this.distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
-        this.distanceSensor = hardwareMap.get(DistanceSensor.class, "topDistanceSensor");
+        this.distanceSensorTop = hardwareMap.get(DistanceSensor.class, "topDistanceSensor");
         this.runtime = new ElapsedTime();
         this.intakeTimer = new ElapsedTime();
         this.waitTimer = new ElapsedTime();

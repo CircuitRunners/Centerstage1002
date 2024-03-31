@@ -15,9 +15,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 public class Lift extends SubsystemBase {
     public enum LiftPositions {
         DOWN(0),
-        SHORT(654),
-        MID(1234),
-        HIGH(2060);
+        SHORT(203),
+        MID(469),
+        HIGH(953);
 
         public int position;
 
@@ -34,7 +34,7 @@ public class Lift extends SubsystemBase {
         }
     }
 
-    public static double UPPER_LIMIT = 2300, LOWER_LIMIT = 250;
+    public static double UPPER_LIMIT = 2300, LOWER_LIMIT = 50;
     public static double winchServoInit = 0.5, winchServoEngage = 0.66;
 
     public static int

@@ -134,6 +134,7 @@ public class MainTeleOp extends CommandOpMode {
                         .withTimeout(1900)
                         .interruptOn(() -> manualLiftCommand.isManualActive()));
 
+        // pivoting
         new Trigger(() -> manipulator.getRightY() < -0.4)
                 .whenActive(new InstantCommand(()-> {
                         if (!lift.atLowerLimit()){
@@ -142,13 +143,13 @@ public class MainTeleOp extends CommandOpMode {
                 }));
         new Trigger(() -> manipulator.getRightX() > 0.4)
                 .whenActive(new InstantCommand(()-> {
-                    if (!lift.atLowerLimit()){
+                    if (arm.getLeftPosition() > 0.5) {
                         pivot.right();
                     }
                 }));
         new Trigger(() -> manipulator.getRightX() < -0.4)
                 .whenActive(new InstantCommand(()-> {
-                    if (!lift.atLowerLimit()){
+                    if (arm.getLeftPosition() > 0.5) {
                         pivot.left();
                     }
                 }));
@@ -283,8 +284,10 @@ public class MainTeleOp extends CommandOpMode {
 
         // Arm commands
         if (debounce(gamepad2.right_trigger)) { // outtake
+            pivot.center();
             arm.up();
         } else if (debounce(gamepad2.left_trigger)) { //intake
+            pivot.center();
             arm.down();
         }
 

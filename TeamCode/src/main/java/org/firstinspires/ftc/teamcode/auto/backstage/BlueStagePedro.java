@@ -7,7 +7,9 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
@@ -15,7 +17,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 import org.firstinspires.ftc.teamcode.commands.BulkCacheCommand;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.ExtendoArm;
@@ -28,9 +29,10 @@ import org.firstinspires.ftc.teamcode.vision.TeamPropDetector;
 import org.firstinspires.ftc.teamcode.commands.FollowPath;
 
 // Complete! :) [who needs I&R anyways?]
+@Disabled
 @Autonomous (name="BLUE BS PEDRO")
 public class BlueStagePedro extends CommandOpMode {
-    private SampleMecanumDrive drive;
+    private Follower pfollower;
     private TrajectorySequence ONE_GLOBAL;
 
     private TrajectorySequence THREE_PIXEL_ON_BACKDROP;
@@ -53,11 +55,11 @@ public class BlueStagePedro extends CommandOpMode {
     // Path gen - https://www.desmos.com/calculator/3so1zx0hcd
     @Override
     public void initialize(){
+        pfollower = new Follower(hardwareMap);
         detector = new TeamPropDetector(hardwareMap, true, Team.BLUE);
         schedule(new BulkCacheCommand(hardwareMap));
 
         intake = new Intake(hardwareMap);
-        drive = new SampleMecanumDrive(hardwareMap);
 
         lift = new Lift(hardwareMap);
         claw = new Claw(hardwareMap);
@@ -66,20 +68,20 @@ public class BlueStagePedro extends CommandOpMode {
 
         lift.initialInitHang();
 
-        drive.setPoseEstimate(startPose);
+        pfollower.setStartingPose(startPose);
 
 
-        middleSpikeMark = drive.pfollower.pathBuilder()
+        middleSpikeMark = pfollower.pathBuilder()
                 .addPath(new Path(new BezierLine(new Point(startingPose), new Point(11.5, 35.5, Point.CARTESIAN))))
                 .setConstantHeadingInterpolation(startingPose.getHeading())
                 .build();
 
-        middleBackboardTraj = drive.pfollower.pathBuilder()
+        middleBackboardTraj = pfollower.pathBuilder()
                 .addPath(new Path(new BezierLine(middleSpikeMark.getPath(0).getLastControlPoint(), new Point(52, 35, Point.CARTESIAN))))
                 .setLinearHeadingInterpolation(startingPose.getHeading(), Math.PI*0.8)
                 .build();
 
-        middleStackTraj = drive.pfollower.pathBuilder()
+        middleStackTraj = pfollower.pathBuilder()
                 .addPath(new BezierCurve(
                         middleBackboardTraj.getPath(0).getLastControlPoint(),
                         new Point(30, 10.5, Point.CARTESIAN)
@@ -93,7 +95,7 @@ public class BlueStagePedro extends CommandOpMode {
                 .setConstantHeadingInterpolation(Math.PI)
                 .build();
 
-        middleBackboardStackTraj = drive.pfollower.pathBuilder()
+        middleBackboardStackTraj = pfollower.pathBuilder()
                 .addPath(new BezierCurve(
                         new Point(-40, 10.5, Point.CARTESIAN),
                         new Point(37, 10.5, Point.CARTESIAN),
@@ -111,7 +113,7 @@ public class BlueStagePedro extends CommandOpMode {
 //                    robot.m_lift.setRelativePosition(600);
 //                })
                 .build();
-        middleStack2Traj = drive.pfollower.pathBuilder()
+        middleStack2Traj = pfollower.pathBuilder()
                 .addPath(new BezierCurve(
                         middleBackboardTraj.getPath(0).getLastControlPoint(),
                         new Point(30, 10.5, Point.CARTESIAN)
@@ -125,7 +127,7 @@ public class BlueStagePedro extends CommandOpMode {
                 .setConstantHeadingInterpolation(Math.PI)
                 .build();
 
-        middleBackboardStack2Traj = drive.pfollower.pathBuilder()
+        middleBackboardStack2Traj = pfollower.pathBuilder()
                 .addPath(new BezierCurve(
                         new Point(-40, 10.5, Point.CARTESIAN),
                         new Point(37, 10.5, Point.CARTESIAN),
@@ -143,7 +145,7 @@ public class BlueStagePedro extends CommandOpMode {
 //                    robot.m_lift.setRelativePosition(900);
 //                })
                 .build();
-        middleStack3Traj = drive.pfollower.pathBuilder()
+        middleStack3Traj = pfollower.pathBuilder()
                 .addPath(new BezierCurve(
                         middleBackboardTraj.getPath(0).getLastControlPoint(),
                         new Point(30, 10.5, Point.CARTESIAN)
@@ -161,7 +163,7 @@ public class BlueStagePedro extends CommandOpMode {
 //                })
                 .build();
 
-        middleBackboardStack3Traj = drive.pfollower.pathBuilder()
+        middleBackboardStack3Traj = pfollower.pathBuilder()
                 .addPath(new BezierCurve(
                         new Point(-40, 10.5, Point.CARTESIAN),
                         new Point(37, 10.5, Point.CARTESIAN),
@@ -179,7 +181,7 @@ public class BlueStagePedro extends CommandOpMode {
 //                    robot.m_lift.setRelativePosition(900);
 //                })
                 .build();
-        middleEndTraj = drive.pfollower.pathBuilder()
+        middleEndTraj = pfollower.pathBuilder()
                 .addPath(new Path(new BezierLine(middleBackboardStackTraj.getPath(0).getLastControlPoint(), new Point(47, 35, Point.CARTESIAN))))
                 .setConstantHeadingInterpolation(Math.PI)
                 .build();
@@ -238,51 +240,51 @@ public class BlueStagePedro extends CommandOpMode {
 //                .splineToLinearHeading(Pose2dMapped(48.31, -36.47, Math.toRadians(0.00)), MathtoRadians(0.00))
 //                .lineTo(Vector2dMapped(52.22, -36.47))
 //                .build();
-
-        // Stack
-        TrajectorySequence FOUR_TO_LIGHTSPEED_BRIDGE_POSITION = drive.trajectorySequenceBuilder(THREE_PIXEL_ON_BACKDROP.end())
-                .lineTo(Vector2dMapped(33.24, 12.25))
-                .lineTo(Vector2dMapped(-52.22, 12.98))
-                .build();
-
-        // Back 2 The Backboard
-        TrajectorySequence FIVE_INTAKE_PIXELS_STACK = drive.trajectorySequenceBuilder(FOUR_TO_LIGHTSPEED_BRIDGE_POSITION.end())
-                .lineTo(Vector2dMapped(-54.29, 12.98))
-                .build();
-
-        TrajectorySequence SIX_LIGHTSPEED_BRIDGE_BACK = drive.trajectorySequenceBuilder(FIVE_INTAKE_PIXELS_STACK.end())
-                .lineTo(Vector2dMapped(39.84, 12.11))
-                .build();
-
-        TrajectorySequence SEVEN_PIXEL_ON_BACKBOARD = drive.trajectorySequenceBuilder(SIX_LIGHTSPEED_BRIDGE_BACK.end())
-                .lineTo(Vector2dMapped(42.80, 31.76))
-                .lineTo(Vector2dMapped(53.85, 36.99))
-                .build();
-
-        TrajectorySequence EIGHT_PARK_END = drive.trajectorySequenceBuilder(SEVEN_PIXEL_ON_BACKBOARD.end())
-                .lineTo(Vector2dMapped(48.72, 26.24))
-                .lineTo(Vector2dMapped(51.54, 11.98))
-                .lineTo(Vector2dMapped(64.06, 12.65))
-                .build();
+//
+//        // Stack
+//        TrajectorySequence FOUR_TO_LIGHTSPEED_BRIDGE_POSITION = drive.trajectorySequenceBuilder(THREE_PIXEL_ON_BACKDROP.end())
+//                .lineTo(Vector2dMapped(33.24, 12.25))
+//                .lineTo(Vector2dMapped(-52.22, 12.98))
+//                .build();
+//
+//        // Back 2 The Backboard
+//        TrajectorySequence FIVE_INTAKE_PIXELS_STACK = drive.trajectorySequenceBuilder(FOUR_TO_LIGHTSPEED_BRIDGE_POSITION.end())
+//                .lineTo(Vector2dMapped(-54.29, 12.98))
+//                .build();
+//
+//        TrajectorySequence SIX_LIGHTSPEED_BRIDGE_BACK = drive.trajectorySequenceBuilder(FIVE_INTAKE_PIXELS_STACK.end())
+//                .lineTo(Vector2dMapped(39.84, 12.11))
+//                .build();
+//
+//        TrajectorySequence SEVEN_PIXEL_ON_BACKBOARD = drive.trajectorySequenceBuilder(SIX_LIGHTSPEED_BRIDGE_BACK.end())
+//                .lineTo(Vector2dMapped(42.80, 31.76))
+//                .lineTo(Vector2dMapped(53.85, 36.99))
+//                .build();
+//
+//        TrajectorySequence EIGHT_PARK_END = drive.trajectorySequenceBuilder(SEVEN_PIXEL_ON_BACKBOARD.end())
+//                .lineTo(Vector2dMapped(48.72, 26.24))
+//                .lineTo(Vector2dMapped(51.54, 11.98))
+//                .lineTo(Vector2dMapped(64.06, 12.65))
+//                .build();
 
         schedule(
                 new SequentialCommandGroup(
-                        new FollowPath(drive.pfollower, middleSpikeMark),
+                        new FollowPath(pfollower, middleSpikeMark),
 
-                        new FollowPath(drive.pfollower, middleBackboardTraj),
+                        new FollowPath(pfollower, middleBackboardTraj),
 
-                        new FollowPath(drive.pfollower, middleStackTraj),
+                        new FollowPath(pfollower, middleStackTraj),
 
-                        new FollowPath(drive.pfollower, middleBackboardStackTraj),
-
-
-                        new FollowPath(drive.pfollower, middleStack2Traj),
-
-                        new FollowPath(drive.pfollower, middleBackboardStack2Traj),
+                        new FollowPath(pfollower, middleBackboardStackTraj),
 
 
-                        new FollowPath(drive.pfollower, middleStack3Traj),
-                        new FollowPath(drive.pfollower, middleEndTraj)
+                        new FollowPath(pfollower, middleStack2Traj),
+
+                        new FollowPath(pfollower, middleBackboardStack2Traj),
+
+
+                        new FollowPath(pfollower, middleStack3Traj),
+                        new FollowPath(pfollower, middleEndTraj)
                 )
         );
     };

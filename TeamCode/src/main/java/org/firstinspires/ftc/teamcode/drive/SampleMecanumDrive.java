@@ -50,7 +50,6 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -72,8 +71,6 @@ public class  SampleMecanumDrive extends MecanumDrive {
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
     private TrajectoryFollower follower;
-
-    public Follower pfollower;
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
@@ -89,7 +86,6 @@ public class  SampleMecanumDrive extends MecanumDrive {
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
-        pfollower = new Follower(hardwareMap);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
