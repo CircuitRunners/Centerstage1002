@@ -8,10 +8,13 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
 
 public class ManualLiftCommand extends CommandBase {
 
     private final Lift lift;
+
+    private final Arm arm;
     private final GamepadEx manipulator;
 
     private final double up = 1.0;
@@ -20,12 +23,13 @@ public class ManualLiftCommand extends CommandBase {
     private final double slowUp = 0.57;
     private final double slowDown = -0.36;
 
-    public ManualLiftCommand(Lift lift, GamepadEx manipulator) {
+    public ManualLiftCommand(Lift lift, Arm arm, GamepadEx manipulator) {
 
 
         addRequirements(lift);
 
         this.lift = lift;
+        this.arm = arm;
         this.manipulator = manipulator;
 
     }
@@ -43,6 +47,7 @@ public class ManualLiftCommand extends CommandBase {
 
         //Check if the up button is pressed
         if (manipulator.getButton(GamepadKeys.Button.DPAD_UP) && !lift.atUpperLimit()) {
+            arm.up();
             lift.setLiftPower((slow) ? slowUp : up);
         }
 

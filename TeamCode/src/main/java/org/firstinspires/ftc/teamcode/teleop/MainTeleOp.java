@@ -104,13 +104,14 @@ public class MainTeleOp extends CommandOpMode {
         intake = new Intake(hardwareMap);
         pivot = new Pivot(hardwareMap);
 
-        manualLiftCommand = new ManualLiftCommand(lift, manipulator);
+        manualLiftCommand = new ManualLiftCommand(lift, arm, manipulator);
         manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
         intakeCommand = new IntakeCommandEx(hardwareMap, claw, intake, Intake.IntakePowers.FAST);
 
         lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 
 //        clawReader = new ToggleButtonReader(manipulator, GamepadKeys.Button.RIGHT_BUMPER);
+
 
         new Trigger(() -> manipulator.getLeftY() > 0.4)
                 .whenActive(new MoveToScoringCommandEx(lift, arm, claw, MoveToScoringCommandEx.Presets.MID, pivot)
