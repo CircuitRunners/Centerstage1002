@@ -305,11 +305,14 @@ public class MainTeleOp extends CommandOpMode {
             lift.initialInitHang();
         }
 
-        telemetry.addData("Distance", intakeCommand.distanceSensor.getDistance(DistanceUnit.CM));
+        telemetry.addData("Distance Bottom", intakeCommand.distanceSensor.getDistance(DistanceUnit.CM));
+        telemetry.addData("Distance Top", intakeCommand.distanceSensorTop.getDistance(DistanceUnit.CM));
+        telemetry.addData("Claw Status", (claw.getPosition() < 0.45) ? "Open": "Closed");
+
 
         if (intakeCommand.distanceSensorTop.getDistance(DistanceUnit.CM) < 4 && intakeCommand.distanceSensor.getDistance(DistanceUnit.CM) < 4 && claw.getPosition() < 0.45 && lift.getLiftPosition() < 50) {
-            gamepad2.rumble(200);
-            gamepad1.rumble(200);
+            gamepad2.rumble(100);
+            gamepad1.rumble(100);
         }
 
 
