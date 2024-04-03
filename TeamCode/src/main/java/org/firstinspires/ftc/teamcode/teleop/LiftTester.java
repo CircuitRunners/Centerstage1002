@@ -11,12 +11,14 @@ import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.commands.liftcommands.ManualLiftResetCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.utilities.BulkCacheCommand;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
 
 
 @TeleOp (name="Lift Tester")
 public class LiftTester extends CommandOpMode {
 //    private Drivebase drivebase;
     private Lift lift;
+    private Arm arm;
     private ManualLiftCommand manualLiftCommand;
     private ManualLiftResetCommand manualLiftResetCommand;
 
@@ -32,11 +34,12 @@ public class LiftTester extends CommandOpMode {
         GamepadEx manipulator = new GamepadEx(gamepad2);
 
         lift = new Lift(hardwareMap);
+        arm = new Arm(hardwareMap);
 
 //        drivebase = new Drivebase(hardwareMap);
 
 
-        manualLiftCommand = new ManualLiftCommand(lift, manipulator);
+        manualLiftCommand = new ManualLiftCommand(lift, arm, manipulator);
         manualLiftResetCommand = new ManualLiftResetCommand(lift, manipulator);
 
 //        lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));

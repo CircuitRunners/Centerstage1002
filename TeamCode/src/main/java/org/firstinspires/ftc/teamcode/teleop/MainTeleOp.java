@@ -307,6 +307,13 @@ public class MainTeleOp extends CommandOpMode {
 
         telemetry.addData("Distance", intakeCommand.distanceSensor.getDistance(DistanceUnit.CM));
 
+        if (intakeCommand.distanceSensorTop.getDistance(DistanceUnit.CM) < 4 && intakeCommand.distanceSensor.getDistance(DistanceUnit.CM) < 4 && claw.getPosition() < 0.45 && lift.getLiftPosition() < 50) {
+            gamepad2.rumble(200);
+            gamepad1.rumble(200);
+        }
+
+
+
         // Ensure telemetry actually works
         telemetry.update();
     }
