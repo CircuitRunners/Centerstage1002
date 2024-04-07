@@ -145,13 +145,23 @@ public class MainTeleOp extends CommandOpMode {
         new Trigger(() -> manipulator.getRightX() > 0.4)
                 .whenActive(new InstantCommand(()-> {
                     if (arm.getLeftPosition() > 0.5) {
-                        pivot.right();
+                        if (!gamepad2.right_stick_button) {
+                            pivot.right();
+                        } else {
+                            // go 180
+                            pivot.rightEx();
+                        }
                     }
                 }));
         new Trigger(() -> manipulator.getRightX() < -0.4)
                 .whenActive(new InstantCommand(()-> {
                     if (arm.getLeftPosition() > 0.5) {
-                        pivot.left();
+                        if (!gamepad2.right_stick_button) {
+                            pivot.left();
+                        } else {
+                            // go 180
+                            pivot.leftEx();
+                        }
                     }
                 }));
 
@@ -308,11 +318,12 @@ public class MainTeleOp extends CommandOpMode {
         telemetry.addData("Distance Bottom", intakeCommand.distanceSensor.getDistance(DistanceUnit.CM));
         telemetry.addData("Distance Top", intakeCommand.distanceSensorTop.getDistance(DistanceUnit.CM));
         telemetry.addData("Claw Status", (claw.getPosition() < 0.45) ? "Open": "Closed");
+        telemetry.addData("Arm Position", arm.getLeftPosition());
 
 
-        if (intakeCommand.distanceSensorTop.getDistance(DistanceUnit.CM) < 4 && intakeCommand.distanceSensor.getDistance(DistanceUnit.CM) < 4 && claw.getPosition() < 0.45 && lift.getLiftPosition() < 50) {
-            gamepad2.rumble(100);
-            gamepad1.rumble(100);
+        if (intakeCommand.distanceSensorTop.getDistance(DistanceUnit.CM) < 4 && intakeCommand.distanceSensor.getDistance(DistanceUnit.CM) < 5 && claw.getPosition() < 0.45 && arm.getLeftPosition() < 0.3) {
+            gamepad2.rumble(200);
+            gamepad1.rumble(200);
         }
 
 

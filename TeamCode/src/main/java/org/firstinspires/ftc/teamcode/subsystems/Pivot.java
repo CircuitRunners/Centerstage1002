@@ -14,9 +14,12 @@ public class Pivot extends SubsystemBase {
 
     public enum PivotPositions {
         // (left, right)
+        LEFTEX(0.28),
+        RIGHTEX(0.72),
         LEFT(0.32),
         CENTER(0.49),
         RIGHT(0.68);
+
 
         private final double position;
 
@@ -91,6 +94,7 @@ public class Pivot extends SubsystemBase {
     public void left(){
         setPosition(PivotPositions.LEFT);
     }
+    public void leftEx() {setPosition(PivotPositions.LEFTEX);}
 
     public void center(){
         setPosition(PivotPositions.CENTER);
@@ -98,6 +102,10 @@ public class Pivot extends SubsystemBase {
 
     public void right(){
         setPosition(PivotPositions.RIGHT);
+    }
+
+    public void rightEx(){
+        setPosition(PivotPositions.RIGHTEX);
     }
 
     // Bypasses the profile
