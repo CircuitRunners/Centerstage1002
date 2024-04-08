@@ -16,6 +16,7 @@ public class Pivot extends SubsystemBase {
         // (left, right)
         LEFTEX(0.28),
         RIGHTEX(0.72),
+
         LEFT(0.32),
         CENTER(0.49),
         RIGHT(0.68);

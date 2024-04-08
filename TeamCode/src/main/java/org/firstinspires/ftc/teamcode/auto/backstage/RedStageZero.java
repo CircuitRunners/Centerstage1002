@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.ExtendoArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utilities.PropLocation;
 import org.firstinspires.ftc.teamcode.utilities.Team;
@@ -45,6 +46,7 @@ public class RedStageZero extends CommandOpMode {
     private Arm arm;
     private Claw claw;
     private ExtendoArm extendo;
+    private Pivot pivot;
 
     private Intake intake;
 
@@ -419,6 +421,7 @@ public class RedStageZero extends CommandOpMode {
         claw = new Claw(hardwareMap);
         arm = new Arm(hardwareMap);
         extendo = new ExtendoArm(hardwareMap);
+        pivot = new Pivot(hardwareMap);
 
         lift.initialInitHang();
 
