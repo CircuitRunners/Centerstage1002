@@ -22,8 +22,8 @@ public class FollowerConstants {
 
     // This section is for setting the actual drive vector for the front left wheel, if the robot
     // is facing a heading of 0 radians with the wheel centered at (0,0)
-    private static double xMovement = 81.34056;
-    private static double yMovement = 65.43028;
+    private static double xMovement = 63.15970990401453;
+    private static double yMovement = 47.89822006529821;
     private static double[] convertToPolar = Point.cartesianToPolar(xMovement, -yMovement);
     public static Vector frontLeftVector = MathFunctions.normalizeVector(new Vector(convertToPolar[0],convertToPolar[1]));
 
@@ -42,7 +42,7 @@ public class FollowerConstants {
 
     // Small heading error PIDF coefficients
     public static CustomPIDFCoefficients smallHeadingPIDFCoefficients = new CustomPIDFCoefficients(
-            5,
+            4,
             0,
             0.08,
             0);
@@ -72,7 +72,7 @@ public class FollowerConstants {
 
     // Small translational PIDF coefficients
     public static CustomPIDFCoefficients smallTranslationalPIDFCoefficients = new CustomPIDFCoefficients(
-            0.3,
+            0.2,
             0,
             0.01,
             0);
@@ -111,7 +111,7 @@ public class FollowerConstants {
     public static double smallDrivePIDFFeedForward = 0.01;
 
     // Mass of robot in kilograms
-    public static double mass = 10.65942;
+    public static double mass = 14.28816; //<-- scale subtractive, 14; <-- "plus 0.5kg for nameplates" 13.83457; <-- 30.5lbs to kgs
 
     // Centripetal force to power scaling
     // todo: there are currently issues with the centripetal force correction, so just don't use it for now
@@ -121,12 +121,12 @@ public class FollowerConstants {
     // Acceleration of the drivetrain when power is cut in inches/second^2 (should be negative)
     // if not negative, then the robot thinks that its going to go faster under 0 power
     // this is for curves
-    public static double forwardZeroPowerAcceleration = -34.62719;
+    public static double forwardZeroPowerAcceleration = -42.35628361671415;
 
     // Acceleration of the drivetrain when power is cut in inches/second^2 (should be negative)
     // if not negative, then the robot thinks that its going to go faster under 0 power
     // this is for curves
-    public static double lateralZeroPowerAcceleration = -78.15554;
+    public static double lateralZeroPowerAcceleration = -88.35964024118418;
 
     // A multiplier for the zero power acceleration to change the speed the robot decelerates at
     // the end of paths.
