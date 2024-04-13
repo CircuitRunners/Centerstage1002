@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.MathFunctions;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Vector;
 import org.firstinspires.ftc.teamcode.controllers.auto.roadrunner.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.MathFunctions;
 
 import java.util.ArrayList;
 import java.util.List;

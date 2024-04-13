@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.controllers.commands.lift.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.controllers.commands.lift.ManualLiftResetCommand;
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift;
 import org.firstinspires.ftc.teamcode.controllers.common.utilities.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Arm;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift;
 
 
 @TeleOp (name="Lift Tester")

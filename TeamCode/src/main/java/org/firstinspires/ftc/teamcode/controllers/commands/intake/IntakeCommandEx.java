@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.controllers.commands.intake;
 
+import static org.firstinspires.ftc.teamcode.controllers.Constants.IntakeCommandConstants.DETECTION_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeStackCommand.FINISH_LOWSPEED_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeStackCommand.OUTTAKE_TIME_ROBOT;
+import static org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeStackCommand.REQUIRED_TIME_MS;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.outoftheboxrobotics.photoncore.Photon;
@@ -10,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Claw;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Intake;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Sensors;
 
 @Photon
 @Config
@@ -17,31 +23,21 @@ public class IntakeCommandEx extends CommandBase {
     private ElapsedTime runtime;
     private ElapsedTime intakeTimer, waitTimer; // Timer for the intake process
     private Intake intake;
-    public DistanceSensor distanceSensor;
-    public DistanceSensor distanceSensorTop;
+    public Sensors sensors;
     private Claw claw;
     private int pixelsDetectedState = 0;
     private Intake.IntakePowers power;
-    public static double DETECTION_THRESHOLD = 4.0; // Threshold for the distance sensor
-
-    // consider reducing if need faster cycle times
-    public static double REQUIRED_TIME_MS = 200; // Required time in milliseconds,
-
-    public static double FINISH_LOWSPEED_THRESHOLD = 200;
-    public static double OUTTAKE_TIME_ROBOT = 1350;
-    public static double MOTOR_CURRENT_THRESHOLD = 9;
 
     public IntakeCommandEx(HardwareMap hardwareMap, Claw claw, Intake intake, Intake.IntakePowers power) {
         this.intake = intake;
         this.claw = claw;
-        this.distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
-        this.distanceSensorTop = hardwareMap.get(DistanceSensor.class, "topDistanceSensor");
+        this.sensors = new Sensors(hardwareMap);
         this.runtime = new ElapsedTime();
         this.intakeTimer = new ElapsedTime();
         this.waitTimer = new ElapsedTime();
         this.power = power;
 
-        addRequirements(claw, intake); // If using Command-based structure, declare subsystem dependencies.
+        addRequirements(claw, intake);
     }
 
     @Override
@@ -58,7 +54,7 @@ public class IntakeCommandEx extends CommandBase {
         switch (pixelsDetectedState) {
             case 0: // Pixel not detected
                 intake.setPower(power);
-                if (distanceSensor.getDistance(DistanceUnit.CM) < DETECTION_THRESHOLD && distanceSensorTop.getDistance(DistanceUnit.CM) < DETECTION_THRESHOLD) {
+                if (sensors.getBottomDistance() < DETECTION_THRESHOLD && sensors.getTopDistance() < DETECTION_THRESHOLD) {
                     intakeTimer.reset();
                     pixelsDetectedState = 1;
                 }
@@ -67,7 +63,7 @@ public class IntakeCommandEx extends CommandBase {
                 if (intakeTimer.milliseconds() < REQUIRED_TIME_MS) {
 
                     intake.setPower(power);
-                    if (distanceSensor.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD && distanceSensorTop.getDistance(DistanceUnit.CM) > DETECTION_THRESHOLD) {
+                    if (sensors.getBottomDistance() > DETECTION_THRESHOLD && sensors.getTopDistance() > DETECTION_THRESHOLD) {
                         pixelsDetectedState = 0; // Reset if the distance goes above the threshold
                     }
                 } else {

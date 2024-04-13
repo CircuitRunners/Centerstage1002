@@ -18,35 +18,31 @@ import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeCommandEx;
+import org.firstinspires.ftc.teamcode.controllers.commands.lift.ManualLiftCommand;
+import org.firstinspires.ftc.teamcode.controllers.commands.lift.ManualLiftResetCommand;
 import org.firstinspires.ftc.teamcode.controllers.commands.presets.MoveToScoringCommandEx;
+import org.firstinspires.ftc.teamcode.controllers.commands.presets.RetractOuttakeCommand;
+import org.firstinspires.ftc.teamcode.controllers.common.utilities.BulkCacheCommand;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.AirplaneLauncher;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Arm;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Claw;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Drivebase;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.ExtendoArm;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Intake;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Pivot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.concurrent.TimeUnit;
-
-
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeCommandEx;
-import org.firstinspires.ftc.teamcode.controllers.commands.lift.ManualLiftCommand;
-import org.firstinspires.ftc.teamcode.controllers.commands.lift.ManualLiftResetCommand;
-import org.firstinspires.ftc.teamcode.controllers.commands.presets.RetractOuttakeCommand;
-import org.firstinspires.ftc.teamcode.controllers.subsytems.AirplaneLauncher;
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Arm;
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Drivebase;
-import org.firstinspires.ftc.teamcode.controllers.subsytems.ExtendoArm;
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Intake;
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Claw;
-import org.firstinspires.ftc.teamcode.controllers.common.utilities.BulkCacheCommand;
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift;
 
 @TeleOp (name="MainTeleOp")
 public class MainTeleOp extends CommandOpMode {
@@ -72,7 +68,6 @@ public class MainTeleOp extends CommandOpMode {
 
     private ManualLiftCommand manualLiftCommand;
     private IntakeCommandEx intakeCommand;
-    private DistanceSensor distanceSensor;
     private ManualLiftResetCommand manualLiftResetCommand;
 
     private ToggleButtonReader clawReader;
@@ -314,16 +309,16 @@ public class MainTeleOp extends CommandOpMode {
             lift.initialInitHang();
         }
 
-        telemetry.addData("Distance Bottom", intakeCommand.distanceSensor.getDistance(DistanceUnit.CM));
-        telemetry.addData("Distance Top", intakeCommand.distanceSensorTop.getDistance(DistanceUnit.CM));
+        telemetry.addData("Distance Bottom", intakeCommand.sensors.getBottomDistance());
+        telemetry.addData("Distance Top", intakeCommand.sensors.getTopDistance());
         telemetry.addData("Claw Status", (claw.getPosition() < 0.45) ? "Open": "Closed");
         telemetry.addData("Arm Position", arm.getLeftPosition());
         telemetry.addData("Pivot Position", pivot.getPosition());
 
 
         if (
-                intakeCommand.distanceSensorTop.getDistance(DistanceUnit.CM) < 5 && intakeCommand.distanceSensorTop.getDistance(DistanceUnit.CM) > 1
-                && intakeCommand.distanceSensor.getDistance(DistanceUnit.CM) < 5 && intakeCommand.distanceSensor.getDistance(DistanceUnit.CM) > 1
+                intakeCommand.sensors.getTopDistance() < 5 && intakeCommand.sensors.getTopDistance() > 1
+                && intakeCommand.sensors.getBottomDistance() < 5 && intakeCommand.sensors.getBottomDistance() > 1
                 && claw.getPosition() < 0.45
                 && arm.getLeftPosition() < 0.3) {
             gamepad2.rumble(200);

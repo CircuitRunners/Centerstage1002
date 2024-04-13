@@ -6,8 +6,8 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Arm;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift;
 
 public class ManualLiftCommand extends CommandBase {
 

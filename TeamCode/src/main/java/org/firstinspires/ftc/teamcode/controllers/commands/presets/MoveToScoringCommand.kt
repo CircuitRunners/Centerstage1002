@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.controllers.commands.presets
 
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Arm
-import com.arcrobotics.ftclib.command.ParallelCommandGroup
 import com.arcrobotics.ftclib.command.InstantCommand
+import com.arcrobotics.ftclib.command.ParallelCommandGroup
 import com.arcrobotics.ftclib.command.SequentialCommandGroup
 import com.arcrobotics.ftclib.command.WaitCommand
 import org.firstinspires.ftc.teamcode.controllers.commands.lift.ProfiledLiftCommand
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift.LiftPositions
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Arm
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Claw
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift.LiftPositions
 
 class MoveToScoringCommand(lift: Lift, arm: Arm, claw: Claw, preset: Presets) : ParallelCommandGroup() {
 

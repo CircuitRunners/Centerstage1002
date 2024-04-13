@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.PathChain;
+import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Point;
 
 /**
  * This is the Circle autonomous OpMode. It runs the robot in a PathChain that's actually not quite

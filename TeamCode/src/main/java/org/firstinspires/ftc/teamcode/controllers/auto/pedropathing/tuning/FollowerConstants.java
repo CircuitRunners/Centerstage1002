@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.tuning;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Vector;
-import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.util.CustomPIDFCoefficients;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.MathFunctions;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Point;
+import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Vector;
+import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.util.CustomPIDFCoefficients;
 
 /**
  * This is the FollowerConstants class. It holds many constants and parameters for various parts of

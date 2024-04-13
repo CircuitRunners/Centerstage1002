@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.controllers.vision;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
