@@ -9,16 +9,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.controllers.auto.pedrocommands.FollowPath;
-import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.PathChain;
-import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeCommandEx;
 import org.firstinspires.ftc.teamcode.controllers.commands.lift.ManualLiftCommand;
 import org.firstinspires.ftc.teamcode.controllers.commands.lift.ManualLiftResetCommand;
@@ -29,8 +23,8 @@ import org.firstinspires.ftc.teamcode.controllers.subsytems.Intake;
 import org.firstinspires.ftc.teamcode.procedures.TeleOpBase;
 
 @Config
-@TeleOp (name="Main TeleOp")
-public class MainTeleOp extends TeleOpBase {
+@TeleOp (name="Robot Centric TeleOp")
+public class RobotCentricArc extends TeleOpBase {
     public ManualLiftCommand manualLiftCommand;
     public IntakeCommandEx intakeCommand;
     public ManualLiftResetCommand manualLiftResetCommand;
@@ -39,12 +33,7 @@ public class MainTeleOp extends TeleOpBase {
 
     @Override
     public void onInitialize(){
-        robot.drive.setStartingPose(startPose);
-        schedule(
-                new SequentialCommandGroup(
-                        new FollowPath(robot.drive, directPath(startPose, new Pose2d(startPose.getX()+0.000001, startPose.getY()+0.000001, startPose.getHeading())))
-                )
-        );
+        drivebase.setRobotCentric(true);
 
         manualLiftCommand = new ManualLiftCommand(robot.lift, robot.arm, manipulator);
         manualLiftResetCommand = new ManualLiftResetCommand(robot.lift, manipulator);
@@ -221,12 +210,5 @@ public class MainTeleOp extends TeleOpBase {
 
         // Ensure telemetry actually works
         telemetry.update();
-    }
-
-    public PathChain directPath(Pose2d startPath, Pose2d endPath) {
-        return robot.drive.pathBuilder()
-                .addPath(new Path(new BezierCurve(new Point(startPath), new Point(endPath))))
-                .setLinearHeadingInterpolation(startPath.getHeading(), endPath.getHeading())
-                .build();
     }
 }

@@ -43,7 +43,7 @@ public class Lift extends SubsystemBase {
 
     DcMotorEx leftMotor;
     DcMotorEx rightMotor;
-    DcMotorEx winchMotor;
+    public DcMotorEx winchMotor;
     ServoImplEx winchServo;
 
     private VoltageSensor voltageSensor;

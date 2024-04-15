@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.controllers.common.utilities;
 
-public enum Team {
-    RED, BLUE
+public enum Side {
+    BACKSTAGE, AUDIENCE
 }

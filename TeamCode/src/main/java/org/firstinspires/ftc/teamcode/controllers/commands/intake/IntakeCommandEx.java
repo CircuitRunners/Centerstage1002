@@ -1,18 +1,16 @@
 package org.firstinspires.ftc.teamcode.controllers.commands.intake;
 
 import static org.firstinspires.ftc.teamcode.controllers.Constants.IntakeCommandConstants.DETECTION_THRESHOLD;
-import static org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeStackCommand.FINISH_LOWSPEED_THRESHOLD;
-import static org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeStackCommand.OUTTAKE_TIME_ROBOT;
-import static org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeStackCommand.REQUIRED_TIME_MS;
+import static org.firstinspires.ftc.teamcode.controllers.Constants.IntakeCommandConstants.FINISH_LOWSPEED_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.controllers.Constants.IntakeCommandConstants.OUTTAKE_TIME_ROBOT;
+import static org.firstinspires.ftc.teamcode.controllers.Constants.IntakeCommandConstants.REQUIRED_TIME_MS;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.outoftheboxrobotics.photoncore.Photon;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Claw;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Intake;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Sensors;

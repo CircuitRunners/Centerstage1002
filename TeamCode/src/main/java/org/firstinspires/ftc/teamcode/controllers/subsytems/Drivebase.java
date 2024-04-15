@@ -29,38 +29,43 @@ public class Drivebase extends SubsystemBase {
     boolean defense = false;
     public static double defensePeriod = 1000, scalingFactor = 0.7;
 
+    private boolean isRobotCentric = false;
+
     // Constructor with IMU parameters
     public Drivebase(HardwareMap hardwareMap) {
-        // Drivetrain motors setup
+//        // Drivetrain motors setup
+//        frontLeft = hardwareMap.get(DcMotorEx.class, "backRight");
+//        backLeft = hardwareMap.get(DcMotorEx.class, "frontRight");
+//        backRight = hardwareMap.get(DcMotorEx.class, "frontLeft");
+//        frontRight = hardwareMap.get(DcMotorEx.class, "backLeft");
+//
+//        // We love the IMU..!
+//        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+//        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
 
+        // Set motor directions
+        // Reverse the right side motors
+        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+
         allDrivebaseMotors = new DcMotorEx[]{frontLeft, backLeft, frontRight, backRight};
 
         timer = new ElapsedTime();
 
-        // We love the IMU..!
-
-        // Begin doing things
-        setMotorBehavior(allDrivebaseMotors);
-        initializeIMU(hardwareMap); // Initialize IMU with the given parameters
-
-
-        //TODO remove
-//        initializeLocalizer(hardwareMap);
-    }
-
-    private void setMotorBehavior(DcMotorEx[] motors) {
-        // Set motor directions and zero power behavior
-        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
-
         // Have all motors brake
-        for (DcMotorEx motor : motors) {
+        for (DcMotorEx motor : allDrivebaseMotors) {
             motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         }
+
+        initializeIMU(hardwareMap); // Initialize IMU with the given parameters
+    }
+
+    public void setRobotCentric (boolean shouldBeRobotCentricOrNot) {
+        isRobotCentric = shouldBeRobotCentricOrNot;
     }
 
     public void initializeIMU(HardwareMap hardwareMap) {
@@ -182,8 +187,11 @@ public class Drivebase extends SubsystemBase {
     public double getCorrectedYaw() {
         double imuDeg = imu.getYaw();
         double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
-//        double imuRad = imuDeg;
+
         double correctedRadReset = imuRad - imuPrevPositionRad;
+        if (isRobotCentric) {
+            return (-1.0) * imu.getYaw();
+        }
         return (-1.0) * correctedRadReset; // * (14.0/180.0);
     }
 

@@ -1,68 +1,73 @@
 package org.firstinspires.ftc.teamcode.procedures;
 
+import static org.firstinspires.ftc.teamcode.controllers.Constants.inCompetition;
+
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.controllers.VisionRobotCore;
 import org.firstinspires.ftc.teamcode.controllers.common.utilities.PropLocation;
+import org.firstinspires.ftc.teamcode.controllers.common.utilities.Side;
 import org.firstinspires.ftc.teamcode.controllers.common.utilities.Team;
 
 @Config
 public abstract class AutoBase extends CommandOpMode {
     public VisionRobotCore robot;
 
-    PropLocation locationID = PropLocation.MIDDLE; // set to right by default
-    Pose2d startPose = new Pose2d(0, 0,  Math.toRadians(90.00));
+    public Team team;
+    public Side side;
 
-    Team team = Team.RED;
+    public PropLocation locationID;
+
+    private SequentialCommandGroup mainCommandGroup;
 
     @Override
     public void initialize(){
+        runOnStart();
+
         robot = new VisionRobotCore(hardwareMap, team);
 
-        robot.drive.setPoseEstimate(startPose);
         robot.lift.initialInitHang();
 
-        build();
-
-//        robot.detector.startStream();
-        while(opModeInInit()){
-//            locationID = robot.detector.update();
-            telemetry.addData("Status", "In Init. Loading...");
+        robot.detector.startStream();
+        while (opModeInInit()) {
+            locationID = robot.detector.update();
+            telemetry.addData("Status", "In Init.");
             telemetry.addData("Prop", locationID.getLocation());
             telemetry.update();
 
 //            sleep(30);
         }
-//        robot.detector.stopStream();
+        robot.detector.stopStream();
+        inRuntime();
+    }
 
-        telemetry.addData("Status", "Loaded!");
+    public void inRuntime () {
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        mainCommandGroup = build(team, side, locationID);
+
+        telemetry.addData("Loaded in", timer.milliseconds());
         telemetry.update();
 
-//        runAuto(locationID);
-        runAuto();
+        schedule(mainCommandGroup);
     }
 
-    public void setStartPose(Pose2d startPose) {
-        this.startPose = startPose;
+    @Override
+    public void run() {
+        super.run();
+
+        if (!inCompetition) {
+            telemetry.addData("Save Money", robot.drive.getPose());
+        }
+
+        robot.drive.update();
+        telemetry.update();
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
-    }
+    public abstract SequentialCommandGroup build (Team team, Side side, PropLocation locations);
 
-//    @Override
-//    public void run() {
-//        CommandScheduler.getInstance().run();
-//
-//        telemetry.update();
-//    }
-
-    public abstract void build();
-
-//    public abstract void runAuto(PropLocation location);
-    public abstract void runAuto();
+    public abstract void runOnStart ();
 }

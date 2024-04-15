@@ -42,7 +42,7 @@ class MoveToScoringCommandEx(lift: Lift, arm: Arm, claw: Claw, preset: Presets, 
                     Presets.HIGH ->
                         ProfiledLiftCommand(lift, LiftPositions.HIGH.position, true)
                     Presets.BOTTOM ->
-                        ProfiledLiftCommand(lift, 300, true);
+                        ProfiledLiftCommand(lift, 200, true);
                 }
             )
         )
