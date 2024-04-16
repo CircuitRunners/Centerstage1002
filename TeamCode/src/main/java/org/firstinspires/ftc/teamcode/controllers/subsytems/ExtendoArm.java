@@ -15,11 +15,11 @@ public class ExtendoArm extends SubsystemBase {
         TRANSPORT(0.67,0.34),
         TRANSPORT_ALPHA(0.649,0.359),
         UP(0.76,0.29),
-        PIXEL1(0,0),
-        PIXEL2(0.67,0.34),
-        PIXEL3(0.67,0.36),
-        PIXEL4(0.64,0.37),
-        PIXEL5(0.63,0.40);
+        PIXEL1(0.35,0.56),
+        PIXEL2(0.35,0.58),
+        PIXEL3(0.35,0.60),
+        PIXEL4(0.35,0.63),
+        PIXEL5(0.35,0.66);
 
         private final double position_right;
         private final double position_left;

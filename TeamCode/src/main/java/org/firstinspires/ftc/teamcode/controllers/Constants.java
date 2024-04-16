@@ -50,49 +50,31 @@ public class Constants {
             public static Pose2d parkPosition = new Pose2d(62.75, -14, Math.toRadians(-90));
 
         }
-
+        @Config
         public static class RED_AUDIENCE {
             public static Pose2d r_a_startPos = new Pose2d(-39.3, -63, Math.toRadians(90.00));
             public static TriPose pixelPositions = new TriPose(
-                    new Pose2d(-45.645,-35.229, Math.toRadians(90)), // Left
+                    new Pose2d(-45.645,-34.758, Math.toRadians(90)), // Left // y is guessed
                     new Pose2d(-35.904,-34.936, Math.toRadians(90)), // Middle
                     new Pose2d(-29.456,-35.005, Math.toRadians(60))  // Right
             );
-            public static Pose2d stackPositions = new Pose2d(-54.876,-36.926, Math.toRadians(0));
+            public static Pose2d stackPositions = new Pose2d(-56.197,-35.176, Math.toRadians(0));
             public static Pose2d beforeGoingThroughBridge = new Pose2d(-38.318,-59.914, Math.toRadians(0));
             public static Pose2d afterGoingThroughBridge = new Pose2d(32.758,-59.914, Math.toRadians(0));
+            public static TriPose preBoard = new TriPose(
+                    new Pose2d(45,-34, Math.toRadians(0)), // Left
+                    new Pose2d(44.875,-40.960, Math.toRadians(0)), // Middle
+                    new Pose2d(44.875,-46.00, Math.toRadians(0))  // Right
+            );
             public static TriPose toBoard = new TriPose(
-                    new Pose2d(48.875,-33.3, Math.toRadians(0)), // Left
+                    new Pose2d(49,-34, Math.toRadians(0)), // Left
                     new Pose2d(48.875,-40.960, Math.toRadians(0)), // Middle
                     new Pose2d(48.875,-46.00, Math.toRadians(0))  // Right
             );
+            // iteration 1
             public static Pose2d toPark = new Pose2d(45,-61, Math.toRadians(270));
-        }
-
-        public static class BLUE_STAGE {
-            public static TriPose pixelPositions = new TriPose(
-                    new Pose2d(0,0, Math.toRadians(0)), // Left
-                    new Pose2d(0,0, Math.toRadians(0)), // Middle
-                    new Pose2d(0,0, Math.toRadians(0))  // Right
-            );
-            public static TriPose boardPositions = new TriPose(
-                    new Pose2d(0,0, Math.toRadians(0)), // Left
-                    new Pose2d(0,0, Math.toRadians(0)), // Middle
-                    new Pose2d(0,0, Math.toRadians(0))  // Right
-            );
-        }
-
-        public static class BLUE_AUDIENCE {
-            public static TriPose pixelPositions = new TriPose(
-                    new Pose2d(0,0, Math.toRadians(0)), // Left
-                    new Pose2d(0,0, Math.toRadians(0)), // Middle
-                    new Pose2d(0,0, Math.toRadians(0))  // Right
-            );
-            public static TriPose boardPositions = new TriPose(
-                    new Pose2d(0,0, Math.toRadians(0)), // Left
-                    new Pose2d(0,0, Math.toRadians(0)), // Middle
-                    new Pose2d(0,0, Math.toRadians(0))  // Right
-            );
+            // iteration 2
+//            public static Pose2d toPark = new Pose2d(45,-61, Math.toRadians(270));
         }
     }
 }

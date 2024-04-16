@@ -15,6 +15,7 @@ public class Arm extends SubsystemBase {
 
     public enum ArmPositions {
         // (left, right)
+        MEGADOWN(.1,.1),
         DOWN(.17, .17), // right 0.22 before
         SCORING(.73, .73); // 0.9 0.333
 
@@ -147,8 +148,8 @@ public class Arm extends SubsystemBase {
 
     // Bypasses the profile
     public void forceDown(){
-        leftServo.setPosition(ArmPositions.DOWN.position_left);
-        rightServo.setPosition(ArmPositions.DOWN.position_right);
+        leftServo.setPosition(ArmPositions.MEGADOWN.position_left);
+        rightServo.setPosition(ArmPositions.MEGADOWN.position_right);
     }
 
     public void toPosition(double level){

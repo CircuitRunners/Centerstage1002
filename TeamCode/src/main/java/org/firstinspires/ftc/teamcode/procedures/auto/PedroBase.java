@@ -54,7 +54,7 @@ public class PedroBase extends CommandOpMode {
         schedule(new BulkCacheCommand(hardwareMap));
 //        detector = new TeamPropDetector(hardwareMap, true, Team.RED);
         daddy = new RobotCore(hardwareMap);
-        drive = daddy.drive;
+        drive = new Follower(hardwareMap);
 
         drive.setStartingPose(startPose);
 

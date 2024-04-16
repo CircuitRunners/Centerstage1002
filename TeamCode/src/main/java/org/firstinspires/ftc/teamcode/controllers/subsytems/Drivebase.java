@@ -1,15 +1,28 @@
 package org.firstinspires.ftc.teamcode.controllers.subsytems;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 //import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -17,9 +30,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class Drivebase extends SubsystemBase {
     public static double STRAFE_CONSTANT = 1.06;
 
-    private DcMotorEx frontLeft, backLeft, frontRight, backRight;
+    public DcMotorEx frontLeft, backLeft, frontRight, backRight;
     private DcMotorEx[] allDrivebaseMotors;
     private AHRS imu;
+    private boolean driveRobotCentric = false;
 //    private SampleMecanumDrive drive;
 
     private double imuPrevPositionRad = 0.0;
@@ -29,43 +43,46 @@ public class Drivebase extends SubsystemBase {
     boolean defense = false;
     public static double defensePeriod = 1000, scalingFactor = 0.7;
 
-    private boolean isRobotCentric = false;
-
     // Constructor with IMU parameters
     public Drivebase(HardwareMap hardwareMap) {
-//        // Drivetrain motors setup
-//        frontLeft = hardwareMap.get(DcMotorEx.class, "backRight");
-//        backLeft = hardwareMap.get(DcMotorEx.class, "frontRight");
-//        backRight = hardwareMap.get(DcMotorEx.class, "frontLeft");
-//        frontRight = hardwareMap.get(DcMotorEx.class, "backLeft");
-//
-//        // We love the IMU..!
-//        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
-//        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        // Drivetrain motors setup
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
 
-        // Set motor directions
-        // Reverse the right side motors
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
-
         allDrivebaseMotors = new DcMotorEx[]{frontLeft, backLeft, frontRight, backRight};
 
         timer = new ElapsedTime();
 
-        // Have all motors brake
-        for (DcMotorEx motor : allDrivebaseMotors) {
-            motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        }
+        // We love the IMU..!
 
+        // Begin doing things
+        setMotorBehavior(allDrivebaseMotors);
         initializeIMU(hardwareMap); // Initialize IMU with the given parameters
+
+
+        //TODO remove
+//        initializeLocalizer(hardwareMap);
     }
 
-    public void setRobotCentric (boolean shouldBeRobotCentricOrNot) {
-        isRobotCentric = shouldBeRobotCentricOrNot;
+    private void setMotorBehavior(DcMotorEx[] motors) {
+        // Set motor directions and zero power behavior
+//        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+//        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+//
+//        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+//        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+
+        // Have all motors brake
+        for (DcMotorEx motor : motors) {
+            motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        }
     }
 
     public void initializeIMU(HardwareMap hardwareMap) {
@@ -177,21 +194,25 @@ public class Drivebase extends SubsystemBase {
         driveRobotPowers(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
     }
 
-    private void driveRobotPowers(double frontLeftPower, double backLeftPower, double frontRightPower, double backRightPower) {
+    public void driveRobotPowers(double frontLeftPower, double backLeftPower, double frontRightPower, double backRightPower) {
         frontLeft.setPower(frontLeftPower);
         backLeft.setPower(backLeftPower);
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
     }
 
+    public void setDriveRobotCentric (boolean toDriveRobotCentric) {
+        driveRobotCentric = toDriveRobotCentric;
+    }
+
     public double getCorrectedYaw() {
         double imuDeg = imu.getYaw();
-        double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
-
-        double correctedRadReset = imuRad - imuPrevPositionRad;
-        if (isRobotCentric) {
-            return (-1.0) * imu.getYaw();
+        if (driveRobotCentric) {
+            imuDeg = 0;
         }
+        double imuRad = AngleUnit.RADIANS.fromDegrees(imuDeg);
+//        double imuRad = imuDeg;
+        double correctedRadReset = imuRad - imuPrevPositionRad;
         return (-1.0) * correctedRadReset; // * (14.0/180.0);
     }
 

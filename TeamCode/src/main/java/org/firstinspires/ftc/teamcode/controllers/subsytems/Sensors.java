@@ -11,8 +11,8 @@ public class Sensors extends SubsystemBase {
     private DistanceSensor distanceSensorBottom, distanceSensorTop;
 
     public Sensors(HardwareMap hardwareMap) {
-        distanceSensorBottom = hardwareMap.get(DistanceSensor.class, "distanceSensor");
-        distanceSensorTop = hardwareMap.get(DistanceSensor.class, "topDistanceSensor");
+        distanceSensorBottom = hardwareMap.get(DistanceSensor.class, "topDistanceSensor");
+        distanceSensorTop = hardwareMap.get(DistanceSensor.class, "distanceSensor");
     }
 
     public double getTopDistance() {

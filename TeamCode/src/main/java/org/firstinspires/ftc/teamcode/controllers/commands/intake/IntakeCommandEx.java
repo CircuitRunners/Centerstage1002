@@ -11,6 +11,7 @@ import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Arm;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Claw;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Intake;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Sensors;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.controllers.subsytems.Sensors;
 @Photon
 @Config
 public class IntakeCommandEx extends CommandBase {
+    private Arm arm;
     private ElapsedTime runtime;
     private ElapsedTime intakeTimer, waitTimer; // Timer for the intake process
     private Intake intake;
@@ -26,20 +28,22 @@ public class IntakeCommandEx extends CommandBase {
     private int pixelsDetectedState = 0;
     private Intake.IntakePowers power;
 
-    public IntakeCommandEx(HardwareMap hardwareMap, Claw claw, Intake intake, Intake.IntakePowers power) {
+    public IntakeCommandEx(HardwareMap hardwareMap, Claw claw, Intake intake, Arm arm, Intake.IntakePowers power) {
         this.intake = intake;
         this.claw = claw;
+        this.arm = arm;
         this.sensors = new Sensors(hardwareMap);
         this.runtime = new ElapsedTime();
         this.intakeTimer = new ElapsedTime();
         this.waitTimer = new ElapsedTime();
         this.power = power;
 
-        addRequirements(claw, intake);
+        addRequirements(claw, intake, arm);
     }
 
     @Override
     public void initialize() {
+        arm.forceDown();
         claw.open();
         pixelsDetectedState = 0;
         runtime.reset();
@@ -98,5 +102,6 @@ public class IntakeCommandEx extends CommandBase {
             intake.setPower(0);
         }
         claw.close(); // Close the claw at the end of the command
+        arm.down();
     }
 }

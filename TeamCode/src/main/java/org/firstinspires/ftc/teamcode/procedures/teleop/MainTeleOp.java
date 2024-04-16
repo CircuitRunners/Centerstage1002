@@ -35,20 +35,11 @@ public class MainTeleOp extends TeleOpBase {
     public IntakeCommandEx intakeCommand;
     public ManualLiftResetCommand manualLiftResetCommand;
 
-    public static Pose2d startPose = new Pose2d(-39.3, -63, Math.toRadians(90.00));
-
     @Override
     public void onInitialize(){
-        robot.drive.setStartingPose(startPose);
-        schedule(
-                new SequentialCommandGroup(
-                        new FollowPath(robot.drive, directPath(startPose, new Pose2d(startPose.getX()+0.000001, startPose.getY()+0.000001, startPose.getHeading())))
-                )
-        );
-
         manualLiftCommand = new ManualLiftCommand(robot.lift, robot.arm, manipulator);
         manualLiftResetCommand = new ManualLiftResetCommand(robot.lift, manipulator);
-        intakeCommand = new IntakeCommandEx(hardwareMap, robot.claw, robot.intake, Intake.IntakePowers.FAST);
+        intakeCommand = new IntakeCommandEx(hardwareMap, robot.claw, robot.intake, robot.arm, Intake.IntakePowers.FAST);
 
         robot.lift.setDefaultCommand(new PerpetualCommand(manualLiftCommand));
 
@@ -112,6 +103,7 @@ public class MainTeleOp extends TeleOpBase {
 
         robot.claw.open();
         robot.lift.initialInitHang();
+        robot.lift.resetLiftPosition();
 
         telemetry.addLine("Ready for start!");
         telemetry.update();
@@ -206,27 +198,23 @@ public class MainTeleOp extends TeleOpBase {
         telemetry.addData("Arm Position", robot.arm.getLeftPosition());
         telemetry.addData("Pivot Position", robot.pivot.getPosition());
 
-        if (
-                intakeCommand.sensors.getTopDistance() < 5 && intakeCommand.sensors.getTopDistance() > 1
-                && intakeCommand.sensors.getBottomDistance() < 5 && intakeCommand.sensors.getBottomDistance() > 1
-                && robot.claw.getPosition() < 0.45
-                && robot.arm.getLeftPosition() < 0.3) {
-            gamepad2.rumble(200);
-            gamepad1.rumble(200);
-        }
+//        if (
+//                intakeCommand.sensors.getTopDistance() < 5 && intakeCommand.sensors.getTopDistance() > 1
+//                && intakeCommand.sensors.getBottomDistance() < 5 && intakeCommand.sensors.getBottomDistance() > 1
+//                && robot.claw.getPosition() < 0.45
+//                && robot.arm.getLeftPosition() < 0.3) {
+//            gamepad2.rumble(200);
+//            gamepad1.rumble(200);
+//        }
 
         // Telemetry for Path Testing
-        robot.drive.update();
-        telemetry.addData("Pivot Position", robot.drive.getPose());
+//        drive.update();
+        telemetry.addData("IMU", robot.navx_device.getYaw());
+        telemetry.addData("imu2", drivebase.getCorrectedYaw());
+
 
         // Ensure telemetry actually works
         telemetry.update();
     }
 
-    public PathChain directPath(Pose2d startPath, Pose2d endPath) {
-        return robot.drive.pathBuilder()
-                .addPath(new Path(new BezierCurve(new Point(startPath), new Point(endPath))))
-                .setLinearHeadingInterpolation(startPath.getHeading(), endPath.getHeading())
-                .build();
-    }
 }

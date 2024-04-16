@@ -28,17 +28,12 @@ public class RobotCore extends Robot {
     public Pivot pivot;
     public Sensors sensors;
 
-    public Follower drive;
-
     public AHRS navx_device;
 
     public RobotCore (HardwareMap hardwareMap) {
 
         // Schedule to clear cache continuously (manual mode)
         schedule(new BulkCacheCommand(hardwareMap));
-
-        // Auto drive mechanics
-        drive = new Follower(hardwareMap);
 
         // Initialize subsystems
         lift = new Lift(hardwareMap);

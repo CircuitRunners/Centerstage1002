@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.controllers.VisionRobotCore;
+import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.controllers.common.utilities.PropLocation;
 import org.firstinspires.ftc.teamcode.controllers.common.utilities.Side;
 import org.firstinspires.ftc.teamcode.controllers.common.utilities.Team;
@@ -18,6 +19,7 @@ public abstract class AutoBase extends CommandOpMode {
 
     public Team team;
     public Side side;
+    public Follower drive;
 
     public PropLocation locationID;
 
@@ -25,7 +27,10 @@ public abstract class AutoBase extends CommandOpMode {
 
     @Override
     public void initialize(){
+        // Auto drive mechanics
         runOnStart();
+
+        drive = new Follower(hardwareMap);
 
         robot = new VisionRobotCore(hardwareMap, team);
 
@@ -60,10 +65,10 @@ public abstract class AutoBase extends CommandOpMode {
         super.run();
 
         if (!inCompetition) {
-            telemetry.addData("Save Money", robot.drive.getPose());
+            telemetry.addData("Save Money", drive.getPose());
         }
 
-        robot.drive.update();
+        drive.update();
         telemetry.update();
     }
 
