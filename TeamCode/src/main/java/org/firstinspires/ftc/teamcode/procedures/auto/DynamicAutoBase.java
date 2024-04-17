@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED
 import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_STAGE.boardPositions;
 import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_STAGE.parkPosition;
 import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_STAGE.pixelPositions;
+import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_STAGE.preBoardPositions;
 import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_STAGE.r_s_startPos;
 import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_STAGE.stagePosition;
 import static org.firstinspires.ftc.teamcode.controllers.common.utilities.Side.AUDIENCE;
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.controllers.RobotCore;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedrocommands.FollowPath;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedrocommands.HoldPoint;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.BezierCurve;
+import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Point;
@@ -109,8 +111,8 @@ public class DynamicAutoBase extends AutoBase {
                             new FollowPath(drive, createPathChain(r_s_startPos, getPosition(pixelPositions, locations))), // to pixel point
                             new WaitCommand(400),
                             new FollowPath(drive, backwardsPathChain(getPosition(pixelPositions, locations), getPosition(backPoint, locations))), // move back to avoid moving pixel
-                            new FollowPath(drive, createPathChain(getPosition(backPoint, locations), getPosition(boardPositions, locations))), // go to the board
-                            new HoldPoint(drive, getPosition(boardPositions, locations)), // chill at the board for accuracy on heading
+                            new FollowPath(drive, createPathChain(getPosition(backPoint, locations), getPosition(preBoardPositions, locations))), // go to the board
+                            new HoldPoint(drive, getPosition(preBoardPositions, locations)), // chill at the board for accuracy on heading
                             presetToLiftPosition(robot, MoveToScoringCommandEx.Presets.BOTTOM),
                             new FollowPath(drive, createPathChain(getPosition(boardPositions, locations), stagePosition)), // go to the stage (from the board)
                             new FollowPath(drive, createPathChain(stagePosition, parkPosition)) // parque!
@@ -127,7 +129,7 @@ public class DynamicAutoBase extends AutoBase {
                             new HoldPoint(drive, getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations)),
                             new WaitCommand(400),
                             new FollowPath(drive, mirroredPathChain(getPosition(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations), Constants.AutoPoses.RED_AUDIENCE.stackPositions)),
-                            new WaitCommand(1000), // stack
+                            new WaitCommand(400), // stack
                             new FollowPath(drive, mirroredPathChain(
                                     Constants.AutoPoses.RED_AUDIENCE.stackPositions,
                                     Constants.AutoPoses.RED_AUDIENCE.beforeGoingThroughBridge)
@@ -142,7 +144,7 @@ public class DynamicAutoBase extends AutoBase {
                             ),
                             new HoldPoint(drive, getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations)),
                             presetToLiftPosition(robot, MoveToScoringCommandEx.Presets.BOTTOM),
-                            new WaitCommand(1000), // stuff at the board
+                            new WaitCommand(400), // stuff at the board
                             new FollowPath(drive, mirroredPathChain(
                                     getPosition(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations),
                                     Constants.AutoPoses.RED_AUDIENCE.toPark)
@@ -150,7 +152,25 @@ public class DynamicAutoBase extends AutoBase {
                             new HoldPoint(drive, mirrorPose(Constants.AutoPoses.RED_AUDIENCE.toPark))
                     );
                 } else if (side == BACKSTAGE) {
-//                    drive.setStartingPose(r_s_startPos);
+                    // BLUE BACKSTAGE
+                    drive.setStartingPose(mirrorPose(r_s_startPos));
+                    return new SequentialCommandGroup(
+                            new FollowPath(drive, mirroredPathChain(r_s_startPos, getPosition(pixelPositions, locations))), // to pixel point
+                            new WaitCommand(400),
+                            new FollowPath(drive, backwardsMirroredPathChain(getPosition(pixelPositions, locations), getPosition(backPoint, locations))), // move back to avoid moving pixel
+                            new FollowPath(drive, mirroredPathChain(getPosition(backPoint, locations), getPosition(preBoardPositions, locations))), // go to the board
+                            new HoldPoint(drive, getPositionMirrored(preBoardPositions, locations)), // chill at the board for accuracy on heading
+                            new MoveToScoringCommandEx(robot.lift, robot.arm, robot.claw, MoveToScoringCommandEx.Presets.BOTTOM , robot.pivot), // lift go up
+                            new WaitCommand(350),
+                            new InstantCommand(robot.claw::open), // open the claw to drop
+                            new WaitCommand(700),
+                            new HoldPoint(drive, getPositionMirrored(boardPositions, locations)),
+                            new WaitCommand(1200),
+                            new FollowPath(drive, mirroredPathLine(getPosition(boardPositions, locations), getPosition(preBoardPositions,locations))),
+                            new RetractOuttakeCommand(robot.lift, robot.arm, robot.claw),
+                            new FollowPath(drive, mirroredPathLine(getPosition(preBoardPositions, locations), stagePosition)), // go to the stage (from the board)
+                            new FollowPath(drive, mirroredPathLine(stagePosition, parkPosition)) // parque!
+                    );
                 }
             }
         }
@@ -227,6 +247,15 @@ public class DynamicAutoBase extends AutoBase {
         return createPathChain(mirroredStart, mirroredEnd);
     }
 
+    public PathChain mirroredPathLine (Pose2d startPath, Pose2d endPath) {
+        // Mirror both start and end poses
+        Pose2d mirroredStart = mirrorPose(startPath);
+        Pose2d mirroredEnd = mirrorPose(endPath);
+
+        // Create path chain with mirrored poses
+        return createPathLine(mirroredStart, mirroredEnd);
+    }
+
     public PathChain backwardsMirroredPathChain(Pose2d startPath, Pose2d endPath) {
         // Mirror both start and end poses
         Pose2d mirroredStart = mirrorPose(startPath);
@@ -234,6 +263,15 @@ public class DynamicAutoBase extends AutoBase {
 
         // Create path chain with mirrored poses
         return createPathChain(mirroredEnd, mirroredStart);
+    }
+
+    public PathChain backwardsMirroredPathLine(Pose2d startPath, Pose2d endPath) {
+        // Mirror both start and end poses
+        Pose2d mirroredStart = mirrorPose(startPath);
+        Pose2d mirroredEnd = mirrorPose(endPath);
+
+        // Create path chain with mirrored poses
+        return createPathLine(mirroredEnd, mirroredStart);
     }
 
     @Override
@@ -245,9 +283,20 @@ public class DynamicAutoBase extends AutoBase {
         return createPathChain(endPath, startPath);
     }
 
+    public PathChain backwardsPathLine (Pose2d startPath, Pose2d endPath) {
+        return createPathLine(endPath, startPath);
+    }
+
     public PathChain createPathChain(Pose2d startPath, Pose2d endPath) {
         return drive.pathBuilder()
                 .addPath(new Path(new BezierCurve(new Point(startPath), new Point(endPath))))
+                .setLinearHeadingInterpolation(startPath.getHeading(), endPath.getHeading())
+                .build();
+    }
+
+    public PathChain createPathLine(Pose2d startPath, Pose2d endPath) {
+        return drive.pathBuilder()
+                .addPath(new Path(new BezierLine(new Point(startPath), new Point(endPath))))
                 .setLinearHeadingInterpolation(startPath.getHeading(), endPath.getHeading())
                 .build();
     }

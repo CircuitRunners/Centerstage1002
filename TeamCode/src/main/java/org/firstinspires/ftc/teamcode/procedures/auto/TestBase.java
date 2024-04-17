@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.procedures.auto;
 
+import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_STAGE.r_s_startPos;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -29,7 +31,7 @@ public class TestBase extends CommandOpMode {
 
     private PathChain toPixel, toBoard, toStage, toBP;
 
-    Pose2d startPose = new Pose2d(-39.3, -63, Math.toRadians(90.00));
+    Pose2d startPose = r_s_startPos;
 
     public PathChain directPath(Pose2d startPath, Pose2d endPath) {
         return drive.pathBuilder()

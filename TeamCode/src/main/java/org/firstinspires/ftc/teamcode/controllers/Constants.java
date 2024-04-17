@@ -30,24 +30,29 @@ public class Constants {
     public static class AutoPoses {
         @Config
         public static class RED_STAGE {
-            public static Pose2d r_s_startPos = new Pose2d(15.75, -63, Math.toRadians(90.00));
+            public static Pose2d r_s_startPos = new Pose2d(15.75, -63,   Math.toRadians(90.00));
             public static TriPose pixelPositions = new TriPose(
-                    new Pose2d(0,0, Math.toRadians(0)), // Left
+                    new Pose2d(22.391,-33.899, Math.toRadians(60)), // Left
                     new Pose2d(15.137,-35.148, Math.toRadians(111.035)), // Middle 15.137	-35.148	111.035
-                    new Pose2d(0,0, Math.toRadians(0))  // Right
+                    new Pose2d(11.320,-34.747, Math.toRadians(113.543))  // Right
             );
             public static TriPose backPoint = new TriPose(
-                    new Pose2d(0,0, Math.toRadians(0)), // Left
+                    new Pose2d(23.686,-38.024, Math.toRadians(64.479)), // Left
                     new Pose2d(15.407,-40.374, Math.toRadians(90)), // Middle 15.407	-40.374	90
-                    new Pose2d(0,0, Math.toRadians(0))  // Right
+                    new Pose2d(11.316,-39.130, Math.toRadians(103.613))  // Right
+            );
+            public static TriPose preBoardPositions = new TriPose(
+                    new Pose2d(48,-33.104, Math.toRadians(0)), // Left
+                    new Pose2d(48,-38.804, Math.toRadians(0)), // Middle EMPIRICALLY
+                    new Pose2d(48,-43.804, Math.toRadians(0))  // Right
             );
             public static TriPose boardPositions = new TriPose(
-                    new Pose2d(50.253,-33.104, Math.toRadians(0)), // Left
-                    new Pose2d(50.253,-38.804, Math.toRadians(0)), // Middle EMPIRICALLY
-                    new Pose2d(50.253,-43.804, Math.toRadians(0))  // Right
+                    new Pose2d(52,-33.104, Math.toRadians(0)), // Left
+                    new Pose2d(52,-38.804, Math.toRadians(0)), // Middle EMPIRICALLY
+                    new Pose2d(52,-43.804, Math.toRadians(0))  // Right
             );
-            public static Pose2d stagePosition = new Pose2d(50.33, -14, Math.toRadians(-90));
-            public static Pose2d parkPosition = new Pose2d(62.75, -14, Math.toRadians(-90));
+            public static Pose2d stagePosition = new Pose2d(50.33, -10, Math.toRadians(-90));
+            public static Pose2d parkPosition = new Pose2d(62.75, -10, Math.toRadians(-90));
 
         }
         @Config
