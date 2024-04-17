@@ -165,7 +165,7 @@ public class DynamicAutoBase extends AutoBase {
                             new InstantCommand(robot.claw::open), // open the claw to drop
                             new WaitCommand(700),
                             new HoldPoint(drive, getPositionMirrored(boardPositions, locations)),
-                            new WaitCommand(1200),
+                            new WaitCommand(2000),
                             new FollowPath(drive, mirroredPathLine(getPosition(boardPositions, locations), getPosition(preBoardPositions,locations))),
                             new RetractOuttakeCommand(robot.lift, robot.arm, robot.claw),
                             new FollowPath(drive, mirroredPathLine(getPosition(preBoardPositions, locations), stagePosition)), // go to the stage (from the board)
