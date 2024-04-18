@@ -39,8 +39,8 @@ public class RobotCore extends Robot {
         lift = new Lift(hardwareMap);
         airplaneLauncher = new AirplaneLauncher(hardwareMap);
 //        drivebase = new Drivebase(hardwareMap);
-        arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
+        arm = new Arm(hardwareMap, claw);
         intake = new Intake(hardwareMap);
         pivot = new Pivot(hardwareMap);
         sensors = new Sensors(hardwareMap);

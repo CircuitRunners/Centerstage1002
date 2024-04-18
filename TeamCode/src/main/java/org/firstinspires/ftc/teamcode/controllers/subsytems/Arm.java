@@ -12,12 +12,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Arm extends SubsystemBase {
     private ServoImplEx leftServo;
     private ServoImplEx rightServo;
+    private Claw claw;
+
+    private boolean usingClaw = false;
 
     public enum ArmPositions {
         // (left, right)
-        MEGADOWN(.1,.1),
-        DOWN(.17, .17), // right 0.22 before
-        SCORING(.73, .73); // 0.9 0.333
+        MEGADOWN(.28,.28),
+        DOWN(.34, .34), // right 0.22 before
+        SCORING(.83, .83); // 0.9 0.333
 
         private final double position_right;
         private final double position_left;
@@ -41,6 +44,14 @@ public class Arm extends SubsystemBase {
         rightServo = hardwareMap.get(ServoImplEx.class, "rightArm");
 
         forceDown();
+    }
+
+    public Arm(HardwareMap hardwareMap, Claw claw){
+        this(hardwareMap);
+
+        usingClaw = true;
+
+        this.claw = claw;
     }
 
     // Motion profile constraints
@@ -140,10 +151,16 @@ public class Arm extends SubsystemBase {
     // All the way to the rest position
     public void down(){
         setPosition(ArmPositions.DOWN);
+        if (usingClaw) {
+            claw.open();
+        }
     }
 
     public void up(){
         setPosition(ArmPositions.SCORING);
+        if (usingClaw) {
+            claw.open();
+        }
     }
 
     // Bypasses the profile

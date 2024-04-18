@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.procedures.auto;
 
+import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_AUDIENCE.preBoard;
 import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_AUDIENCE.r_a_startPos;
 import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_AUDIENCE.stackPositions;
+import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_AUDIENCE.toBoard;
+import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_AUDIENCE.toPark;
 import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_STAGE.backPoint;
 import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_STAGE.boardPositions;
 import static org.firstinspires.ftc.teamcode.controllers.Constants.AutoPoses.RED_STAGE.parkPosition;
@@ -16,6 +19,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
@@ -29,6 +33,7 @@ import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGenerati
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeCommandEx;
+import org.firstinspires.ftc.teamcode.controllers.commands.lift.ProfiledLiftCommand;
 import org.firstinspires.ftc.teamcode.controllers.commands.presets.MoveToScoringCommandEx;
 import org.firstinspires.ftc.teamcode.controllers.commands.presets.RetractOuttakeCommand;
 import org.firstinspires.ftc.teamcode.controllers.common.utilities.PropLocation;
@@ -37,6 +42,7 @@ import org.firstinspires.ftc.teamcode.controllers.common.utilities.Team;
 import org.firstinspires.ftc.teamcode.controllers.common.utilities.TriPose;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.ExtendoArm;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Intake;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift;
 import org.firstinspires.ftc.teamcode.procedures.AutoBase;
 
 @Config
@@ -59,8 +65,12 @@ public class DynamicAutoBase extends AutoBase {
                             new FollowPath(drive, createPathChain(getPosition(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations), Constants.AutoPoses.RED_AUDIENCE.stackPositions)),
                             new HoldPoint(drive, stackPositions),
                             new WaitCommand(400),
-                            new IntakeCommandEx(hardwareMap, robot.claw, robot.intake, robot.arm, Intake.IntakePowers.FAST),
-                            new WaitCommand(1000), // stack
+                            new ParallelRaceGroup(
+                                    new IntakeCommandEx(hardwareMap, robot.claw, robot.intake, robot.arm, Intake.IntakePowers.FAST),
+                                    new WaitCommand(3500)
+                            ),
+                            new InstantCommand(robot.claw::close),
+                            new WaitCommand(200), // stack
 
                             new FollowPath(drive, createPathChain(
                                     Constants.AutoPoses.RED_AUDIENCE.stackPositions,
@@ -79,30 +89,36 @@ public class DynamicAutoBase extends AutoBase {
                                     new MoveToScoringCommandEx(robot.lift, robot.arm, robot.claw, MoveToScoringCommandEx.Presets.SHORT, robot.pivot)
                             ),
                             new InstantCommand(() -> {
-                                if (locations != PropLocation.RIGHT) {
+                                if (locations == PropLocation.RIGHT) {
                                     robot.pivot.right();
                                 } else {
                                     robot.pivot.left();
                                 }
                             }),
                             new WaitCommand(400),
-                            new FollowPath(drive, createPathChain(
-                                    getPosition(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations),
-                                    getPosition(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations))
+                            new ParallelRaceGroup(
+                                    new FollowPath(drive, createPathChain(
+                                            getPosition(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations),
+                                            getPosition(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations))
+                                    ),
+                                    new WaitCommand(1000)
                             ),
-                            new WaitCommand(1000),
+                            new WaitCommand(400),
                             new InstantCommand(() -> {
-                                if (locations != PropLocation.RIGHT) {
+                                if (locations == PropLocation.RIGHT) {
                                     robot.pivot.left();
                                 } else {
                                     robot.pivot.right();
                                 }
                             }),
-                            new WaitCommand(1000),
+
                             new InstantCommand(robot.claw::open),
-                            new WaitCommand(1000),
+
+                            new ProfiledLiftCommand(robot.lift, Lift.LiftPositions.SHORT.position, true),
                             new RetractOuttakeCommand(robot.lift, robot.arm, robot.claw, robot.pivot),
-                            new HoldPoint(drive, Constants.AutoPoses.RED_AUDIENCE.toPark)
+                            new FollowPath(drive, createPathLine(getPosition(boardPositions, locations), getPosition(preBoardPositions, locations))),
+                            new FollowPath(drive, createPathLine(getPosition(preBoardPositions, locations), toPark)),
+                            new HoldPoint(drive, toPark)
                     );
                 } else if (side == BACKSTAGE) {
                     // RED BACKSTAGE
@@ -114,8 +130,8 @@ public class DynamicAutoBase extends AutoBase {
                             new FollowPath(drive, createPathChain(getPosition(backPoint, locations), getPosition(preBoardPositions, locations))), // go to the board
                             new HoldPoint(drive, getPosition(preBoardPositions, locations)), // chill at the board for accuracy on heading
                             presetToLiftPosition(robot, MoveToScoringCommandEx.Presets.BOTTOM),
-                            new FollowPath(drive, createPathChain(getPosition(boardPositions, locations), stagePosition)), // go to the stage (from the board)
-                            new FollowPath(drive, createPathChain(stagePosition, parkPosition)) // parque!
+                            new FollowPath(drive, createPathChain(getPosition(boardPositions, locations), stagePosition)) // go to the stage (from the board)
+//                            new FollowPath(drive, createPathChain(stagePosition, parkPosition)) // parque!
                     );
                 }
             }
@@ -168,8 +184,8 @@ public class DynamicAutoBase extends AutoBase {
                             new WaitCommand(2000),
                             new FollowPath(drive, mirroredPathLine(getPosition(boardPositions, locations), getPosition(preBoardPositions,locations))),
                             new RetractOuttakeCommand(robot.lift, robot.arm, robot.claw),
-                            new FollowPath(drive, mirroredPathLine(getPosition(preBoardPositions, locations), stagePosition)), // go to the stage (from the board)
-                            new FollowPath(drive, mirroredPathLine(stagePosition, parkPosition)) // parque!
+                            new FollowPath(drive, mirroredPathLine(getPosition(preBoardPositions, locations), stagePosition)) // go to the stage (from the board)
+//                            new FollowPath(drive, mirroredPathLine(stagePosition, parkPosition)) // parque!
                     );
                 }
             }

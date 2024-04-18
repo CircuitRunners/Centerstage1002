@@ -126,12 +126,14 @@ public class MainTeleOp extends TeleOpBase {
         }
 
 
+//        if (gamepad2.triangle) {
+//            robot.lift.setLiftPower(-0.2);
+//            robot.lift.hangPower(-0.0000002);
+//        } else
+        robot.lift.hangPower(0);
         if (gamepad2.cross) {
-            robot.lift.setLiftPower(-0.2);
-            robot.lift.winchMotor.setVelocity(-robot.lift.getLiftVelocity());
-        } else if (gamepad2.triangle) {
-            robot.lift.hangPower(1);
-            robot.lift.setLiftPower(0.6);
+            robot.lift.hangPower(-1.0);
+            robot.lift.setLiftPower(0.0);
         } else {
             robot.lift.hangPower(0);
         }

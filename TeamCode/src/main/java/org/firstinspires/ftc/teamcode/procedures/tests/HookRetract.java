@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift;
 public class HookRetract extends CommandOpMode {
 
     private Lift lift;
-    private double liftSpeed = 0.12223;
+    private double liftSpeed = 0.22223;
 
     @Override
     public void initialize(){

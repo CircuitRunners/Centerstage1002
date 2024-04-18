@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.controllers.subsytems;
 
+import static org.firstinspires.ftc.teamcode.controllers.Constants.reverseHangDirection;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -73,7 +75,7 @@ public class Lift extends SubsystemBase {
         //TODO gravity PID coefficients?
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT); // change to brake if bad
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         voltageComp = VOLTAGE_WHEN_LIFT_TUNED / voltageSensor.getVoltage();
@@ -114,7 +116,7 @@ public class Lift extends SubsystemBase {
         return getLiftPosition() < LOWER_LIMIT;
     }
 
-    public void resetLiftPosition(){
+    public void resetLiftPosition() {
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -129,6 +131,9 @@ public class Lift extends SubsystemBase {
     public void hangPower (double power) {
 //        setLiftPower(power);
         double constantWinchMultiplier = 1.0;
+        if (reverseHangDirection) {
+            power = -power;
+        }
         winchMotor.setPower(power * constantWinchMultiplier);
     }
     

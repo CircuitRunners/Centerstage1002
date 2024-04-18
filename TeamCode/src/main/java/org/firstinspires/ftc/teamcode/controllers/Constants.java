@@ -9,6 +9,9 @@ import org.firstinspires.ftc.teamcode.controllers.common.utilities.TriPose;
 public class Constants {
     public static boolean inCompetition = false;
 
+    public static boolean reverseHangDirection = false;
+
+
     // Front means the deposit side of the robot
     public static class HardwareMap {
         public static String
@@ -72,9 +75,9 @@ public class Constants {
                     new Pose2d(44.875,-46.00, Math.toRadians(0))  // Right
             );
             public static TriPose toBoard = new TriPose(
-                    new Pose2d(49,-34, Math.toRadians(0)), // Left
-                    new Pose2d(48.875,-40.960, Math.toRadians(0)), // Middle
-                    new Pose2d(48.875,-46.00, Math.toRadians(0))  // Right
+                    new Pose2d(50.0,-34, Math.toRadians(0)), // Left
+                    new Pose2d(50.0,-40.960, Math.toRadians(0)), // Middle
+                    new Pose2d(50.0,-46.00, Math.toRadians(0))  // Right
             );
             // iteration 1
             public static Pose2d toPark = new Pose2d(45,-61, Math.toRadians(270));
