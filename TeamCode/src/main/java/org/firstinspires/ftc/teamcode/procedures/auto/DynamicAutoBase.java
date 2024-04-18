@@ -33,6 +33,7 @@ import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGenerati
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.controllers.auto.pedropathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeCommandEx;
+import org.firstinspires.ftc.teamcode.controllers.commands.intake.IntakeCommandStack;
 import org.firstinspires.ftc.teamcode.controllers.commands.lift.ProfiledLiftCommand;
 import org.firstinspires.ftc.teamcode.controllers.commands.presets.MoveToScoringCommandEx;
 import org.firstinspires.ftc.teamcode.controllers.commands.presets.RetractOuttakeCommand;
@@ -61,12 +62,11 @@ public class DynamicAutoBase extends AutoBase {
                             new WaitCommand(400),
                             new HoldPoint(drive, getPosition(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations)),
                             new WaitCommand(400),
-                            new InstantCommand(robot.frontArm::toPixel1),
                             new FollowPath(drive, createPathChain(getPosition(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations), Constants.AutoPoses.RED_AUDIENCE.stackPositions)),
                             new HoldPoint(drive, stackPositions),
                             new WaitCommand(400),
                             new ParallelRaceGroup(
-                                    new IntakeCommandEx(hardwareMap, robot.claw, robot.intake, robot.arm, Intake.IntakePowers.FAST),
+                                    new IntakeCommandStack(hardwareMap, robot.claw, robot.intake, robot.arm, Intake.IntakePowers.FAST, ExtendoArm.ExtendoPositions.PIXEL1),
                                     new WaitCommand(3500)
                             ),
                             new InstantCommand(robot.claw::close),
@@ -144,8 +144,17 @@ public class DynamicAutoBase extends AutoBase {
                             new WaitCommand(400),
                             new HoldPoint(drive, getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations)),
                             new WaitCommand(400),
+                            new InstantCommand(robot.frontArm::toPixel1),
                             new FollowPath(drive, mirroredPathChain(getPosition(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations), Constants.AutoPoses.RED_AUDIENCE.stackPositions)),
-                            new WaitCommand(400), // stack
+                            new HoldPoint(drive, mirrorPose(stackPositions)),
+                            new WaitCommand(400),
+                            new ParallelRaceGroup(
+                                    new IntakeCommandEx(hardwareMap, robot.claw, robot.intake, robot.arm, Intake.IntakePowers.FAST),
+                                    new WaitCommand(3500)
+                            ),
+                            new InstantCommand(robot.claw::close),
+                            new WaitCommand(200), // stack
+
                             new FollowPath(drive, mirroredPathChain(
                                     Constants.AutoPoses.RED_AUDIENCE.stackPositions,
                                     Constants.AutoPoses.RED_AUDIENCE.beforeGoingThroughBridge)
@@ -156,16 +165,43 @@ public class DynamicAutoBase extends AutoBase {
                             ),
                             new FollowPath(drive, mirroredPathChain(
                                     Constants.AutoPoses.RED_AUDIENCE.afterGoingThroughBridge,
-                                    getPosition(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations))
+                                    getPosition(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations))
                             ),
-                            new HoldPoint(drive, getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations)),
-                            presetToLiftPosition(robot, MoveToScoringCommandEx.Presets.BOTTOM),
-                            new WaitCommand(400), // stuff at the board
-                            new FollowPath(drive, mirroredPathChain(
-                                    getPosition(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations),
-                                    Constants.AutoPoses.RED_AUDIENCE.toPark)
+                            new ParallelCommandGroup(
+                                    new HoldPoint(drive, getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations)),
+                                    new MoveToScoringCommandEx(robot.lift, robot.arm, robot.claw, MoveToScoringCommandEx.Presets.SHORT, robot.pivot)
                             ),
-                            new HoldPoint(drive, mirrorPose(Constants.AutoPoses.RED_AUDIENCE.toPark))
+                            new InstantCommand(() -> {
+                                if (locations != PropLocation.RIGHT) {
+                                    robot.pivot.right();
+                                } else {
+                                    robot.pivot.left();
+                                }
+                            }),
+                            new WaitCommand(400),
+                            new ParallelRaceGroup(
+                                    new FollowPath(drive, mirroredPathChain(
+                                            getPosition(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations),
+                                            getPosition(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations))
+                                    ),
+                                    new WaitCommand(1000)
+                            ),
+                            new WaitCommand(400),
+                            new InstantCommand(() -> {
+                                if (locations != PropLocation.RIGHT) {
+                                    robot.pivot.left();
+                                } else {
+                                    robot.pivot.right();
+                                }
+                            }),
+
+                            new InstantCommand(robot.claw::open),
+
+                            new ProfiledLiftCommand(robot.lift, Lift.LiftPositions.SHORT.position, true),
+                            new RetractOuttakeCommand(robot.lift, robot.arm, robot.claw, robot.pivot),
+                            new FollowPath(drive, mirroredPathLine(getPosition(boardPositions, locations), getPosition(preBoardPositions, locations))),
+                            new FollowPath(drive, mirroredPathLine(getPosition(preBoardPositions, locations), toPark)),
+                            new HoldPoint(drive, mirrorPose(toPark))
                     );
                 } else if (side == BACKSTAGE) {
                     // BLUE BACKSTAGE

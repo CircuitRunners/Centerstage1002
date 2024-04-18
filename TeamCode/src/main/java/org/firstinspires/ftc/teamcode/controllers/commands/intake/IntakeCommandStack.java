@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Arm;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Claw;
+import org.firstinspires.ftc.teamcode.controllers.subsytems.ExtendoArm;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Intake;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Sensors;
 
@@ -21,14 +22,17 @@ import org.firstinspires.ftc.teamcode.controllers.subsytems.Sensors;
 public class IntakeCommandStack extends CommandBase {
     private Arm arm;
     private ElapsedTime runtime;
-    private ElapsedTime intakeTimer, waitTimer; // Timer for the intake process
+    private ElapsedTime intakeTimer, waitTimer, lastUpdateTimer; // Timer for the intake process
     private Intake intake;
     public Sensors sensors;
     private Claw claw;
     private int pixelsDetectedState = 0;
+    private double lastUpdateTime = 0;
     private Intake.IntakePowers power;
+    private static final double POSITION_INCREMENT_PER_MILLISECOND = 0.05 / 1000; // How much to lower the arm per second
+    private ExtendoArm.ExtendoPositions extendo_pos;
 
-    public IntakeCommandStack(HardwareMap hardwareMap, Claw claw, Intake intake, Arm arm, Intake.IntakePowers power) {
+    public IntakeCommandStack(HardwareMap hardwareMap, Claw claw, Intake intake, Arm arm, Intake.IntakePowers power, ExtendoArm.ExtendoPositions extendoPositions) {
         this.intake = intake;
         this.claw = claw;
         this.arm = arm;
@@ -37,18 +41,22 @@ public class IntakeCommandStack extends CommandBase {
         this.intakeTimer = new ElapsedTime();
         this.waitTimer = new ElapsedTime();
         this.power = power;
+        this.extendo_pos = extendoPositions;
+
+        this.lastUpdateTimer = new ElapsedTime();
 
         addRequirements(claw, intake, arm);
     }
 
     @Override
     public void initialize() {
-        arm.forceDown();
+//        arm.forceDown();
         claw.open();
         pixelsDetectedState = 0;
         runtime.reset();
         intakeTimer.reset();
         intake.setPower(power);
+        lastUpdateTimer.reset();
     }
 
     @Override
@@ -59,6 +67,10 @@ public class IntakeCommandStack extends CommandBase {
                 if (sensors.getBottomDistance() < DETECTION_THRESHOLD && sensors.getTopDistance() < DETECTION_THRESHOLD) {
                     intakeTimer.reset();
                     pixelsDetectedState = 1;
+                }
+                double deltaTime = lastUpdateTimer.milliseconds();
+                if (deltaTime >= 1000) { // Update position every second
+                    arm.setPosition(extendo_pos.getLeftPosition()-(POSITION_INCREMENT_PER_MILLISECOND * deltaTime));
                 }
                 break;
             case 1: // Pixel detected, timer running
@@ -102,6 +114,6 @@ public class IntakeCommandStack extends CommandBase {
             intake.setPower(0);
         }
         claw.close(); // Close the claw at the end of the command
-        arm.down();
+//        arm.down();
     }
 }
