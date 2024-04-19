@@ -194,8 +194,8 @@ public class MainTeleOp extends TeleOpBase {
             robot.lift.initialInitHang();
         }
 
-        telemetry.addData("Distance Bottom", intakeCommand.sensors.getBottomDistance());
-        telemetry.addData("Distance Top", intakeCommand.sensors.getTopDistance());
+        //telemetry.addData("Distance Bottom", intakeCommand.sensors.getBottomDistance());
+        //telemetry.addData("Distance Top", intakeCommand.sensors.getTopDistance());
         telemetry.addData("Claw Status", (robot.claw.getPosition() < 0.45) ? "Open": "Closed");
         telemetry.addData("Arm Position", robot.arm.getLeftPosition());
         telemetry.addData("Pivot Position", robot.pivot.getPosition());
