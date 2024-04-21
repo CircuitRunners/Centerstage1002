@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.controllers.subsytems.ExtendoArm;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Intake;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Lift;
 import org.firstinspires.ftc.teamcode.controllers.subsytems.Pivot;
-import org.firstinspires.ftc.teamcode.controllers.subsytems.Sensors;
+//import org.firstinspires.ftc.teamcode.controllers.subsytems.Sensors;
 
 public class RobotCore extends Robot {
     public Lift lift;
@@ -26,7 +26,7 @@ public class RobotCore extends Robot {
     public Intake intake;
     public ExtendoArm frontArm;
     public Pivot pivot;
-    public Sensors sensors;
+    //public Sensors sensors;
 
     public AHRS navx_device;
 
@@ -43,7 +43,7 @@ public class RobotCore extends Robot {
         arm = new Arm(hardwareMap, claw);
         intake = new Intake(hardwareMap);
         pivot = new Pivot(hardwareMap);
-        sensors = new Sensors(hardwareMap);
+        //sensors = new Sensors(hardwareMap);
 
         navx_device = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navX2"), AHRS.DeviceDataType.kProcessedData);
 

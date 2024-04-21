@@ -20,6 +20,7 @@ public class Arm extends SubsystemBase {
         // (left, right)
         MEGADOWN(.28,.28),
         DOWN(.26, .26), // right 0.22 before
+//        DOWN(.4, .4), // right 0.22 before (this line overriten by new push
         SCORING(.83, .83); // 0.9 0.333
 
         private final double position_right;
