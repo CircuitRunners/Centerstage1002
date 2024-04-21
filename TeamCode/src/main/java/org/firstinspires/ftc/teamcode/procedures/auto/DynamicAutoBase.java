@@ -52,6 +52,7 @@ public class DynamicAutoBase extends AutoBase {
 
     @Override
     public SequentialCommandGroup build(Team team, Side side, PropLocation locations) {
+        robot.arm.setClawAutoDisable();
         switch (team) {
             case RED: {
                 if (side == AUDIENCE) {
@@ -136,73 +137,165 @@ public class DynamicAutoBase extends AutoBase {
                 }
             }
             case BLUE: {
+                /*
+                -39.7 63 -90 heading
+                left: -43.7 33.55 272.901
+                middle: -50.6, 35.9, 246.4
+                right: -57.157 41.376 228.356
+
+                stack -66 45.991 335.117
+                throuyguhput -39.305 57.82 333.187
+
+
+                 */
                 if (side == AUDIENCE) {
                     // BLUE AUDIENCE
                     drive.setStartingPose(mirrorPose(r_a_startPos));
                     return new SequentialCommandGroup(
-                            new FollowPath(drive, mirroredPathChain(r_a_startPos, getPosition(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations))),
-                            new WaitCommand(400),
-                            new HoldPoint(drive, getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations)),
-                            new WaitCommand(400),
-                            new InstantCommand(robot.frontArm::toPixel1),
-                            new FollowPath(drive, mirroredPathChain(getPosition(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations), Constants.AutoPoses.RED_AUDIENCE.stackPositions)),
-                            new HoldPoint(drive, mirrorPose(stackPositions)),
-                            new WaitCommand(400),
-                            new ParallelRaceGroup(
-                                    new IntakeCommandEx(hardwareMap, robot.claw, robot.intake, robot.arm, Intake.IntakePowers.FAST),
-                                    new WaitCommand(3500)
-                            ),
-                            new InstantCommand(robot.claw::close),
-                            new WaitCommand(200), // stack
-
-                            new FollowPath(drive, mirroredPathChain(
-                                    Constants.AutoPoses.RED_AUDIENCE.stackPositions,
-                                    Constants.AutoPoses.RED_AUDIENCE.beforeGoingThroughBridge)
-                            ),
-                            new FollowPath(drive, mirroredPathChain(
-                                    Constants.AutoPoses.RED_AUDIENCE.beforeGoingThroughBridge,
-                                    Constants.AutoPoses.RED_AUDIENCE.afterGoingThroughBridge)
-                            ),
-                            new FollowPath(drive, mirroredPathChain(
-                                    Constants.AutoPoses.RED_AUDIENCE.afterGoingThroughBridge,
-                                    getPosition(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations))
-                            ),
-                            new ParallelCommandGroup(
-                                    new HoldPoint(drive, getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations)),
-                                    new MoveToScoringCommandEx(robot.lift, robot.arm, robot.claw, MoveToScoringCommandEx.Presets.SHORT, robot.pivot)
-                            ),
-                            new InstantCommand(() -> {
-                                if (locations != PropLocation.RIGHT) {
-                                    robot.pivot.right();
-                                } else {
-                                    robot.pivot.left();
-                                }
-                            }),
-                            new WaitCommand(400),
-                            new ParallelRaceGroup(
-                                    new FollowPath(drive, mirroredPathChain(
-                                            getPosition(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations),
-                                            getPosition(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations))
-                                    ),
-                                    new WaitCommand(1000)
-                            ),
-                            new WaitCommand(400),
-                            new InstantCommand(() -> {
-                                if (locations != PropLocation.RIGHT) {
-                                    robot.pivot.left();
-                                } else {
-                                    robot.pivot.right();
-                                }
-                            }),
-
-                            new InstantCommand(robot.claw::open),
-
-                            new ProfiledLiftCommand(robot.lift, Lift.LiftPositions.SHORT.position, true),
-                            new RetractOuttakeCommand(robot.lift, robot.arm, robot.claw, robot.pivot),
-                            new FollowPath(drive, mirroredPathLine(getPosition(boardPositions, locations), getPosition(preBoardPositions, locations))),
-                            new FollowPath(drive, mirroredPathLine(getPosition(preBoardPositions, locations), toPark)),
-                            new HoldPoint(drive, mirrorPose(toPark))
+                            new FollowPath(drive, createPathChain(new Pose2d(-39.7, 63, -90), getPosition(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations))),
+                            new FollowPath(drive, createPathChain(getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations), new Pose2d(-62.8, 56.054, 275.908))),
+                            new FollowPath(drive, createPathChain(new Pose2d(-62.8, 56.054, 275.908), new Pose2d(-70.442, 43.062, 243.686))),
+                            new FollowPath(drive, createPathChain(new Pose2d(-70.442, 43.062, 243.686), new Pose2d(-80.071, 22.070, 245))),
+                            new FollowPath(drive, createPathChain(new Pose2d(-80.071, 22.070, 245),new Pose2d(22.072, 68.571)))
                     );
+//                            new FollowPath(drive, createPathChain(mirrorPose(r_a_startPos), getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations))),
+//                            new WaitCommand(400),
+//                            new HoldPoint(drive, getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations)),
+//                            new WaitCommand(400),
+//                            new FollowPath(drive, mirroredPathChain(getPosition(Constants.AutoPoses.RED_AUDIENCE.pixelPositions, locations), Constants.AutoPoses.RED_AUDIENCE.stackPositions)),
+//                            new HoldPoint(drive, mirrorPose(stackPositions)),
+//                            new InstantCommand(robot.frontArm::toPixel1),
+//                            new WaitCommand(400),
+//                            new ParallelRaceGroup(
+//                                    new IntakeCommandStack(hardwareMap, robot.claw, robot.intake, robot.arm, Intake.IntakePowers.FAST, ExtendoArm.ExtendoPositions.PIXEL1),
+//                                    new WaitCommand(3500)
+//                            ),
+//                            new InstantCommand(robot.claw::close),
+//                            new WaitCommand(200), // stack
+//
+//                            new FollowPath(drive, mirroredPathChain(
+//                                    Constants.AutoPoses.RED_AUDIENCE.stackPositions,
+//                                    Constants.AutoPoses.RED_AUDIENCE.beforeGoingThroughBridge)
+//                            ),
+//                            new FollowPath(drive, mirroredPathChain(
+//                                    Constants.AutoPoses.RED_AUDIENCE.beforeGoingThroughBridge,
+//                                    Constants.AutoPoses.RED_AUDIENCE.afterGoingThroughBridge)
+//                            ),
+//                            new FollowPath(drive, createPathChain(
+//                                    mirrorPose(Constants.AutoPoses.RED_AUDIENCE.afterGoingThroughBridge),
+//                                    getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations)
+//                            )),
+//                            new ParallelCommandGroup(
+//                                    new HoldPoint(drive, getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations)),
+//                                    new MoveToScoringCommandEx(robot.lift, robot.arm, robot.claw, MoveToScoringCommandEx.Presets.SHORT, robot.pivot)
+//                            ),
+//                            new InstantCommand(() -> {
+//                                if (locations != PropLocation.RIGHT) {
+//                                    robot.pivot.right();
+//                                } else {
+//                                    robot.pivot.left();
+//                                }
+//                            }),
+//                            new WaitCommand(400),
+//                            new ParallelRaceGroup(
+//                                    new FollowPath(drive, mirroredPathChain(
+//                                            getPosition(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations),
+//                                            getPosition(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations))
+//                                    ),
+//                                    new WaitCommand(1000)
+//                            ),
+//                            new WaitCommand(400),
+//                            new InstantCommand(() -> {
+//                                if (locations != PropLocation.RIGHT) {
+//                                    robot.pivot.left();
+//                                } else {
+//                                    robot.pivot.right();
+//                                }
+//                            }),
+//
+//                            new InstantCommand(robot.claw::open),
+//
+//                            new ProfiledLiftCommand(robot.lift, Lift.LiftPositions.SHORT.position, true),
+//                            new RetractOuttakeCommand(robot.lift, robot.arm, robot.claw, robot.pivot),
+//                            //
+//                            new FollowPath(drive, getDoubleMirroredPositions(boardPositions, preBoardPositions, locations)),
+//
+//                    new FollowPath(drive, createPathChain(
+//                            getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations),
+//                            mirrorPose(Constants.AutoPoses.RED_AUDIENCE.afterGoingThroughBridge)
+//                    )),
+//                    new FollowPath(drive, mirroredPathChain(
+//                            Constants.AutoPoses.RED_AUDIENCE.afterGoingThroughBridge,
+//                            Constants.AutoPoses.RED_AUDIENCE.beforeGoingThroughBridge
+//                    )),
+//
+//                    new FollowPath(drive, mirroredPathChain(
+//                            Constants.AutoPoses.RED_AUDIENCE.beforeGoingThroughBridge,
+//                            Constants.AutoPoses.RED_AUDIENCE.stackPositions
+//
+//                    )),
+//
+//                    new HoldPoint(drive, mirrorPose(stackPositions)),
+//                            new InstantCommand(robot.frontArm::down),
+//                            new WaitCommand(400),
+//                            new ParallelRaceGroup(
+//                                    new IntakeCommandEx(hardwareMap, robot.claw, robot.intake, robot.arm, Intake.IntakePowers.FAST),
+//                                    new WaitCommand(3500)
+//                            ),
+//                            new InstantCommand(robot.claw::close),
+//                            new WaitCommand(200), // stack
+//
+//                            new FollowPath(drive, mirroredPathChain(
+//                                    Constants.AutoPoses.RED_AUDIENCE.stackPositions,
+//                                    Constants.AutoPoses.RED_AUDIENCE.beforeGoingThroughBridge)
+//                            ),
+//                            new FollowPath(drive, mirroredPathChain(
+//                                    Constants.AutoPoses.RED_AUDIENCE.beforeGoingThroughBridge,
+//                                    Constants.AutoPoses.RED_AUDIENCE.afterGoingThroughBridge)
+//                            ),
+//                            new FollowPath(drive, createPathChain(
+//                                    mirrorPose(Constants.AutoPoses.RED_AUDIENCE.afterGoingThroughBridge),
+//                                    getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations))
+//                            ),
+//
+//                            new ParallelCommandGroup(
+//                                    new HoldPoint(drive, getPositionMirrored(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations)),
+//                                    new MoveToScoringCommandEx(robot.lift, robot.arm, robot.claw, MoveToScoringCommandEx.Presets.SHORT, robot.pivot)
+//                            ),
+//                            new InstantCommand(() -> {
+//                                if (locations != PropLocation.RIGHT) {
+//                                    robot.pivot.right();
+//                                } else {
+//                                    robot.pivot.left();
+//                                }
+//                            }),
+//                            new WaitCommand(400),
+//                            new ParallelRaceGroup(
+//                                    new FollowPath(drive, mirroredPathChain(
+//                                            getPosition(Constants.AutoPoses.RED_AUDIENCE.preBoard, locations),
+//                                            getPosition(Constants.AutoPoses.RED_AUDIENCE.toBoard, locations))
+//                                    ),
+//                                    new WaitCommand(1000)
+//                            ),
+//                            new WaitCommand(400),
+//                            new InstantCommand(() -> {
+//                                if (locations != PropLocation.RIGHT) {
+//                                    robot.pivot.left();
+//                                } else {
+//                                    robot.pivot.right();
+//                                }
+//                            }),
+//
+//                            new InstantCommand(robot.claw::open),
+//
+//                            new ProfiledLiftCommand(robot.lift, Lift.LiftPositions.SHORT.position, true),
+//                            new RetractOuttakeCommand(robot.lift, robot.arm, robot.claw, robot.pivot),
+//                            //
+//                            new FollowPath(drive, getDoubleMirroredPositions(boardPositions, preBoardPositions, locations)),
+//
+//                            new FollowPath(drive, createPathLine(getPositionMirrored(preBoardPositions, locations), mirrorPose(toPark))),
+//                            new HoldPoint(drive, mirrorPose(toPark))
+//                    );
                 } else if (side == BACKSTAGE) {
                     // BLUE BACKSTAGE
                     drive.setStartingPose(mirrorPose(r_s_startPos));
@@ -250,6 +343,10 @@ public class DynamicAutoBase extends AutoBase {
             default:
                 return triPose.getMiddle();
         }
+    }
+
+    private PathChain getDoubleMirroredPositions (TriPose triPose1, TriPose triPose2, PropLocation location) {
+        return mirroredPathLine(getPositionMirrored(triPose1, location), getPositionMirrored(triPose2, location));
     }
 
     private Pose2d getPositionMirrored (TriPose triPose, PropLocation side) {

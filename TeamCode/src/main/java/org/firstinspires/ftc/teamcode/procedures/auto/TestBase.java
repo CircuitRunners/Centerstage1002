@@ -31,7 +31,7 @@ public class TestBase extends CommandOpMode {
 
     private PathChain toPixel, toBoard, toStage, toBP;
 
-    Pose2d startPose = r_s_startPos;
+    Pose2d startPose = new Pose2d(-39.7, 63, -90);
 
     public PathChain directPath(Pose2d startPath, Pose2d endPath) {
         return drive.pathBuilder()

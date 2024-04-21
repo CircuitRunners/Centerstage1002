@@ -19,7 +19,7 @@ public class Arm extends SubsystemBase {
     public enum ArmPositions {
         // (left, right)
         MEGADOWN(.28,.28),
-        DOWN(.34, .34), // right 0.22 before
+        DOWN(.26, .26), // right 0.22 before
         SCORING(.83, .83); // 0.9 0.333
 
         private final double position_right;
@@ -151,22 +151,26 @@ public class Arm extends SubsystemBase {
     // All the way to the rest position
     public void down(){
         setPosition(ArmPositions.DOWN);
-        if (usingClaw) {
-            claw.open();
-        }
+//        if (usingClaw) {
+//            claw.open();
+//        }
     }
 
     public void up(){
         setPosition(ArmPositions.SCORING);
-        if (usingClaw) {
-            claw.open();
-        }
+//        if (usingClaw) {
+//            claw.open();
+//        }
     }
 
     // Bypasses the profile
     public void forceDown(){
         leftServo.setPosition(ArmPositions.MEGADOWN.position_left);
         rightServo.setPosition(ArmPositions.MEGADOWN.position_right);
+    }
+
+    public void setClawAutoDisable () {
+        usingClaw = false;
     }
 
     public void toPosition(double level){
