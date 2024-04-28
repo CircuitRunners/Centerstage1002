@@ -79,15 +79,17 @@ public class Lift extends SubsystemBase {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         voltageComp = VOLTAGE_WHEN_LIFT_TUNED / voltageSensor.getVoltage();
+
+        LiftPositions.HIGH.setPosition(LIFTPOSITIONS_HIGH);
+        LiftPositions.MID.setPosition(LIFTPOSITIONS_MID);
+        LiftPositions.SHORT.setPosition(LIFTPOSITIONS_SHORT);
+        LiftPositions.DOWN.setPosition(LIFTPOSITIONS_DOWN);
     }
 
     @Override
     public void periodic(){
         // happens every loop
-        LiftPositions.HIGH.setPosition(LIFTPOSITIONS_HIGH);
-        LiftPositions.MID.setPosition(LIFTPOSITIONS_MID);
-        LiftPositions.SHORT.setPosition(LIFTPOSITIONS_SHORT);
-        LiftPositions.DOWN.setPosition(LIFTPOSITIONS_DOWN);
+        // OOPS! shoot
     }
 
     public void setLiftPower(double power){
